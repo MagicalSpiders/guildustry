@@ -1,144 +1,23 @@
-## Guildustry Web Platform – Requirements
-
-Guildustry is a multi‑portal digital platform that connects skilled trades candidates with employers and supports administrators with management and reporting. This README defines the scope, structure, theming, UX rules, and the first deliverable (Homepage with Navbar + Hero only).
-
-### Tech Stack
-
-- Next.js (App Router) + React 18
-- TypeScript
-- Tailwind CSS
-- Iconify React (icons)
-- next-themes (Dark/Light theming)
-
-### Phase 1 Goals
-
-- Marketing website with pages: `Homepage`, `For Candidates`, `For Employers`, `About`, `Contact`, `Sign Up`, `Sign In` (page shells acceptable initially).
-- Implement Homepage with Navbar + Hero first (mobile‑first, accessible, theme‑aware).
-
-### Project Structure
-
-- `src/app` – App Router pages
-  - `/(marketing)/page.tsx` (Homepage)
-  - `/candidates/page.tsx`
-  - `/employers/page.tsx`
-  - `/about/page.tsx`
-  - `/contact/page.tsx`
-  - `/auth/sign-in/page.tsx`
-  - `/auth/sign-up/page.tsx`
-- `src/components` – shared UI (e.g., `Button.tsx`, `Header.tsx`, `ThemeToggle.tsx`, `Footer.tsx`)
-- `src/app/homepage/components` – page‑local components for Homepage (e.g., `Hero.tsx`)
-- `src/styles` – global CSS (Tailwind entry + theme utilities)
-- `public/fonts` – fonts (Red Hat Display, Cambria)
-- `public/media` – assets (placeholder `tradesMen.mp4` to be added later)
-
-Notes
-
-- Components used only by a specific page should live under that page, e.g., `src/app/homepage/components/Hero.tsx`.
-- Shared primitives live in `src/components`.
-
-### Theming & Design System
-
-- Dual themes: Dark (default) and Light. Use `next-themes` and toggle via `data-theme` on `<html>`.
-- Palette: black/white base with accent `#f59f0a` (primary brand accent). Keep UI clean, minimal, professional.
-- Typography
-  - Titles/headings: Red Hat Display
-  - Body/UI: Cambria (serif). Fallbacks allowed per platform.
-- Use Tailwind defaults for spacing and breakpoints; containers should follow `container mx-auto px-4 sm:px-6 lg:px-8` and `max-w-7xl/8xl` as needed.
-
-### Accessibility & UX
-
-- Target WCAG AA contrast.
-- Fully keyboard navigable; visible focus ring (`focus-visible`).
-- Respect `prefers-reduced-motion` for animations.
-- Semantic landmarks (`header`, `main`, `nav`, `footer`) and descriptive `aria-label`s for icon-only buttons.
-
-### Iconography
-
-- Use Iconify React for all icons (CTA arrows, briefcase, menu, theme toggle, etc.).
-
-### Navbar (Homepage)
-
-- Left: text logotype `Guildustry` (SVG later).
-- Links: `For Candidates`, `For Employers`, `About`, `Contact`.
-- Actions: `Sign In` (link) and `Get Started` (accent button → Sign Up).
-- Mobile: sticky top, hamburger → popover/drawer. Theme toggle present on all breakpoints.
-
-### Hero (Homepage)
-
-- Background: will host `tradesMen.mp4` video. For now, render a clean white/light panel with subtle overlay matching the provided reference image. Keep Dark/Light contrast correct.
-- Eyebrow badge: “100% FREE for Candidates” (pill; subtle surface; accent border/text).
-- Headline (stacked, responsive):
-  - “America Needs Builders.”
-  - “Step Into the Future of Skilled Trades.”
-- Subcopy: “Find high-paying jobs that offer stability—without the burden of college debt.”
-- CTAs:
-  - Primary: “Find Your Opportunity” (accent, arrow‑right icon)
-  - Secondary: “Post an Opening” (outline/ghost, briefcase icon)
-- Motion: tasteful slide‑in on load; respect reduced motion.
-
-### Routing
-
-- Use App Router with `export const metadata` per page for basic SEO.
-
-### Packages
-
-- `next`, `react`, `react-dom`
-- `tailwindcss`, `postcss`, `autoprefixer`
-- `@iconify/react`
-- `next-themes`
-- `clsx`
-- `eslint`, `prettier`
-
-### Scripts
-
-- `dev`: run development server
-- `build`: production build
-- `start`: start production server
-- `lint`: run ESLint
-- `type-check`: run TypeScript compiler in noEmit mode
-
-### Getting Started
-
-1. Install dependencies
-
-```bash
-npm install
-```
-
-2. Run the dev server
-
-```bash
-npm run dev
-# http://localhost:3000
-```
-
-### Styling & Theme CSS
-
-Place the following as `src/styles/theme.css` and import from your Tailwind entry (e.g., `src/styles/globals.css`). This file provides fonts, variables, utilities, and animations (Dark default with Light overrides). Replace font file paths if needed.
-
-```css
 @import "tailwindcss";
-
-/* Font Declarations */
 @font-face {
   font-family: "Red Hat Display";
-  src: url("../fonts/RedHatDisplayVariableFont_wght.ttf") format("truetype");
-  font-weight: 500;
+  src: url("../../public/fonts/Tiktok.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Cambria";
-  src: url("../fonts/RedHatDisplayVariableFont_wght.ttf") format("truetype");
+  src: url("../../public/fonts/Tiktok.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
-/* Set default font */
+/* Set default font: Cambria for body copy */
 body {
-  font-family: "Red Hat Display", sans-serif;
+  font-family: "Cambria", serif;
   color-scheme: dark;
   color: var(--color-main-text);
   background-color: var(--color-main-bg);
@@ -149,38 +28,67 @@ body {
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       150deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       30deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       150deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       60deg,
       var(--color-pattern-stroke) 25%,
       transparent 25.5%,
       transparent 75%,
       var(--color-pattern-stroke) 75%,
       var(--color-pattern-stroke)
-    ), linear-gradient(60deg, var(--color-pattern-stroke) 25%, transparent 25.5%, transparent
-        75%, var(--color-pattern-stroke) 75%, var(--color-pattern-stroke));
+    ),
+    linear-gradient(
+      60deg,
+      var(--color-pattern-stroke) 25%,
+      transparent 25.5%,
+      transparent 75%,
+      var(--color-pattern-stroke) 75%,
+      var(--color-pattern-stroke)
+    );
   background-size: 20px 35px;
   background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
+}
+
+/* Titles/Headings: Red Hat Display */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Red Hat Display", sans-serif;
+}
+
+/* Utility classes for explicit usage */
+.font-title {
+  font-family: "Red Hat Display", sans-serif;
+}
+.font-body {
+  font-family: "Cambria", serif;
 }
 
 /* Body overrides for light theme */
@@ -194,36 +102,47 @@ body {
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       150deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       30deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       150deg,
       var(--color-pattern-stroke) 12%,
       transparent 12.5%,
       transparent 87%,
       var(--color-pattern-stroke) 87.5%,
       var(--color-pattern-stroke)
-    ), linear-gradient(
+    ),
+    linear-gradient(
       60deg,
       var(--color-pattern-stroke) 25%,
       transparent 25.5%,
       transparent 75%,
       var(--color-pattern-stroke) 75%,
       var(--color-pattern-stroke)
-    ), linear-gradient(60deg, var(--color-pattern-stroke) 25%, transparent 25.5%, transparent
-        75%, var(--color-pattern-stroke) 75%, var(--color-pattern-stroke));
+    ),
+    linear-gradient(
+      60deg,
+      var(--color-pattern-stroke) 25%,
+      transparent 25.5%,
+      transparent 75%,
+      var(--color-pattern-stroke) 75%,
+      var(--color-pattern-stroke)
+    );
   background-size: 20px 35px;
   background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
 }
@@ -373,8 +292,8 @@ body {
         to right,
         rgba(255, 255, 255, 0.04) 1px,
         transparent 1px
-      ), linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent
-          1px);
+      ),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 24px 24px, 24px 24px;
     background-position: 0 0, 0 0;
   }
@@ -383,7 +302,8 @@ body {
         to right,
         rgba(0, 0, 0, 0.04) 1px,
         transparent 1px
-      ), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      ),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
   }
   .font-mono {
     font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
@@ -435,51 +355,3 @@ body {
     font-size: 14px !important;
   }
 }
-```
-
-### Implementation Notes
-
-- Use `next/link` and `next/image` where applicable.
-- Prefer semantic components; create `Button` variants (accent/outline) and reuse in hero/nav.
-- Mobile first; progressively enhance layout for md/lg breakpoints.
-
-### Future Phases (high level)
-
-- Candidate/Employer portals, Admin area, authentication, analytics, and CMS for marketing content.
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
