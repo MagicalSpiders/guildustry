@@ -25,10 +25,10 @@ const supportCategories = [
 
 export function HowCanWeHelp() {
   return (
-    <section className="bg-white text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">How Can We Help?</h2>
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">How Can We Help?</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -50,8 +50,8 @@ export function HowCanWeHelp() {
               <span className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-3 mb-4">
                 <Icon icon={category.icon} width={40} height={40} />
               </span>
-              <h3 className="text-xl font-semibold mb-2 text-neutral-900 dark:text-main-text">{category.title}</h3>
-              <p className="text-sm text-neutral-600 dark:text-main-light-text leading-relaxed">
+              <h3 className="text-xl font-semibold mb-2 text-main-text">{category.title}</h3>
+              <p className="text-sm text-main-light-text leading-relaxed">
                 {category.desc}
               </p>
             </div>

@@ -27,7 +27,7 @@ const pairs: Pair[] = [
 
 export function MythBusting() {
   return (
-    <section className="relative bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="relative bg-grid bg-surface/60 text-main-text">
       {/* Grid background like hero */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-grid opacity-30" />
@@ -35,10 +35,10 @@ export function MythBusting() {
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">
             Busting the College-First Myth
           </h2>
-          <p className="mt-3 max-w-3xl mx-auto text-neutral-600 dark:text-main-light-text">
+          <p className="mt-3 max-w-3xl mx-auto text-main-light-text">
             For too long, society has pushed one path: four-year college or
             bust. It's time to challenge that narrative.
           </p>
@@ -48,7 +48,7 @@ export function MythBusting() {
           {pairs.map((p, idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-subtle bg-white dark:bg-surface p-6"
+              className="rounded-2xl border border-subtle bg-surface p-6"
             >
               {/* Myth */}
               <div className="flex items-start gap-3">
@@ -56,12 +56,10 @@ export function MythBusting() {
                   <Icon icon="lucide:x" className="w-4 h-4" />
                 </span>
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                  <div className="text-xs uppercase tracking-wide text-main-light-text opacity-70">
                     Myth
                   </div>
-                  <p className="font-medium text-neutral-800 dark:text-main-text">
-                    {p.myth}
-                  </p>
+                  <p className="font-medium text-main-text">{p.myth}</p>
                 </div>
               </div>
 
@@ -73,10 +71,10 @@ export function MythBusting() {
                   <Icon icon="lucide:check" className="w-4 h-4" />
                 </span>
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                  <div className="text-xs uppercase tracking-wide text-main-light-text opacity-70">
                     Reality
                   </div>
-                  <p className="text-neutral-700 dark:text-main-light-text leading-relaxed">
+                  <p className="text-main-light-text leading-relaxed">
                     {p.reality}
                   </p>
                 </div>

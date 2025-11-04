@@ -26,21 +26,21 @@ export function ContactForm() {
   };
 
   return (
-    <section className="relative bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="relative bg-grid bg-surface/60 text-main-text">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-grid opacity-30" />
       </div>
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="max-w-2xl mx-auto">
-          <div className="rounded-2xl border border-subtle bg-white dark:bg-surface p-8 shadow-elevated">
-            <h2 className="text-2xl sm:text-3xl font-title font-bold mb-6 text-neutral-900 dark:text-main-text">Send Us a Message</h2>
+          <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-elevated">
+            <h2 className="text-2xl sm:text-3xl font-title font-bold mb-6 text-main-text">Send Us a Message</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium mb-2 text-neutral-700 dark:text-main-light-text">
+                  <label htmlFor="firstName" className="block text-sm font-medium mb-2 text-main-light-text">
                     First Name
                   </label>
                   <input
@@ -49,12 +49,12 @@ export function ContactForm() {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-subtle bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                     placeholder="John"
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium mb-2 text-neutral-700 dark:text-main-light-text">
+                  <label htmlFor="lastName" className="block text-sm font-medium mb-2 text-main-light-text">
                     Last Name
                   </label>
                   <input
@@ -63,7 +63,7 @@ export function ContactForm() {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-subtle bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                     placeholder="Doe"
                   />
                 </div>
@@ -71,7 +71,7 @@ export function ContactForm() {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-neutral-700 dark:text-main-light-text">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-main-light-text">
                   Email
                 </label>
                 <input
@@ -80,14 +80,14 @@ export function ContactForm() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                   placeholder="john@example.com"
                 />
               </div>
 
               {/* Subject */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium mb-2 text-neutral-700 dark:text-main-light-text">
+                <label htmlFor="subject" className="block text-sm font-medium mb-2 text-main-light-text">
                   Subject
                 </label>
                 <input
@@ -96,14 +96,14 @@ export function ContactForm() {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                   placeholder="How can we help?"
                 />
               </div>
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2 text-neutral-700 dark:text-main-light-text">
+                <label htmlFor="message" className="block text-sm font-medium mb-2 text-main-light-text">
                   Message
                 </label>
                 <textarea
@@ -112,7 +112,7 @@ export function ContactForm() {
                   value={formData.message}
                   onChange={handleChange}
                   rows={6}
-                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors resize-y"
+                  className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors resize-y"
                   placeholder="Tell us more about your inquiry..."
                 />
               </div>

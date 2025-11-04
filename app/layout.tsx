@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/src/components/ThemeProvider";
+import { AuthProvider } from "@/src/components/AuthProvider";
+import { LayoutWrapper } from "@/src/components/LayoutWrapper";
 import "@/src/styles/globals.css";
-import { Header } from "@/src/components/Header";
-import { Footer } from "@/src/components/Footer";
 
 export const metadata: Metadata = {
   title: "Guildustry - Building the Future of Skilled Trades",
@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-display antialiased">
         <ThemeProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <AuthProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

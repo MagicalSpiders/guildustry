@@ -1,12 +1,12 @@
 export function OurMission() {
   return (
-    <section className="bg-white text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">Our Mission</h2>
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">Our Mission</h2>
         </div>
 
-        <div className="max-w-4xl mx-auto space-y-6 text-neutral-700 dark:text-main-light-text leading-relaxed">
+        <div className="max-w-4xl mx-auto space-y-6 text-main-light-text leading-relaxed">
           <p className="text-lg">
             There was a time when the heartbeat of America pulsed through its factories. The roar of machinery, the glow of molten steel, the rhythm of hands and tools working in harmony — these sounds told the story of a nation that made things. From Detroit to Pittsburgh to Cleveland to Upstate New York, towns thrived on the dignity of work and the pride of craftsmanship. Manufacturing wasn't just an industry; it was an identity.
           </p>

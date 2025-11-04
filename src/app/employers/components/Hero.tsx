@@ -30,7 +30,7 @@ export function EmployersHero() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text"
+      className="relative overflow-hidden bg-grid bg-surface/60 text-main-text"
     >
       {/* Subtle grid/pattern background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -41,7 +41,7 @@ export function EmployersHero() {
         {/* Title with accent */}
         <h1
           ref={titleRef}
-          className="text-4xl sm:text-5xl lg:text-6xl font-title font-bold"
+          className="text-4xl sm:text-5xl lg:text-6xl font-title font-bold text-main-text"
         >
           Hire Skilled Trades <span className="text-main-accent">Faster</span>
         </h1>

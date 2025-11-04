@@ -26,7 +26,7 @@ export function AboutHero() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text"
+      className="relative overflow-hidden bg-grid bg-surface/60 text-main-text"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-grid opacity-30" />
@@ -35,13 +35,13 @@ export function AboutHero() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 lg:py-36 relative z-10 text-center">
         <h1
           ref={titleRef}
-          className="text-4xl sm:text-5xl lg:text-6xl font-title font-bold"
+          className="text-4xl sm:text-5xl lg:text-6xl font-title font-bold text-main-text"
         >
           About Guildustry
         </h1>
         <p
           ref={textRef}
-          className="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-neutral-700 dark:text-main-light-text leading-relaxed"
+          className="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-main-light-text leading-relaxed"
         >
           Our mission is to uplift American manufacturing businesses and their
           communities by addressing one of its biggest constraints to growth:

@@ -25,14 +25,14 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="relative bg-grid bg-surface/60 text-main-text">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-grid opacity-30" />
       </div>
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">
             How Guildustry Works
           </h2>
         </div>
@@ -41,7 +41,7 @@ export function HowItWorks() {
           {steps.map((step, idx) => (
             <div
               key={step.title}
-              className="group relative overflow-hidden rounded-2xl border border-subtle bg-white dark:bg-surface p-6"
+              className="group relative overflow-hidden rounded-2xl border border-subtle bg-surface p-6"
             >
               {/* Step number badge */}
               <div className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full bg-main-accent/10 text-main-accent text-xl font-bold w-7 h-7">
@@ -54,12 +54,12 @@ export function HowItWorks() {
               </span>
 
               {/* Title */}
-              <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-main-text">
+              <h3 className="mt-4 text-lg font-semibold text-main-text">
                 {step.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-2 text-sm text-neutral-600 dark:text-main-light-text leading-relaxed">
+              <p className="mt-2 text-sm text-main-light-text leading-relaxed">
                 {step.desc}
               </p>
             </div>

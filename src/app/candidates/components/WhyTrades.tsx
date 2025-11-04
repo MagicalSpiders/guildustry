@@ -25,13 +25,13 @@ const items = [
 
 export function WhyTrades() {
   return (
-    <section className="bg-white text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">
             Why Choose Skilled Trades?
           </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-neutral-600 dark:text-main-light-text">
+          <p className="mt-3 max-w-2xl mx-auto text-main-light-text">
             Real careers with real impact, built on skill, pride, and
             opportunity.
           </p>
@@ -67,10 +67,10 @@ export function WhyTrades() {
               <span className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-3">
                 <Icon icon={item.icon} width={44} height={44} />
               </span>
-              <h3 className="mt-4 text-xl font-semibold text-neutral-900 dark:text-main-text">
+              <h3 className="mt-4 text-xl font-semibold text-main-text">
                 {item.title}
               </h3>
-              <p className="mt-2 text-sm text-neutral-600 dark:text-main-light-text leading-relaxed">
+              <p className="mt-2 text-sm text-main-light-text leading-relaxed">
                 {item.desc}
               </p>
             </div>

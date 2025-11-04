@@ -66,7 +66,7 @@ export function Hero() {
             playsInline
           />
         </div>
-        <div className="absolute w-screen h-full bg-white/20 dark:bg-black/20 inset-0 blur-sm" />
+        <div className="absolute w-screen h-full bg-white/20 dark:bg-black/20 inset-0 backdrop-blur-xs" />
       </div>
 
       {/* Theme-aware subtle grid above video but below content */}
@@ -77,13 +77,13 @@ export function Hero() {
       {/* White sheet that slides up to cover the video on scroll */}
       <div
         ref={sheetRef}
-        className="absolute inset-0 w-screen z-0 bg-white/90 dark:bg-main-bg/90 translate-y-1/2 will-change-transform transform-gpu"
+        className="absolute inset-0 w-screen z-0 bg-surface dark:bg-main-bg/90 translate-y-1/2 will-change-transform transform-gpu"
         aria-hidden="true"
       >
         {/* Intro text shown in the visible (bottom) half initially */}
         <div
           ref={introTextRef}
-          className="absolute left-1/2 -translate-x-1/2 top-6 md:top-10 w-full max-w-6xl px-6 md:px-8 text-neutral-800 dark:text-main-text text-sm md:text-base font-body"
+          className="absolute left-1/2 -translate-x-1/2 top-6 md:top-10 w-full max-w-6xl px-6 md:px-8 text-main-text text-sm md:text-base font-body"
         >
           <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-10">
             {/* Left: Rich intro text and feature icons */}
@@ -99,13 +99,13 @@ export function Hero() {
                   Skilled Trades.
                 </span>
               </h1>
-              <p className="text-neutral-700 md:text-neutral-800 dark:text-main-light-text max-w-2xl leading-relaxed text-sm sm:text-base">
+              <p className="text-main-light-text max-w-2xl leading-relaxed text-sm sm:text-base">
                 Find high‑paying jobs that offer stability—without the burden of
                 college debt. Build a meaningful career in construction,
                 electrical, HVAC, welding, manufacturing, and more.
               </p>
               {/* Feature bullets with SVG icons */}
-              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-neutral-800 dark:text-main-light-text">
+              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-main-light-text">
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:badge-check"
@@ -146,17 +146,17 @@ export function Hero() {
                     window.location.hash = "main-hero";
                   }
                 }}
-                className="group inline-flex items-center gap-4 rounded-full border border-neutral-300 dark:border-subtle bg-white/80 dark:bg-surface/80 backdrop-blur-md shadow-elevated hover:shadow-lg transition-all px-4 py-3 md:px-5 md:py-4"
+                className="group inline-flex items-center gap-4 rounded-full border border-subtle bg-surface/80 backdrop-blur-md shadow-elevated hover:shadow-lg transition-all px-4 py-3 md:px-5 md:py-4"
                 aria-label="Scroll down to explore"
               >
-                <span className="relative inline-flex items-center justify-center rounded-full border border-neutral-300 dark:border-subtle bg-white/90 dark:bg-surface/90 size-12 md:size-14">
+                <span className="relative inline-flex items-center justify-center rounded-full border border-subtle bg-surface/90 size-12 md:size-14">
                   <Icon
                     icon="lucide:chevrons-down"
-                    className="w-6 h-6 md:w-7 md:h-7 text-neutral-700 dark:text-main-light-text group-hover:text-main-accent transition-colors"
+                    className="w-6 h-6 md:w-7 md:h-7 text-main-light-text group-hover:text-main-accent transition-colors"
                   />
                 </span>
-                <div className="text-neutral-700 dark:text-main-light-text leading-tight">
-                  <span className="block text-[11px] md:text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                <div className="text-main-light-text leading-tight">
+                  <span className="block text-[11px] md:text-xs uppercase tracking-wide text-main-light-text opacity-70">
                     Scroll down
                   </span>
                   <span className="block text-sm md:text-base font-medium group-hover:text-main-accent transition-colors">

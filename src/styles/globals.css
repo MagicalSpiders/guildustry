@@ -169,7 +169,7 @@ h6 {
   :root {
     --color-main-bg: #080808;
     --color-main-bg-rgb: 8, 8, 8;
-    --color-light-bg: #1b212c;
+    --color-light-bg: #202020;
     --color-main-accent: #f59f0a; /* brand accent */
     --color-main-highlight: #f59f0a;
     --color-main-text: #ffffff;
@@ -185,7 +185,7 @@ h6 {
 
 /* Light theme overrides - apply on <html data-theme="light"> */
 [data-theme="light"] {
-  --color-main-bg: #e0e0e0;
+  --color-main-bg: #f3f3f3;
   --color-main-bg-rgb: 224, 224, 224;
   --color-light-bg: #ffffff;
   --color-main-accent: #f59f0a;

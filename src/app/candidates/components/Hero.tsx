@@ -30,7 +30,7 @@ export function CandidatesHero() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text"
+      className="relative overflow-hidden bg-grid bg-surface/60 text-main-text"
     >
       {/* Subtle grid/pattern background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -41,7 +41,7 @@ export function CandidatesHero() {
         {/* Badge */}
         <div
           ref={badgeRef}
-          className="inline-flex items-center px-4 py-2 rounded-full border border-main-accent bg-white/80 dark:bg-surface/80 backdrop-blur-sm"
+          className="inline-flex items-center px-4 py-2 rounded-full border border-main-accent bg-surface/80 backdrop-blur-sm"
         >
           <span className="text-main-accent font-medium text-sm">
             100% FREE to Join

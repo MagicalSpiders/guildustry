@@ -10,7 +10,7 @@ export function Employers() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 items-center">
           <div className="lg:col-span-7">
-            <span className="inline-flex items-center gap-2 text-sm tracking-wide uppercase text-neutral-400 dark:text-neutral-400">
+            <span className="inline-flex items-center gap-2 text-sm tracking-wide uppercase text-main-light-text opacity-70">
               <Icon
                 icon="lucide:briefcase"
                 className="w-4 h-4 text-main-accent"
@@ -94,7 +94,7 @@ export function Employers() {
               {/* Mini summary header */}
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-neutral-400 dark:text-neutral-400">
+                  <p className="text-xs uppercase tracking-wide text-main-light-text opacity-70">
                     Pipeline overview
                   </p>
                   <p className="text-lg font-semibold text-main-text">Open roles this week</p>
@@ -174,14 +174,14 @@ export function Employers() {
 
               {/* Footer note */}
               <div className="mt-5 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-neutral-400 dark:text-neutral-400">
+                <div className="flex items-center gap-2 text-xs text-main-light-text opacity-70">
                   <Icon
                     icon="lucide:shield-check"
                     className="w-4 h-4 text-main-accent"
                   />
                   Vetted profiles, updated daily
                 </div>
-                <span className="text-xs text-neutral-400 dark:text-neutral-400">100% FREE</span>
+                <span className="text-xs text-main-light-text opacity-70">100% FREE</span>
               </div>
             </div>
           </div>

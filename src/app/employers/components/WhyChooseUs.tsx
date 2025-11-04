@@ -20,14 +20,14 @@ const benefits = [
 
 export function WhyChooseUs() {
   return (
-    <section className="relative bg-grid bg-white/60 text-neutral-900 dark:bg-main-bg dark:text-main-text">
+    <section className="relative bg-grid bg-surface/60 text-main-text">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-grid opacity-30" />
       </div>
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-title font-bold text-neutral-900 dark:text-main-text">
+          <h2 className="text-3xl sm:text-4xl font-title font-bold text-main-text">
             Why Employers Choose Guildustry
           </h2>
         </div>
@@ -36,7 +36,7 @@ export function WhyChooseUs() {
           {benefits.map((benefit) => (
             <div
               key={benefit.title}
-              className="group relative overflow-hidden rounded-2xl border border-subtle bg-white dark:bg-surface p-8 text-center"
+              className="group relative overflow-hidden rounded-2xl border border-subtle bg-surface p-8 text-center"
             >
               {/* Decorative corner svg */}
               <svg
@@ -62,10 +62,10 @@ export function WhyChooseUs() {
               <span className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-4 mb-4">
                 <Icon icon={benefit.icon} width={48} height={48} />
               </span>
-              <h3 className="text-xl font-semibold mb-3 text-neutral-900 dark:text-main-text">
+              <h3 className="text-xl font-semibold mb-3 text-main-text">
                 {benefit.title}
               </h3>
-              <p className="text-sm text-neutral-600 dark:text-main-light-text leading-relaxed">
+              <p className="text-sm text-main-light-text leading-relaxed">
                 {benefit.desc}
               </p>
             </div>
