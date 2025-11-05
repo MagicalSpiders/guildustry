@@ -3,19 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
-import { NotificationModal, NotificationItemData } from "./NotificationModal";
+import { NotificationModal, NotificationItemData, NotificationKind } from "./NotificationModal";
 
-type NotificationKind = "interview" | "message" | "status" | "reminder";
-
-interface NotificationItemData {
-  id: string;
-  kind: NotificationKind;
-  company: string;
-  title: string;
-  body: string;
-  createdAt: string; // ISO string
-  read: boolean;
-}
+// Types imported from NotificationModal
 
 const seedNotifications: NotificationItemData[] = [
   {
