@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const [current, setCurrent] = useState(0);
 
   const methods = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileSchema) as any,
     defaultValues: {
       fullName: "",
       email: "",
