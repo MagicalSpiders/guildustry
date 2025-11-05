@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -13,7 +13,7 @@ export function Hero() {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const introTextRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Register plugin on client only
     if (typeof window === "undefined") return;
     // Safe to call multiple times; GSAP ignores duplicate registrations
@@ -25,7 +25,7 @@ export function Hero() {
           trigger: sectionRef.current,
           start: "top top",
           end: "+=80%",
-          scrub: true,
+          scrub: 2,
           pin: true,
         },
       });
@@ -65,7 +65,7 @@ export function Hero() {
             playsInline
           />
         </div>
-        <div className="absolute w-screen h-full bg-white/20 dark:bg-black/20 inset-0 backdrop-blur-xs" />
+        <div className="absolute w-screen h-full bg-white/20 dark:bg-black/20 inset-0 blur-sm" />
       </div>
 
       {/* Theme-aware subtle grid above video but below content */}
@@ -74,15 +74,16 @@ export function Hero() {
       </div>
 
       {/* White sheet that slides up to cover the video on scroll */}
+
       <div
         ref={sheetRef}
-        className="absolute inset-0 w-screen z-0 bg-surface dark:bg-main-bg/90 translate-y-1/2 will-change-transform transform-gpu"
+        className="absolute inset-0 w-screen z-0 bg-surface   translate-y-1/2 will-change-transform transform-gpu"
         aria-hidden="true"
       >
         {/* Intro text shown in the visible (bottom) half initially */}
         <div
           ref={introTextRef}
-          className="absolute left-1/2 -translate-x-1/2 top-6 md:top-10 w-full max-w-6xl px-6 md:px-8 text-main-text text-sm md:text-base font-body"
+          className="absolute left-1/2 -translate-x-1/2 top-6 md:top-10 w-full max-w-6xl px-6 md:px-8 text-main-light-text text-sm md:text-base font-body"
         >
           <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-10">
             {/* Left: Rich intro text and feature icons */}
@@ -104,7 +105,7 @@ export function Hero() {
                 electrical, HVAC, welding, manufacturing, and more.
               </p>
               {/* Feature bullets with SVG icons */}
-              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-main-light-text">
+              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-neutral-800 dark:text-main-light-text">
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:badge-check"
@@ -172,11 +173,11 @@ export function Hero() {
       <div
         ref={contentRef}
         id="main-hero"
-        className="relative z-10       w-full mx-auto sm:-mt-16 lg:-mt-44 xl:-mt-28  px-4 sm:px-6 lg:px-8 text-center  "
+        className="relative z-10       w-full mx-auto sm:-mt-16 lg:-mt-24 xl:-mt-28  px-4 sm:px-6 lg:px-8 text-center  "
       >
         <div className="  w-full   mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 mb-8 rounded-full border border-main-accent bg-surface/80 backdrop-blur-sm">
+          <div className="inline-flex items-center px-4 py-2 mb-8 rounded-full border border-main-accent bg-[rgb(var(--color-surface-bg-rgb)/0.8)] backdrop-blur-sm">
             <span className="text-main-accent font-medium text-sm">
               100% FREE for Candidates
             </span>
