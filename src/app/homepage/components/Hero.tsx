@@ -16,9 +16,8 @@ export function Hero() {
   useEffect(() => {
     // Register plugin on client only
     if (typeof window === "undefined") return;
-    if (!gsap.core.globals()["ScrollTrigger"]) {
-      gsap.registerPlugin(ScrollTrigger);
-    }
+    // Safe to call multiple times; GSAP ignores duplicate registrations
+    gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({
@@ -173,7 +172,7 @@ export function Hero() {
       <div
         ref={contentRef}
         id="main-hero"
-        className="relative z-10       w-full mx-auto sm:-mt-16 lg:-mt-24 xl:-mt-28  px-4 sm:px-6 lg:px-8 text-center  "
+        className="relative z-10       w-full mx-auto sm:-mt-16 lg:-mt-44 xl:-mt-28  px-4 sm:px-6 lg:px-8 text-center  "
       >
         <div className="  w-full   mx-auto">
           {/* Badge */}
