@@ -21,7 +21,10 @@ export default function CandidateDashboardPage() {
         {/* Progress Card */}
         <ProgressCard
           steps={[
-            { title: "Step 1: Complete Profile & Assessment", status: "done" },
+            {
+              title: "Step 1: Complete Profile & Assessment",
+              status: "pending",
+            },
             { title: "Step 2: Browse Job Openings", status: "pending" },
             {
               title: "Step 3: Explore Learning Hub & Resources",
@@ -84,7 +87,11 @@ export default function CandidateDashboardPage() {
             {/* Quick Actions */}
             <QuickActions
               actions={[
-                { icon: "lucide:user-cog", label: "Edit Profile" },
+                {
+                  icon: "lucide:user-cog",
+                  label: "Edit Profile",
+                  href: "/profile/edit",
+                },
                 { icon: "lucide:book-open", label: "Browse Resources" },
                 { icon: "lucide:bell", label: "View Notifications" },
                 { icon: "lucide:search", label: "Browse Job Board" },

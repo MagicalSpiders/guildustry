@@ -15,14 +15,24 @@ export function StepControls({
 }) {
   return (
     <div className="mt-6 flex items-center justify-between">
-      <Button variant="outline" size="sm" onClick={onBack} disabled={!canBack}>
+      <Button
+        variant="outline"
+        size="sm"
+        type="button"
+        onClick={onBack}
+        disabled={!canBack}
+      >
         Back
       </Button>
-      <Button variant="accent" size="sm" onClick={onNext} disabled={!canNext}>
+      <Button
+        variant="accent"
+        size="sm"
+        type={isLast ? "button" : "submit"}
+        onClick={onNext}
+        disabled={!canNext}
+      >
         {isLast ? "Save Profile" : "Continue"}
       </Button>
     </div>
   );
 }
-
-

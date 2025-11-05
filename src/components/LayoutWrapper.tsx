@@ -20,7 +20,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     return (
       <>
         <DashboardNav />
-        <main>{children}</main>
+        <main className="page-fade">{children}</main>
       </>
     );
   }
@@ -30,13 +30,13 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     return (
       <>
         <Header />
-        <main>{children}</main>
+        <main className="page-fade">{children}</main>
         <Footer />
       </>
     );
   }
 
   // Auth pages have no header/footer
-  return <main>{children}</main>;
+  return <main className="page-fade">{children}</main>;
 }
 

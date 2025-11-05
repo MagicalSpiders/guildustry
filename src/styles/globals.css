@@ -91,6 +91,13 @@ h6 {
   font-family: "Cambria", serif;
 }
 
+/* Select options use Cambria - ensure it applies globally */
+select,
+select *,
+select option {
+  font-family: "Cambria", serif !important;
+}
+
 /* Body overrides for light theme */
 [data-theme="light"] body {
   color-scheme: light;
@@ -207,6 +214,12 @@ h6 {
 }
 
 @layer utilities {
+  /* Select elements use Cambria font */
+  select,
+  select option {
+    font-family: "Cambria", serif !important;
+  }
+
   .bg-main-bg {
     background-color: var(--color-main-bg);
   }
@@ -228,6 +241,11 @@ h6 {
   .text-main-accent {
     color: var(--color-main-accent);
   }
+  @media (hover: hover) {
+    .hover\:text-main-accent:hover {
+      color: var(--color-main-accent);
+    }
+  }
   .text-main-highlight {
     color: var(--color-main-highlight);
   }
@@ -245,6 +263,11 @@ h6 {
   }
   .border-main-accent {
     border-color: var(--color-main-accent);
+  }
+  @media (hover: hover) {
+    .hover\:border-main-accent:hover {
+      border-color: var(--color-main-accent);
+    }
   }
   .border-main-highlight {
     border-color: var(--color-main-highlight);
@@ -329,6 +352,30 @@ h6 {
   }
   .grid-cols-21 {
     grid-template-columns: repeat(21, minmax(0, 1fr));
+  }
+}
+
+/* Global page transition (snappy and minimal) */
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.995);
+    filter: saturate(90%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: saturate(100%);
+  }
+}
+
+.page-fade {
+  animation: pageFadeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-fade {
+    animation: none;
   }
 }
 

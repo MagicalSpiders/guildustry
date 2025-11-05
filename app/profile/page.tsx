@@ -63,8 +63,9 @@ export default function ProfilePage() {
       stepResolver.parse(data);
       if (current < steps.length - 1) setCurrent((c) => c + 1);
       else {
-        // Save profile
+        // Save profile and redirect to showcase
         localStorage.setItem("guildustry_profile", JSON.stringify(data));
+        window.location.href = "/profile/userprofile";
       }
     } catch (e) {
       // trigger field validation display

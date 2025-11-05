@@ -7,7 +7,7 @@ type Application = {
 
 export function RecentApplications({ items }: { items: Application[] }) {
   return (
-    <section className="lg:col-span-2 rounded-2xl border border-subtle bg-surface shadow-elevated">
+    <section className="lg:col-span-2 rounded-2xl border border-subtle bg-surface shadow-elevated flex flex-col">
       <div className="px-5 sm:px-6 py-5 border-b border-subtle">
         <h3 className="text-xl font-title font-bold">Recent Applications</h3>
         <p className="text-sm text-main-light-text">
@@ -15,7 +15,7 @@ export function RecentApplications({ items }: { items: Application[] }) {
         </p>
       </div>
 
-      <div className="divide-y divide-subtle">
+      <div className="divide-y divide-subtle flex flex-col flex-1">
         {items.map((app) => (
           <div key={app.title} className="px-5 sm:px-6 py-5">
             <div className="flex items-center justify-between gap-4">
@@ -43,10 +43,13 @@ export function RecentApplications({ items }: { items: Application[] }) {
           </div>
         ))}
 
-        <div className="px-5 sm:px-6 py-4">
-          <button className="w-full text-sm font-medium px-4 py-2 rounded-lg border border-subtle bg-light-bg hover:border-main-accent hover:text-main-accent transition-colors">
+        <div className="px-5 sm:px-6 py-4 mt-auto">
+          <a
+            href="/candidate/applications"
+            className="block w-full text-center text-sm font-medium px-4 py-2 rounded-lg border border-subtle bg-light-bg hover:border-main-accent hover:text-main-accent transition-colors"
+          >
             View All Applications
-          </button>
+          </a>
         </div>
       </div>
     </section>

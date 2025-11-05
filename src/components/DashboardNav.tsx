@@ -5,12 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { Button } from "./Button";
+import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "./AuthProvider";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "lucide:user" },
   { name: "Jobs", href: "/dashboard/jobs", icon: "lucide:search" },
-  { name: "Applicants", href: "/dashboard/applicants", icon: "lucide:users" },
+  { name: "Applicants", href: "/candidate/applications", icon: "lucide:users" },
   { name: "Company", href: "/dashboard/company", icon: "lucide:building-2" },
   {
     name: "Notifications",
@@ -68,7 +69,8 @@ export function DashboardNav() {
           </div>
 
           {/* Actions */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center gap-4">
+            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
