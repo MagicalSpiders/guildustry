@@ -14,11 +14,11 @@ export function Hero() {
   const introTextRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Register plugin on client only; registration is safe to call multiple times
+    // Register plugin on client only
     if (typeof window === "undefined") return;
-    try {
+    if (!gsap.core.globals()["ScrollTrigger"]) {
       gsap.registerPlugin(ScrollTrigger);
-    } catch {}
+    }
 
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({
