@@ -10,7 +10,7 @@ import { useAuth } from "./AuthProvider";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "lucide:user" },
-  { name: "Jobs", href: "/dashboard/jobs", icon: "lucide:search" },
+  { name: "Jobs", href: "/dashboard/jobs", icon: "gravity-ui:magnifier" },
   { name: "Applicants", href: "/candidate/applications", icon: "lucide:users" },
   { name: "Company", href: "/dashboard/company", icon: "lucide:building-2" },
   {
@@ -23,7 +23,22 @@ const navigation = [
 
 export function DashboardNav() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+
+  const getDashboardHref = () => {
+    if (user?.role === "candidate") {
+      return "/candidate/dashboard";
+    } else if (user?.role === "employer") {
+      return "/employer/dashboard";
+    }
+    return "/dashboard";
+  };
+
+  const getApplicantsHref = () => {
+    return user?.role === "candidate"
+      ? "/candidate/applications"
+      : "/dashboard/applicants";
+  };
 
   const handleLogout = () => {
     logout();
@@ -39,7 +54,7 @@ export function DashboardNav() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href={getDashboardHref()} className="flex items-center gap-2">
               <Image src="/logo.webp" alt="Guildustry" width={30} height={30} />
               <span className="text-2xl font-bold text-main-text font-display">
                 Guildustry
@@ -50,11 +65,28 @@ export function DashboardNav() {
           {/* Navigation Links */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              // For Dashboard and Applicants links, use dynamic href based on user role
+              let href = item.href;
+              if (item.name === "Dashboard") {
+                href = getDashboardHref();
+              } else if (item.name === "Applicants") {
+                href = getApplicantsHref();
+              }
+
+              // Check if current path matches the href or any of the role-specific paths
+              const isActive =
+                pathname === href ||
+                (item.name === "Dashboard" &&
+                  (pathname === "/dashboard" ||
+                    pathname === "/candidate/dashboard" ||
+                    pathname === "/employer/dashboard")) ||
+                (item.name === "Applicants" &&
+                  (pathname === "/candidate/applications" ||
+                    pathname === "/dashboard/applicants"));
               return (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={href}
                   className={`text-sm font-medium leading-6 transition-colors duration-200 flex items-center gap-2 ${
                     isActive
                       ? "text-main-text"

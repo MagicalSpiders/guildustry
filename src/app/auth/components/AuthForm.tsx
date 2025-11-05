@@ -71,7 +71,11 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
       // Redirect to dashboard based on role
       const destination =
-        data.role === "candidate" ? "/candidate/dashboard" : "/dashboard";
+        data.role === "candidate"
+          ? "/candidate/dashboard"
+          : data.role === "employer"
+          ? "/employer/dashboard"
+          : "/dashboard";
       router.push(destination);
     } catch (error) {
       console.error("Authentication error:", error);

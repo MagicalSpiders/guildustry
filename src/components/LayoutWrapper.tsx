@@ -13,6 +13,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const isDashboardPage =
     pathname?.startsWith("/dashboard") ||
     pathname?.startsWith("/candidate") ||
+    pathname?.startsWith("/employer") ||
     pathname?.startsWith("/profile");
 
   // Show dashboard nav when authenticated
