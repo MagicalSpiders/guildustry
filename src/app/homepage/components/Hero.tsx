@@ -109,21 +109,21 @@ export function Hero() {
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:badge-check"
-                    className="w-5 h-5 text-main-text"
+                    className="w-5 h-5 text-main-accent"
                   />
                   Verified employers
                 </li>
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:coins"
-                    className="w-5 h-5 text-main-text"
+                    className="w-5 h-5 text-main-accent"
                   />
                   High‑paying roles
                 </li>
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:clock"
-                    className="w-5 h-5 text-main-text"
+                    className="w-5 h-5 text-main-accent"
                   />
                   Fast placement
                 </li>
