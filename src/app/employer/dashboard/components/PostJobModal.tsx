@@ -73,6 +73,7 @@ function Stepper({ currentStep, totalSteps, stepTitles }: StepperProps) {
 
 export function PostJobModal({ open, onClose }: PostJobModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
   const totalSteps = 4;
   const stepTitles = [
     "Role Basics",
@@ -81,7 +82,16 @@ export function PostJobModal({ open, onClose }: PostJobModalProps) {
     "Description",
   ];
 
-  if (!open) return null;
+  // Handle closing animation
+  const handleClose = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      onClose();
+      setIsAnimating(false);
+    }, 200); // Match transition duration
+  };
+
+  if (!open && !isAnimating) return null;
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -106,12 +116,20 @@ export function PostJobModal({ open, onClose }: PostJobModalProps) {
       <div className="flex min-h-screen items-center justify-center p-4">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-          onClick={onClose}
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ${
+            open && !isAnimating ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={handleClose}
         />
 
         {/* Modal */}
-        <div className="relative w-full max-w-4xl bg-surface rounded-2xl shadow-2xl border border-subtle max-h-[90vh] overflow-hidden">
+        <div
+          className={`relative w-full max-w-4xl bg-surface rounded-2xl shadow-2xl border border-subtle max-h-[90vh] overflow-hidden transition-all duration-200 ${
+            open && !isAnimating
+              ? "opacity-100 scale-100 translate-y-0"
+              : "opacity-0 scale-95 translate-y-4"
+          }`}
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-subtle">
             <div>
@@ -124,7 +142,7 @@ export function PostJobModal({ open, onClose }: PostJobModalProps) {
               </p>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-2 hover:bg-light-bg rounded-lg transition-colors"
             >
               <Icon icon="lucide:x" className="w-5 h-5 text-main-light-text" />
@@ -173,7 +191,7 @@ export function PostJobModal({ open, onClose }: PostJobModalProps) {
             </Button>
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
               {currentStep === totalSteps ? (

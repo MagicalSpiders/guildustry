@@ -53,7 +53,11 @@ function SummaryCard({
   );
 }
 
-export function EmployerHero({ companyName = "ABC Construction" }: { companyName?: string }) {
+export function EmployerHero({
+  companyName = "ABC Construction",
+}: {
+  companyName?: string;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -89,12 +93,14 @@ export function EmployerHero({ companyName = "ABC Construction" }: { companyName
             icon="lucide:briefcase"
           />
         </Link>
-        <SummaryCard
-          title="Total Applicants"
-          value="42"
-          description="Across all jobs"
-          icon="lucide:users"
-        />
+        <Link href="/employer/applicants">
+          <SummaryCard
+            title="Total Applicants"
+            value="42"
+            description="Across all jobs"
+            icon="lucide:users"
+          />
+        </Link>
         <SummaryCard
           title="Interviews"
           value="8"
@@ -115,4 +121,3 @@ export function EmployerHero({ companyName = "ABC Construction" }: { companyName
     </div>
   );
 }
-
