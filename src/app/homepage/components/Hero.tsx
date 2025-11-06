@@ -25,7 +25,7 @@ export function Hero() {
           trigger: sectionRef.current,
           start: "top top",
           end: "+=80%",
-          scrub: 2,
+          scrub: true,
           pin: true,
         },
       });
@@ -105,25 +105,25 @@ export function Hero() {
                 electrical, HVAC, welding, manufacturing, and more.
               </p>
               {/* Feature bullets with SVG icons */}
-              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-neutral-800 dark:text-main-light-text">
+              <ul className="mt-4 md:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-main-light-text">
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:badge-check"
-                    className="w-5 h-5 text-main-accent"
+                    className="w-5 h-5 text-main-text"
                   />
                   Verified employers
                 </li>
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:coins"
-                    className="w-5 h-5 text-main-accent"
+                    className="w-5 h-5 text-main-text"
                   />
                   High‑paying roles
                 </li>
                 <li className="flex items-center gap-2">
                   <Icon
                     icon="lucide:clock"
-                    className="w-5 h-5 text-main-accent"
+                    className="w-5 h-5 text-main-text"
                   />
                   Fast placement
                 </li>
