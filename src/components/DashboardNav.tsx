@@ -7,23 +7,43 @@ import { Icon } from "@iconify/react";
 import { Button } from "./Button";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "./AuthProvider";
+import { useTheme } from "next-themes";
 
-const navigation = [
+const navigation: Array<{
+  name: string;
+  href: string;
+  icon: string;
+  employerOnly?: boolean;
+  candidateOnly?: boolean;
+}> = [
   { name: "Dashboard", href: "/dashboard", icon: "lucide:user" },
   { name: "Jobs", href: "/dashboard/jobs", icon: "gravity-ui:magnifier" },
+  { name: "Resources", href: "/candidate/resources", icon: "lucide:book-open" },
   { name: "Applicants", href: "/candidate/applications", icon: "lucide:users" },
-  { name: "Company", href: "/dashboard/company", icon: "lucide:building-2" },
+  {
+    name: "Company",
+    href: "/employer/profile",
+    icon: "lucide:building-2",
+    employerOnly: true,
+  },
   {
     name: "Notifications",
     href: "/dashboard/notifications",
     icon: "lucide:bell",
   },
-  { name: "Profile", href: "/profile", icon: "lucide:id-card" },
+  {
+    name: "Profile",
+    href: "/profile",
+    icon: "lucide:id-card",
+    candidateOnly: true,
+  },
 ];
 
 export function DashboardNav() {
   const pathname = usePathname();
   const { logout, user } = useAuth();
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
   const getDashboardHref = () => {
     if (user?.role === "candidate") {
@@ -38,6 +58,10 @@ export function DashboardNav() {
     return user?.role === "candidate"
       ? "/candidate/applications"
       : "/dashboard/applicants";
+  };
+
+  const getJobsHref = () => {
+    return user?.role === "candidate" ? "/candidate/jobs" : "/dashboard/jobs";
   };
 
   const handleLogout = () => {
@@ -55,7 +79,7 @@ export function DashboardNav() {
           {/* Logo */}
           <div className="flex lg:flex-1">
             <Link href={getDashboardHref()} className="flex items-center gap-2">
-              <Image src="/logo.webp" alt="Guildustry" width={30} height={30} />
+              <Image src={logoSrc} alt="Guildustry" width={30} height={30} />
               <span className="text-2xl font-bold text-main-text font-display">
                 Guildustry
               </span>
@@ -65,10 +89,22 @@ export function DashboardNav() {
           {/* Navigation Links */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => {
-              // For Dashboard and Applicants links, use dynamic href based on user role
+              // Hide Company link if user is not an employer
+              if (item.employerOnly && user?.role !== "employer") {
+                return null;
+              }
+
+              // Hide Profile link if user is not a candidate
+              if (item.candidateOnly && user?.role !== "candidate") {
+                return null;
+              }
+
+              // For Dashboard, Jobs, and Applicants links, use dynamic href based on user role
               let href = item.href;
               if (item.name === "Dashboard") {
                 href = getDashboardHref();
+              } else if (item.name === "Jobs") {
+                href = getJobsHref();
               } else if (item.name === "Applicants") {
                 href = getApplicantsHref();
               }
@@ -80,6 +116,13 @@ export function DashboardNav() {
                   (pathname === "/dashboard" ||
                     pathname === "/candidate/dashboard" ||
                     pathname === "/employer/dashboard")) ||
+                (item.name === "Jobs" &&
+                  (pathname === "/candidate/jobs" ||
+                    pathname === "/dashboard/jobs" ||
+                    pathname === "/employer/jobs")) ||
+                (item.name === "Resources" &&
+                  pathname === "/candidate/resources") ||
+                (item.name === "Company" && pathname === "/employer/profile") ||
                 (item.name === "Applicants" &&
                   (pathname === "/candidate/applications" ||
                     pathname === "/dashboard/applicants"));

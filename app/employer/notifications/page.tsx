@@ -8,12 +8,17 @@ import { NotificationsList } from "@/src/app/employer/notifications/components/N
 import { ViewApplicationModal } from "@/src/app/employer/notifications/components/ViewApplicationModal";
 import { ViewDetailsModal } from "@/src/app/employer/notifications/components/ViewDetailsModal";
 import { Toast } from "@/src/app/employer/notifications/components/Toast";
-import { mockNotifications, Notification } from "@/src/app/employer/notifications/data";
+import {
+  mockNotifications,
+  Notification,
+} from "@/src/app/employer/notifications/data";
 
 export default function EmployerNotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] =
+    useState<Notification[]>(mockNotifications);
   const [activeTab, setActiveTab] = useState("all");
-  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [toast, setToast] = useState<{
@@ -45,7 +50,8 @@ export default function EmployerNotificationsPage() {
     return {
       total: notifications.length,
       unread: notifications.filter((n) => n.status === "unread").length,
-      applications: notifications.filter((n) => n.type === "application").length,
+      applications: notifications.filter((n) => n.type === "application")
+        .length,
       interviews: notifications.filter((n) => n.type === "interview").length,
     };
   }, [notifications]);
@@ -147,4 +153,3 @@ export default function EmployerNotificationsPage() {
     </>
   );
 }
-

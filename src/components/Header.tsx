@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { Button } from "./Button";
 import { ThemeToggle } from "./ThemeToggle";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 const navigation = [
   { name: "For Candidates", href: "/candidates" },
@@ -15,6 +16,8 @@ const navigation = [
 ];
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
   return (
     <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-subtle">
@@ -26,7 +29,7 @@ export function Header() {
           {/* Logo */}
           <div className="flex lg:flex-1">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.webp" alt="Guildustry" width={30} height={30} />
+              <Image src={logoSrc} alt="Guildustry" width={30} height={30} />
               <span className="text-2xl font-bold text-main-text font-display">
                 Guildustry
               </span>

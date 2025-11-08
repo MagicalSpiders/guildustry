@@ -11,7 +11,11 @@ interface NotificationsTabsProps {
   };
 }
 
-export function NotificationsTabs({ activeTab, onTabChange, counts }: NotificationsTabsProps) {
+export function NotificationsTabs({
+  activeTab,
+  onTabChange,
+  counts,
+}: NotificationsTabsProps) {
   const tabs = [
     { id: "all", label: "All", count: counts.all },
     { id: "unread", label: "Unread", count: counts.unread },
@@ -37,4 +41,3 @@ export function NotificationsTabs({ activeTab, onTabChange, counts }: Notificati
     </div>
   );
 }
-

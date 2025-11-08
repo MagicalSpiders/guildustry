@@ -67,4 +67,3 @@ export function RecentJobPostings({ jobs }: RecentJobPostingsProps) {
     </div>
   );
 }
-

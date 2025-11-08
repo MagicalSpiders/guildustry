@@ -30,7 +30,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "blue",
     icon: "lucide:user-plus",
     primaryEntityName: "John Smith",
-    description: "John Smith has applied for the Licensed Electrician position.",
+    description:
+      "John Smith has applied for the Licensed Electrician position.",
     actionButtonText: "View Application",
     actionButtonLink: "/employer/applicants/1",
     metadata: {
@@ -48,7 +49,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "grey",
     icon: "lucide:calendar",
     primaryEntityName: "Sarah Johnson",
-    description: "Sarah Johnson has confirmed the interview scheduled for October 20, 2025.",
+    description:
+      "Sarah Johnson has confirmed the interview scheduled for October 20, 2025.",
     actionButtonText: "View Details",
     actionButtonLink: "/employer/interviews/2",
     metadata: {
@@ -66,7 +68,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "grey",
     icon: "lucide:message-square",
     primaryEntityName: "Mike Davis",
-    description: "Mike Davis sent you a message regarding the HVAC Technician position.",
+    description:
+      "Mike Davis sent you a message regarding the HVAC Technician position.",
     actionButtonText: "Read Message",
     actionButtonLink: "/employer/messages/3",
     metadata: {
@@ -84,7 +87,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "blue",
     icon: "lucide:user-plus",
     primaryEntityName: "Emily Chen",
-    description: "Emily Chen has applied for the Licensed Electrician position.",
+    description:
+      "Emily Chen has applied for the Licensed Electrician position.",
     actionButtonText: "View Application",
     actionButtonLink: "/employer/applicants/4",
     metadata: {
@@ -102,7 +106,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "orange",
     icon: "lucide:trending-up",
     primaryEntityName: "",
-    description: "Your Licensed Electrician posting has received 15 new views this week.",
+    description:
+      "Your Licensed Electrician posting has received 15 new views this week.",
     actionButtonText: "View Analytics",
     actionButtonLink: "/employer/jobs/analytics",
     metadata: {
@@ -120,7 +125,8 @@ export const mockNotifications: Notification[] = [
     labelColor: "grey",
     icon: "lucide:calendar-clock",
     primaryEntityName: "Michael Chen",
-    description: "Interview with Michael Chen is scheduled for tomorrow at 10:00 AM.",
+    description:
+      "Interview with Michael Chen is scheduled for tomorrow at 10:00 AM.",
     actionButtonText: "View Details",
     actionButtonLink: "/employer/interviews/6",
     metadata: {
@@ -129,4 +135,3 @@ export const mockNotifications: Notification[] = [
     },
   },
 ];
-

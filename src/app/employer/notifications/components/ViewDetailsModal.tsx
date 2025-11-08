@@ -98,19 +98,34 @@ export function ViewDetailsModal({
                     {notification.metadata.interviewDate && (
                       <div className="flex items-center gap-2 text-main-light-text">
                         <Icon icon="lucide:calendar" className="w-4 h-4" />
-                        <span>Date: <span className="text-main-text font-medium">{notification.metadata.interviewDate}</span></span>
+                        <span>
+                          Date:{" "}
+                          <span className="text-main-text font-medium">
+                            {notification.metadata.interviewDate}
+                          </span>
+                        </span>
                       </div>
                     )}
                     {notification.metadata.views !== undefined && (
                       <div className="flex items-center gap-2 text-main-light-text">
                         <Icon icon="lucide:eye" className="w-4 h-4" />
-                        <span>Views: <span className="text-main-text font-medium">{notification.metadata.views}</span></span>
+                        <span>
+                          Views:{" "}
+                          <span className="text-main-text font-medium">
+                            {notification.metadata.views}
+                          </span>
+                        </span>
                       </div>
                     )}
                     {notification.metadata.jobTitle && (
                       <div className="flex items-center gap-2 text-main-light-text">
                         <Icon icon="lucide:briefcase" className="w-4 h-4" />
-                        <span>Job: <span className="text-main-text font-medium">{notification.metadata.jobTitle}</span></span>
+                        <span>
+                          Job:{" "}
+                          <span className="text-main-text font-medium">
+                            {notification.metadata.jobTitle}
+                          </span>
+                        </span>
                       </div>
                     )}
                   </div>
@@ -121,9 +136,7 @@ export function ViewDetailsModal({
                 <h3 className="text-lg font-semibold text-main-text mb-2">
                   Timestamp
                 </h3>
-                <p className="text-main-light-text">
-                  {notification.timestamp}
-                </p>
+                <p className="text-main-light-text">{notification.timestamp}</p>
               </div>
             </div>
           </div>
@@ -134,9 +147,12 @@ export function ViewDetailsModal({
               Close
             </Button>
             {notification.actionButtonLink && (
-              <Button variant="accent" onClick={() => {
-                window.location.href = notification.actionButtonLink!;
-              }}>
+              <Button
+                variant="accent"
+                onClick={() => {
+                  window.location.href = notification.actionButtonLink!;
+                }}
+              >
                 {notification.actionButtonText}
               </Button>
             )}
@@ -146,4 +162,3 @@ export function ViewDetailsModal({
     </div>
   );
 }
-

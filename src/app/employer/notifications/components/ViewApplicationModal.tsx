@@ -58,14 +58,18 @@ export function ViewApplicationModal({
           <div className="flex items-center justify-between p-6 border-b border-subtle">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-main-accent/10 flex items-center justify-center">
-                <Icon icon="lucide:user-plus" className="w-5 h-5 text-main-accent" />
+                <Icon
+                  icon="lucide:user-plus"
+                  className="w-5 h-5 text-main-accent"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-title font-bold text-main-text">
                   Application Details
                 </h2>
                 <p className="text-sm text-main-light-text">
-                  {notification.primaryEntityName} - {notification.metadata?.jobTitle}
+                  {notification.primaryEntityName} -{" "}
+                  {notification.metadata?.jobTitle}
                 </p>
               </div>
             </div>
@@ -87,15 +91,30 @@ export function ViewApplicationModal({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-main-light-text">
                     <Icon icon="lucide:user" className="w-4 h-4" />
-                    <span>Applicant: <span className="text-main-text font-medium">{notification.primaryEntityName}</span></span>
+                    <span>
+                      Applicant:{" "}
+                      <span className="text-main-text font-medium">
+                        {notification.primaryEntityName}
+                      </span>
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-main-light-text">
                     <Icon icon="lucide:briefcase" className="w-4 h-4" />
-                    <span>Position: <span className="text-main-text font-medium">{notification.metadata?.jobTitle}</span></span>
+                    <span>
+                      Position:{" "}
+                      <span className="text-main-text font-medium">
+                        {notification.metadata?.jobTitle}
+                      </span>
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-main-light-text">
                     <Icon icon="lucide:clock" className="w-4 h-4" />
-                    <span>Applied: <span className="text-main-text font-medium">{notification.timestamp}</span></span>
+                    <span>
+                      Applied:{" "}
+                      <span className="text-main-text font-medium">
+                        {notification.timestamp}
+                      </span>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -116,10 +135,14 @@ export function ViewApplicationModal({
             <Button variant="outline" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="accent" onClick={() => {
-              // Navigate to applicant profile
-              window.location.href = notification.actionButtonLink || "/employer/applicants";
-            }}>
+            <Button
+              variant="accent"
+              onClick={() => {
+                // Navigate to applicant profile
+                window.location.href =
+                  notification.actionButtonLink || "/employer/applicants";
+              }}
+            >
               View Full Profile
             </Button>
           </div>
@@ -128,4 +151,3 @@ export function ViewApplicationModal({
     </div>
   );
 }
-

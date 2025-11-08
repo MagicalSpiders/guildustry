@@ -22,31 +22,34 @@ function StatCard({ label, value, icon }: StatCardProps) {
   );
 }
 
-export function NotificationsStats({
-  total,
-  unread,
-  applications,
-  interviews,
-}: {
-  total: number;
-  unread: number;
-  applications: number;
-  interviews: number;
-}) {
+interface JobsStatsProps {
+  totalJobs: number;
+  highMatchJobs: number;
+  appliedJobs: number;
+  newJobs: number;
+}
+
+export function JobsStats({
+  totalJobs,
+  highMatchJobs,
+  appliedJobs,
+  newJobs,
+}: JobsStatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <StatCard label="Total" value={total.toString()} icon="lucide:bell" />
-      <StatCard label="Unread" value={unread.toString()} icon="lucide:mail" />
+      <StatCard label="Total Jobs" value={totalJobs.toString()} icon="lucide:briefcase" />
       <StatCard
-        label="Applications"
-        value={applications.toString()}
-        icon="lucide:user-plus"
+        label="High Match (90%+)"
+        value={highMatchJobs.toString()}
+        icon="lucide:target"
       />
       <StatCard
-        label="Interviews"
-        value={interviews.toString()}
-        icon="lucide:calendar"
+        label="Applied"
+        value={appliedJobs.toString()}
+        icon="lucide:check-circle"
       />
+      <StatCard label="New This Week" value={newJobs.toString()} icon="lucide:sparkles" />
     </div>
   );
 }
+

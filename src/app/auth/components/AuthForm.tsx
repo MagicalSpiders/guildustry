@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/components/AuthProvider";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 type AuthMode = "login" | "signup";
 
@@ -43,6 +44,8 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const { login } = useAuth();
   const router = useRouter();
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
   const {
     register,
@@ -97,7 +100,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
         <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-elevated">
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Image src="/logo.webp" alt="Guildustry" width={40} height={40} />
+            <Image src={logoSrc} alt="Guildustry" width={40} height={40} />
             <span className="text-2xl font-bold text-main-text font-display">
               Guildustry
             </span>

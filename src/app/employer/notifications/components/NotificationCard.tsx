@@ -39,8 +39,12 @@ export function NotificationCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-main-text">{notification.title}</h3>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getLabelColor()}`}>
+              <h3 className="font-semibold text-main-text">
+                {notification.title}
+              </h3>
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getLabelColor()}`}
+              >
                 {notification.label}
               </span>
               {notification.status === "unread" && (
@@ -53,7 +57,9 @@ export function NotificationCard({
           </div>
 
           <p className="text-main-light-text mb-4">
-            <span className="font-medium text-main-text">{notification.primaryEntityName}</span>{" "}
+            <span className="font-medium text-main-text">
+              {notification.primaryEntityName}
+            </span>{" "}
             {notification.description}
           </p>
 
@@ -89,4 +95,3 @@ export function NotificationCard({
     </div>
   );
 }
-

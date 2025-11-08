@@ -9,7 +9,12 @@ interface Applicant {
   name: string;
   position: string;
   experience: string;
-  status: "new" | "underReview" | "interviewScheduled" | "shortlisted" | "rejected";
+  status:
+    | "new"
+    | "underReview"
+    | "interviewScheduled"
+    | "shortlisted"
+    | "rejected";
 }
 
 interface RecentApplicantsProps {
@@ -19,17 +24,34 @@ interface RecentApplicantsProps {
 function ApplicantCard({ applicant }: { applicant: Applicant }) {
   const getStatusBadge = () => {
     const statusConfig = {
-      new: { label: "New", className: "bg-surface border border-subtle text-main-light-text" },
-      underReview: { label: "Under Review", className: "bg-surface border border-subtle text-main-light-text" },
-      interviewScheduled: { label: "Interview Scheduled", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-      shortlisted: { label: "Shortlisted", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-      rejected: { label: "Rejected", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+      new: {
+        label: "New",
+        className: "bg-surface border border-subtle text-main-light-text",
+      },
+      underReview: {
+        label: "Under Review",
+        className: "bg-surface border border-subtle text-main-light-text",
+      },
+      interviewScheduled: {
+        label: "Interview Scheduled",
+        className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      },
+      shortlisted: {
+        label: "Shortlisted",
+        className: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+      },
+      rejected: {
+        label: "Rejected",
+        className: "bg-red-500/20 text-red-400 border-red-500/30",
+      },
     };
 
     const config = statusConfig[applicant.status];
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap ${config.className}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap ${config.className}`}
+      >
         {config.label}
       </span>
     );
@@ -39,9 +61,15 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
     <div className="rounded-lg bg-surface border border-subtle p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-main-text mb-1">{applicant.name}</h3>
-          <p className="text-sm text-main-light-text mb-2">{applicant.position}</p>
-          <span className="text-xs text-main-light-text">{applicant.experience}</span>
+          <h3 className="font-semibold text-main-text mb-1">
+            {applicant.name}
+          </h3>
+          <p className="text-sm text-main-light-text mb-2">
+            {applicant.position}
+          </p>
+          <span className="text-xs text-main-light-text">
+            {applicant.experience}
+          </span>
         </div>
         {getStatusBadge()}
       </div>
@@ -75,4 +103,3 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
     </div>
   );
 }
-

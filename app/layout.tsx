@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Guildustry - Building the Future of Skilled Trades",
   description:
     "Connect skilled trades candidates with employers. Find high-paying jobs that offer stability—without the burden of college debt.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
