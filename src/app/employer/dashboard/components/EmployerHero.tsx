@@ -107,14 +107,16 @@ export function EmployerHero({
           description="Scheduled this month"
           icon="lucide:calendar"
         />
-        <SummaryCard
-          title="Notifications"
-          value="3"
-          description="New updates"
-          icon="lucide:bell"
-          badge="NEW"
-          showNotificationDot={true}
-        />
+        <Link href="/employer/notifications">
+          <SummaryCard
+            title="Notifications"
+            value="3"
+            description="New updates"
+            icon="lucide:bell"
+            badge="NEW"
+            showNotificationDot={true}
+          />
+        </Link>
       </div>
 
       <PostJobModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />

@@ -445,3 +445,15 @@ select option {
   border: 2px solid var(--color-surface);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Toast animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
