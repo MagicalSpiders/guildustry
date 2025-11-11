@@ -9,26 +9,27 @@ import { PersonalInfo } from "./components/PersonalInfo";
 import { TradeInfo } from "./components/TradeInfo";
 import { ResumeInfo } from "./components/ResumeInfo";
 import { AssessmentInfo } from "./components/AssessmentInfo";
+import { useAuth } from "@/src/components/AuthProvider";
 
 export default function UserProfilePage() {
   const router = useRouter();
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
   const [profileData, setProfileData] = useState<ProfileFormValues | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("guildustry_profile");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        setProfileData(data);
-      } catch (error) {
-        console.error("Error parsing profile data:", error);
-      }
+    if (!authLoading && !user) {
+      router.push("/auth/sign-in");
     }
-    setLoading(false);
-  }, []);
+  }, [authLoading, user, router]);
 
-  if (loading) {
+  useEffect(() => {
+    if (profile) {
+      // Convert profile to ProfileFormValues format
+      setProfileData(profile as any);
+    }
+  }, [profile]);
+
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-main-bg text-main-text flex items-center justify-center">
         <div className="text-center">
@@ -54,11 +55,8 @@ export default function UserProfilePage() {
               Create your profile to showcase your skills and experience.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button variant="accent" onClick={() => router.push("/profile")}>
+              <Button variant="accent" onClick={() => router.push("/candidate/profile")}>
                 Create Profile
-              </Button>
-              <Button variant="outline" onClick={() => router.push("/profile/edit")}>
-                Edit Profile
               </Button>
             </div>
           </div>
@@ -77,7 +75,7 @@ export default function UserProfilePage() {
             <p className="text-main-light-text">View and manage your profile information.</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" size="sm" onClick={() => router.push("/profile/edit")}>
+            <Button variant="outline" size="sm" onClick={() => router.push("/candidate/profile")}>
               <Icon icon="lucide:edit" className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
@@ -108,7 +106,7 @@ export default function UserProfilePage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" size="sm" onClick={() => router.push("/profile")}>
+            <Button variant="outline" size="sm" onClick={() => router.push("/candidate/profile")}>
               <Icon icon="lucide:refresh-cw" className="w-4 h-4 mr-2" />
               Update Profile
             </Button>

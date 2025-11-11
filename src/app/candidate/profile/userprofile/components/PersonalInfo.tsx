@@ -7,9 +7,9 @@ interface PersonalInfoProps {
 
 export function PersonalInfo({ data }: PersonalInfoProps) {
   const infoItems = [
-    { label: "Full Name", value: data.fullName, icon: "lucide:user" },
+    { label: "Full Name", value: data.fullname, icon: "lucide:user" },
     { label: "Email", value: data.email, icon: "lucide:mail" },
-    { label: "Phone", value: data.phone, icon: "lucide:phone" },
+    { label: "Phone", value: data.phone_number, icon: "lucide:phone" },
     { label: "Location", value: `${data.city}, ${data.state}`, icon: "lucide:map-pin" },
   ].filter((item) => item.value);
 

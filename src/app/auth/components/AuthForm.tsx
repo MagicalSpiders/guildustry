@@ -11,6 +11,8 @@ import { Button } from "@/src/components/Button";
 import { useAuth } from "@/src/components/AuthProvider";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { NoticeModal } from "@/src/components/NoticeModal";
+import { Toast } from "@/src/app/employer/notifications/components/Toast";
 
 type AuthMode = "login" | "signup";
 
@@ -42,10 +44,21 @@ type FormData = LoginFormData | SignupFormData;
 
 export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const { login } = useAuth();
+  const { signIn, signUp } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
   const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [noticeTitle, setNoticeTitle] = useState("");
+  const [noticeDescription, setNoticeDescription] = useState("");
+  const [noticeVariant, setNoticeVariant] = useState<
+    "success" | "error" | "info"
+  >("info");
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("Logged in successfully");
+  const [toastDescription, setToastDescription] = useState<string | undefined>(
+    undefined
+  );
 
   const {
     register,
@@ -66,23 +79,60 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (mode === "signup") {
+        // Sign up with Supabase
+        await signUp(data.email, data.password, data.role);
+        // Note: Supabase may require email confirmation depending on your settings
+        setNoticeTitle("Account created");
+        setNoticeDescription(
+          "Please check your email to verify your account before signing in."
+        );
+        setNoticeVariant("success");
+        setNoticeOpen(true);
+      } else {
+        // Sign in with Supabase
+        // Suppress initial profile fetch for first-login candidate flow
+        if (typeof window !== "undefined") {
+          localStorage.setItem("suppress_initial_profile_fetch", "1");
+        }
+        await signIn(data.email, data.password);
+      }
 
-      // Login with any credentials (for testing)
-      login(data.role);
+      // Show toast on successful login
+      setToastMessage("Logged in successfully");
+      setToastDescription(undefined);
+      setToastVisible(true);
 
-      // Redirect to dashboard based on role
-      const destination =
-        data.role === "candidate"
-          ? "/candidate/dashboard"
-          : data.role === "employer"
-          ? "/employer/dashboard"
-          : "/dashboard";
-      router.push(destination);
-    } catch (error) {
+      // Candidate first-login flow: show modal prompt to fill profile
+      const hasSeenPostLogin =
+        typeof window !== "undefined"
+          ? localStorage.getItem("has_seen_candidate_post_login") === "1"
+          : false;
+      if (data.role === "candidate" && !hasSeenPostLogin) {
+        setNoticeTitle("Complete your profile?");
+        setNoticeDescription(
+          "Would you like to fill your candidate profile now to get better matches?"
+        );
+        setNoticeVariant("info");
+        setNoticeOpen(true);
+      } else {
+        // Non-candidate or repeat login: go to appropriate dashboard
+        const destination =
+          data.role === "candidate"
+            ? "/candidate/dashboard"
+            : data.role === "employer"
+            ? "/employer/dashboard"
+            : "/dashboard";
+        router.push(destination);
+      }
+    } catch (error: any) {
       console.error("Authentication error:", error);
-      // Handle error
+      setNoticeTitle("Authentication failed");
+      setNoticeDescription(
+        error?.message || "Please try again or reset your password."
+      );
+      setNoticeVariant("error");
+      setNoticeOpen(true);
     }
   };
 
@@ -111,7 +161,9 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             Welcome to Guildustry
           </h1>
           <p className="text-center text-sm text-main-light-text mb-8">
-            Prototype authentication (any credentials work).
+            {mode === "login"
+              ? "Sign in to your account to continue."
+              : "Create an account to get started."}
           </p>
 
           {/* Tab switcher */}
@@ -119,7 +171,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             <button
               type="button"
               onClick={() => handleModeChange("login")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 cursor-pointer py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mode === "login"
                   ? "text-main-text bg-light-bg shadow-sm"
                   : "text-main-light-text hover:text-main-text"
@@ -130,7 +182,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             <button
               type="button"
               onClick={() => handleModeChange("signup")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 cursor-pointer py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                 mode === "signup"
                   ? "text-main-text bg-light-bg shadow-sm"
                   : "text-main-light-text hover:text-main-text"
@@ -270,6 +322,64 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
           </div>
         </div>
       </div>
+      <NoticeModal
+        open={noticeOpen}
+        title={noticeTitle}
+        description={noticeDescription}
+        variant={noticeVariant}
+        onClose={() => {
+          setNoticeOpen(false);
+          // Treat close as skip for now if it's the first-login prompt
+          if (typeof window !== "undefined") {
+            if (!localStorage.getItem("has_seen_candidate_post_login")) {
+              localStorage.setItem("has_seen_candidate_post_login", "1");
+              localStorage.removeItem("suppress_initial_profile_fetch");
+            }
+          }
+          router.push("/candidate/dashboard");
+        }}
+        primaryAction={{
+          label: "Fill Profile Now",
+          onClick: () => {
+            setNoticeOpen(false);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("has_seen_candidate_post_login", "1");
+              localStorage.removeItem("suppress_initial_profile_fetch");
+            }
+            router.push("/candidate/profile/edit");
+          },
+        }}
+        secondaryAction={{
+          label: "Skip for now",
+          onClick: () => {
+            setNoticeOpen(false);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("has_seen_candidate_post_login", "1");
+              localStorage.removeItem("suppress_initial_profile_fetch");
+            }
+            router.push("/candidate/dashboard");
+          },
+        }}
+      />
+      <Toast
+        message={toastMessage}
+        description={toastDescription}
+        type="success"
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+        duration={2500}
+      />
     </div>
+  );
+}
+
+// Render the notice modal at the root of this component
+// Placed after the main return to avoid interfering with layout flow
+export function AuthFormWithNotice(props: AuthFormProps) {
+  return (
+    <>
+      <AuthForm {...props} />
+      {/* The NoticeModal is managed inside AuthForm via state */}
+    </>
   );
 }

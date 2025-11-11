@@ -3,8 +3,15 @@ import { useState } from "react";
 
 export function ResumeStep() {
   const { setValue, watch } = useFormContext();
-  const fileName = watch("resumeFileName");
+  const resumeUrl = watch("resume_file_url");
   const [hover, setHover] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    // Store the file temporarily - will be uploaded when form is submitted
+    setValue("resumeFile", file, { shouldDirty: true });
+  };
 
   return (
     <div>
@@ -19,7 +26,7 @@ export function ResumeStep() {
           e.preventDefault();
           setHover(false);
           const file = e.dataTransfer.files?.[0];
-          if (file) setValue("resumeFileName", file.name, { shouldDirty: true });
+          if (file) handleFileSelect(file);
         }}
         className={`rounded-2xl border border-dashed ${
           hover ? "border-main-accent" : "border-subtle"
@@ -32,14 +39,19 @@ export function ResumeStep() {
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) setValue("resumeFileName", file.name, { shouldDirty: true });
+            if (file) handleFileSelect(file);
           }}
         />
         <label htmlFor="resume-input" className="cursor-pointer text-main-accent">
           Click to upload or drag and drop
         </label>
-        <p className="mt-2 text-xs text-main-light-text">PDF or DOC</p>
-        {fileName && <p className="mt-3 text-sm">Selected: {fileName}</p>}
+        <p className="mt-2 text-xs text-main-light-text">PDF, DOC, or DOCX (max 5MB)</p>
+        {selectedFile && (
+          <p className="mt-3 text-sm text-main-text">Selected: {selectedFile.name}</p>
+        )}
+        {resumeUrl && !selectedFile && (
+          <p className="mt-3 text-sm text-main-accent">✓ Resume uploaded</p>
+        )}
       </div>
     </div>
   );

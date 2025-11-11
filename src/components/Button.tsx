@@ -29,7 +29,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseClasses =
-      "flex gap-2 items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-main-accent disabled:opacity-50 disabled:cursor-not-allowed";
+      "flex gap-2 items-center justify-center gap-2 cursor-pointer font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-main-accent disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variantClasses = {
       accent:

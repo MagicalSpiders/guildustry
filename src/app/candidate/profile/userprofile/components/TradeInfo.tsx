@@ -19,7 +19,11 @@ const shiftLabels: Record<string, string> = {
 };
 
 export function TradeInfo({ data }: TradeInfoProps) {
-  const hasData = data.primaryTrade || data.yearsExperience > 0 || data.shiftPreference || data.hasLicense;
+  const hasData =
+    data.primary_trade ||
+    data.years_of_experience > 0 ||
+    data.shift_preference ||
+    data.has_valid_licence;
 
   if (!hasData) {
     return (
@@ -28,7 +32,9 @@ export function TradeInfo({ data }: TradeInfoProps) {
           <Icon icon="lucide:briefcase" className="w-5 h-5 text-main-accent" />
           Trade & Experience
         </h2>
-        <p className="text-sm text-main-light-text">No trade information available.</p>
+        <p className="text-sm text-main-light-text">
+          No trade information available.
+        </p>
       </div>
     );
   }
@@ -40,7 +46,7 @@ export function TradeInfo({ data }: TradeInfoProps) {
         Trade & Experience
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {data.primaryTrade && (
+        {data.primary_trade && (
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-1">
               <div className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-2">
@@ -48,15 +54,17 @@ export function TradeInfo({ data }: TradeInfoProps) {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-main-light-text mb-1">Primary Trade</p>
+              <p className="text-xs font-medium text-main-light-text mb-1">
+                Primary Trade
+              </p>
               <p className="text-sm font-medium text-main-text">
-                {tradeLabels[data.primaryTrade] || data.primaryTrade}
+                {tradeLabels[data.primary_trade] || data.primary_trade}
               </p>
             </div>
           </div>
         )}
 
-        {data.yearsExperience > 0 && (
+        {data.years_of_experience > 0 && (
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-1">
               <div className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-2">
@@ -64,15 +72,18 @@ export function TradeInfo({ data }: TradeInfoProps) {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-main-light-text mb-1">Years of Experience</p>
+              <p className="text-xs font-medium text-main-light-text mb-1">
+                Years of Experience
+              </p>
               <p className="text-sm font-medium text-main-text">
-                {data.yearsExperience} {data.yearsExperience === 1 ? "year" : "years"}
+                {data.years_of_experience}{" "}
+                {data.years_of_experience === 1 ? "year" : "years"}
               </p>
             </div>
           </div>
         )}
 
-        {data.shiftPreference && (
+        {data.shift_preference && (
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-1">
               <div className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-2">
@@ -80,15 +91,17 @@ export function TradeInfo({ data }: TradeInfoProps) {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-main-light-text mb-1">Shift Preference</p>
+              <p className="text-xs font-medium text-main-light-text mb-1">
+                Shift Preference
+              </p>
               <p className="text-sm font-medium text-main-text">
-                {shiftLabels[data.shiftPreference] || data.shiftPreference}
+                {shiftLabels[data.shift_preference] || data.shift_preference}
               </p>
             </div>
           </div>
         )}
 
-        {data.hasLicense && (
+        {data.has_valid_licence && (
           <div className="flex items-start gap-3 sm:col-span-2">
             <div className="flex-shrink-0 mt-1">
               <div className="inline-flex items-center justify-center rounded-lg bg-main-accent/10 text-main-accent p-2">
@@ -96,8 +109,12 @@ export function TradeInfo({ data }: TradeInfoProps) {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-main-light-text mb-1">Certifications</p>
-              <p className="text-sm font-medium text-main-text">Licensed & Certified</p>
+              <p className="text-xs font-medium text-main-light-text mb-1">
+                Certifications
+              </p>
+              <p className="text-sm font-medium text-main-text">
+                Licensed & Certified
+              </p>
             </div>
           </div>
         )}
@@ -105,4 +122,3 @@ export function TradeInfo({ data }: TradeInfoProps) {
     </div>
   );
 }
-
