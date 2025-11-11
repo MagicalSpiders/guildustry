@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,43 +13,110 @@ import { PersonalFields } from "./components/PersonalFields";
 import { TradeFields } from "./components/TradeFields";
 import { ResumeField } from "./components/ResumeField";
 import { AssessmentFields } from "./components/AssessmentFields";
+import { useAuth } from "@/src/components/AuthProvider";
+import { updateUserProfile, uploadResume } from "@/src/lib/profileFunctions";
 
 export default function ProfileEditPage() {
   const router = useRouter();
+  const { user, profile, loading: authLoading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const methods = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema) as any,
     defaultValues: {
-      fullName: "",
+      fullname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       city: "",
       state: "",
-      primaryTrade: "",
-      yearsExperience: 0,
-      shiftPreference: "any",
-      hasLicense: false,
-      resumeFileName: "",
+      primary_trade: "",
+      years_of_experience: 0,
+      shift_preference: "any",
+      has_valid_licence: false,
+      resume_file_url: null,
+      role: "candidate",
+      priority: 1,
       q1: undefined,
       q2: undefined,
     },
     mode: "onChange",
   });
 
+  // Load existing profile if available
   useEffect(() => {
-    const saved = localStorage.getItem("guildustry_profile");
-    if (saved) {
-      try {
-        methods.reset(JSON.parse(saved));
-      } catch {}
+    if (!authLoading && profile) {
+      methods.reset({
+        fullname: profile.fullname,
+        email: profile.email,
+        phone_number: profile.phone_number,
+        city: profile.city,
+        state: profile.state,
+        primary_trade: profile.primary_trade,
+        years_of_experience: profile.years_of_experience,
+        shift_preference: profile.shift_preference,
+        has_valid_licence: profile.has_valid_licence,
+        resume_file_url: profile.resume_file_url,
+        role: profile.role as "candidate" | "employer",
+        priority: profile.priority,
+      });
+    } else if (!authLoading && user) {
+      // Pre-fill email from auth user
+      methods.setValue("email", user.email || "");
     }
-  }, []); // eslint-disable-line
+  }, [authLoading, profile, user]); // eslint-disable-line
 
-  const onSave = methods.handleSubmit((data) => {
-    localStorage.setItem("guildustry_profile", JSON.stringify(data));
-    router.push("/profile/userprofile");
+  const onSave = methods.handleSubmit(async (data) => {
+    if (!user) {
+      alert("You must be logged in to save your profile");
+      router.push("/auth/sign-in");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Handle resume file upload if present
+      let resumeUrl = data.resume_file_url;
+      const resumeFile = (data as any).resumeFile as File | undefined;
+      
+      if (resumeFile) {
+        resumeUrl = await uploadResume(resumeFile, user.id);
+      }
+
+      const profileData = {
+        fullname: data.fullname,
+        email: data.email,
+        phone_number: data.phone_number,
+        city: data.city,
+        state: data.state,
+        primary_trade: data.primary_trade,
+        years_of_experience: data.years_of_experience,
+        shift_preference: data.shift_preference,
+        has_valid_licence: data.has_valid_licence || false,
+        resume_file_url: resumeUrl,
+        role: data.role || "candidate",
+        priority: data.priority || 1,
+        company_id: data.company_id || null,
+      };
+
+      await updateUserProfile(profileData);
+      alert("Profile updated successfully!");
+      router.push("/candidate/profile/userprofile");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      alert(error.message || "Failed to update profile. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   });
 
-  const onCancel = () => router.push("/profile");
+  const onCancel = () => router.push("/candidate/profile/userprofile");
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/auth/sign-in");
+    }
+  }, [authLoading, user, router]);
 
   return (
     <div className="min-h-screen bg-main-bg text-main-text">
@@ -60,15 +127,15 @@ export default function ProfileEditPage() {
               Edit Profile
             </h1>
             <p className="mt-2 text-main-light-text">
-              Update your information. Changes are saved locally for now.
+              Update your profile information and preferences.
             </p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={onCancel}>
               Cancel
             </Button>
-            <Button variant="accent" size="sm" onClick={onSave}>
-              Save Profile
+            <Button variant="accent" size="sm" onClick={onSave} disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Save Profile"}
             </Button>
           </div>
         </div>

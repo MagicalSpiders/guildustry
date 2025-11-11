@@ -9,12 +9,12 @@ export function PersonalFields() {
       <div>
         <label className="block text-sm font-medium mb-2 text-main-light-text">Full Name</label>
         <input
-          {...register("fullName")}
+          {...register("fullname")}
           className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent"
           placeholder="John Builder"
         />
-        {errors.fullName && (
-          <p className="mt-1 text-sm text-red-500">{errors.fullName.message as string}</p>
+        {errors.fullname && (
+          <p className="mt-1 text-sm text-red-500">{errors.fullname.message as string}</p>
         )}
       </div>
       <div>
@@ -32,12 +32,12 @@ export function PersonalFields() {
       <div>
         <label className="block text-sm font-medium mb-2 text-main-light-text">Phone</label>
         <input
-          {...register("phone")}
+          {...register("phone_number")}
           className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent"
-          placeholder="(555) 000-0000"
+          placeholder="+1 (555) 000-0000"
         />
-        {errors.phone && (
-          <p className="mt-1 text-sm text-red-500">{errors.phone.message as string}</p>
+        {errors.phone_number && (
+          <p className="mt-1 text-sm text-red-500">{errors.phone_number.message as string}</p>
         )}
       </div>
       <div>
