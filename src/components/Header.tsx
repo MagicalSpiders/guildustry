@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { Button } from "./Button";
@@ -16,8 +16,16 @@ const navigation = [
 ];
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme } = useTheme();
-  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+  const { theme, systemTheme } = useTheme();
+  // Use mounted state to prevent hydration mismatch
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Default to dark logo until theme is determined to prevent hydration mismatch
+  const logoSrc = mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
   return (
     <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-subtle">

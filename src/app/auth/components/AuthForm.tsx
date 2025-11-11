@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -47,7 +47,15 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   const { signIn, signUp } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
-  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Default to dark logo until theme is determined to prevent hydration mismatch
+  const logoSrc =
+    mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
   const [noticeOpen, setNoticeOpen] = useState(false);
   const [noticeTitle, setNoticeTitle] = useState("");
   const [noticeDescription, setNoticeDescription] = useState("");

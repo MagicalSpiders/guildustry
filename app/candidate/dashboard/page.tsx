@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
-import { Icon } from "@iconify/react";
+"use client";
+
 import { Welcome } from "@/src/app/candidate/dashboard/components/Welcome";
 import { ProgressCard } from "@/src/app/candidate/dashboard/components/ProgressCard";
 import { TopStats } from "@/src/app/candidate/dashboard/components/TopStats";
 import { RecentApplications } from "@/src/app/candidate/dashboard/components/RecentApplications";
 import { UpcomingInterviews } from "@/src/app/candidate/dashboard/components/UpcomingInterviews";
 import { QuickActions } from "@/src/app/candidate/dashboard/components/QuickActions";
-
-export const metadata: Metadata = {
-  title: "Candidate Dashboard – Guildustry",
-  description: "Welcome back. Continue your job search journey.",
-};
 
 export default function CandidateDashboardPage() {
   return (

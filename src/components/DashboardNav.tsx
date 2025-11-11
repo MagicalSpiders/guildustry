@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +9,14 @@ import { Button } from "./Button";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "./AuthProvider";
 import { useTheme } from "next-themes";
+import {
+  getDashboardRoute,
+  getJobsRoute,
+  getApplicantsRoute,
+  getProfileRoute,
+  getNotificationsRoute,
+  type UserRole,
+} from "@/src/lib/routes";
 
 const navigation: Array<{
   name: string;
@@ -16,9 +25,14 @@ const navigation: Array<{
   employerOnly?: boolean;
   candidateOnly?: boolean;
 }> = [
-  { name: "Dashboard", href: "/dashboard", icon: "lucide:user" },
+  { name: "Dashboard", href: "/dashboard", icon: "lucide:layout-dashboard" },
   { name: "Jobs", href: "/dashboard/jobs", icon: "gravity-ui:magnifier" },
-  { name: "Resources", href: "/candidate/resources", icon: "lucide:book-open" },
+  {
+    name: "Resources",
+    href: "/candidate/resources",
+    icon: "lucide:book-open",
+    candidateOnly: true,
+  },
   { name: "Applicants", href: "/candidate/applications", icon: "lucide:users" },
   {
     name: "Company",
@@ -41,31 +55,24 @@ const navigation: Array<{
 
 export function DashboardNav() {
   const pathname = usePathname();
-  const { logout, user } = useAuth();
+  const { signOut, user, profile } = useAuth();
   const { theme } = useTheme();
-  const logoSrc = theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+  const [mounted, setMounted] = useState(false);
 
-  const getDashboardHref = () => {
-    if (user?.role === "candidate") {
-      return "/candidate/dashboard";
-    } else if (user?.role === "employer") {
-      return "/employer/dashboard";
-    }
-    return "/dashboard";
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const getApplicantsHref = () => {
-    return user?.role === "candidate"
-      ? "/candidate/applications"
-      : "/dashboard/applicants";
-  };
+  // Default to dark logo until theme is determined to prevent hydration mismatch
+  const logoSrc =
+    mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
-  const getJobsHref = () => {
-    return user?.role === "candidate" ? "/candidate/jobs" : "/dashboard/jobs";
-  };
+  // Get role from profile (source of truth) or fallback to user metadata
+  const userRole: UserRole =
+    (profile?.role as UserRole) || (user?.user_metadata?.role as UserRole);
 
   const handleLogout = () => {
-    logout();
+    signOut();
     window.location.href = "/";
   };
 
@@ -78,7 +85,10 @@ export function DashboardNav() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href={getDashboardHref()} className="flex items-center gap-2">
+            <Link
+              href={getDashboardRoute(userRole)}
+              className="flex items-center gap-2"
+            >
               <Image src={logoSrc} alt="Guildustry" width={30} height={30} />
               <span className="text-2xl font-bold text-main-text font-display">
                 Guildustry
@@ -90,23 +100,27 @@ export function DashboardNav() {
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => {
               // Hide Company link if user is not an employer
-              if (item.employerOnly && user?.role !== "employer") {
+              if (item.employerOnly && userRole !== "employer") {
                 return null;
               }
 
               // Hide Profile link if user is not a candidate
-              if (item.candidateOnly && user?.role !== "candidate") {
+              if (item.candidateOnly && userRole !== "candidate") {
                 return null;
               }
 
-              // For Dashboard, Jobs, and Applicants links, use dynamic href based on user role
+              // For Dashboard, Jobs, Applicants, Profile, and Notifications links, use dynamic href based on user role
               let href = item.href;
               if (item.name === "Dashboard") {
-                href = getDashboardHref();
+                href = getDashboardRoute(userRole);
               } else if (item.name === "Jobs") {
-                href = getJobsHref();
+                href = getJobsRoute(userRole);
               } else if (item.name === "Applicants") {
-                href = getApplicantsHref();
+                href = getApplicantsRoute(userRole);
+              } else if (item.name === "Profile") {
+                href = getProfileRoute(userRole);
+              } else if (item.name === "Notifications") {
+                href = getNotificationsRoute(userRole);
               }
 
               // Check if current path matches the href or any of the role-specific paths
@@ -123,8 +137,16 @@ export function DashboardNav() {
                 (item.name === "Resources" &&
                   pathname === "/candidate/resources") ||
                 (item.name === "Company" && pathname === "/employer/profile") ||
+                (item.name === "Profile" &&
+                  (pathname === "/candidate/profile" ||
+                    pathname === "/employer/profile" ||
+                    pathname === "/profile")) ||
+                (item.name === "Notifications" &&
+                  (pathname === "/employer/notifications" ||
+                    pathname === "/dashboard/notifications")) ||
                 (item.name === "Applicants" &&
                   (pathname === "/candidate/applications" ||
+                    pathname === "/employer/applicants" ||
                     pathname === "/dashboard/applicants"));
               return (
                 <Link
