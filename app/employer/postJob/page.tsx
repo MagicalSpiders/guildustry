@@ -787,7 +787,7 @@ function PreferencesStep({ setValue, watch }: PreferencesStepProps) {
     setValue("preferences", { ...preferences, [key]: value });
   };
 
-  const total = Object.values(preferences).reduce((sum, val) => sum + val, 0);
+  const total = Object.values(preferences).reduce((sum: number, val: number) => sum + val, 0);
 
   return (
     <div className="space-y-6">
