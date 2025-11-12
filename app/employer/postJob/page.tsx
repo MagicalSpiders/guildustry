@@ -29,7 +29,7 @@ const jobFormSchema = z.object({
   education_level: z.string().optional(),
   transportation: z.string().optional(),
   // Step 3: Preferences (optional for now)
-  preferences: z.record(z.number()).optional(),
+  preferences: z.record(z.string(), z.number()).optional(),
   // Step 4: Description
   description: z.string().min(10, "Description must be at least 10 characters"),
   requirements: z.string().optional(),
