@@ -781,7 +781,7 @@ function PreferencesStep({ setValue, watch }: PreferencesStepProps) {
     proximityAvailability: 10,
   };
 
-  const preferences = watch("preferences") || defaultPreferences;
+  const preferences = (watch("preferences") as Record<string, number>) || defaultPreferences;
 
   const handleSliderChange = (key: string, value: number) => {
     setValue("preferences", { ...preferences, [key]: value });
