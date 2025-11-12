@@ -416,14 +416,31 @@ export default function PostJobPage() {
 }
 
 // Step Components
-interface StepProps {
-  register: any;
+interface BaseStepProps {
   errors?: any;
-  setValue?: any;
-  watch?: any;
 }
 
-function RoleBasicsStep({ register, errors, setValue }: StepProps) {
+interface RoleBasicsStepProps extends BaseStepProps {
+  register: any;
+  setValue?: any;
+}
+
+interface RequirementsStepProps extends BaseStepProps {
+  register: any;
+  setValue: any;
+  watch: any;
+}
+
+interface PreferencesStepProps {
+  setValue: any;
+  watch: any;
+}
+
+interface DescriptionStepProps extends BaseStepProps {
+  register: any;
+}
+
+function RoleBasicsStep({ register, errors, setValue }: RoleBasicsStepProps) {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-title font-semibold text-main-text">
@@ -595,7 +612,7 @@ function RoleBasicsStep({ register, errors, setValue }: StepProps) {
   );
 }
 
-function RequirementsStep({ register, errors, setValue, watch }: StepProps) {
+function RequirementsStep({ register, errors, setValue, watch }: RequirementsStepProps) {
   const certifications = [
     "OSHA 10-Hour Safety",
     "OSHA 30-Hour Safety",
@@ -754,7 +771,7 @@ function RequirementsStep({ register, errors, setValue, watch }: StepProps) {
   );
 }
 
-function PreferencesStep({ setValue, watch }: StepProps) {
+function PreferencesStep({ setValue, watch }: PreferencesStepProps) {
   const defaultPreferences = {
     technicalSkills: 30,
     experienceLevel: 15,
@@ -848,7 +865,7 @@ function PreferencesStep({ setValue, watch }: StepProps) {
   );
 }
 
-function DescriptionStep({ register, errors }: StepProps) {
+function DescriptionStep({ register, errors }: DescriptionStepProps) {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-title font-semibold text-main-text">
