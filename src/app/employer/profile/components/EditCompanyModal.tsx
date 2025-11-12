@@ -23,7 +23,26 @@ export function EditCompanyModal({
 
   useEffect(() => {
     if (open) {
-      setFormData(company);
+      // Ensure all fields have proper defaults for empty/null values
+      setFormData({
+        ...company,
+        website: company.website || "",
+        description: company.description || "",
+        size: company.size || "",
+        specialties: company.specialties || [],
+        values: company.values || [],
+        benefits: company.benefits || [],
+        contact: {
+          email: company.contact.email || "",
+          phone: company.contact.phone || "",
+          address: company.contact.address || "",
+        },
+        socialMedia: {
+          linkedin: company.socialMedia?.linkedin || "",
+          twitter: company.socialMedia?.twitter || "",
+          facebook: company.socialMedia?.facebook || "",
+        },
+      });
       setIsAnimating(false);
     }
   }, [open, company]);
@@ -59,7 +78,10 @@ export function EditCompanyModal({
   const handleSocialMediaChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      socialMedia: { ...prev.socialMedia, [field]: value },
+      socialMedia: {
+        ...prev.socialMedia,
+        [field]: value || undefined, // Convert empty string to undefined
+      },
     }));
   };
 
@@ -202,7 +224,7 @@ export function EditCompanyModal({
                       </label>
                       <input
                         type="text"
-                        value={formData.website}
+                        value={formData.website || ""}
                         onChange={(e) =>
                           handleChange("website", e.target.value)
                         }
@@ -215,15 +237,16 @@ export function EditCompanyModal({
                         Company Size
                       </label>
                       <select
-                        value={formData.size}
+                        value={formData.size || ""}
                         onChange={(e) => handleChange("size", e.target.value)}
                         className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                       >
-                        <option>1-10 employees</option>
-                        <option>11-50 employees</option>
-                        <option>50-200 employees</option>
-                        <option>200-500 employees</option>
-                        <option>500+ employees</option>
+                        <option value="">Select size</option>
+                        <option value="1-10 employees">1-10 employees</option>
+                        <option value="11-50 employees">11-50 employees</option>
+                        <option value="50-200 employees">50-200 employees</option>
+                        <option value="200-500 employees">200-500 employees</option>
+                        <option value="500+ employees">500+ employees</option>
                       </select>
                     </div>
                   </div>
@@ -236,7 +259,7 @@ export function EditCompanyModal({
                   </h3>
                   <textarea
                     rows={5}
-                    value={formData.description}
+                    value={formData.description || ""}
                     onChange={(e) =>
                       handleChange("description", e.target.value)
                     }
@@ -425,7 +448,7 @@ export function EditCompanyModal({
                       </label>
                       <input
                         type="text"
-                        value={formData.socialMedia.linkedin || ""}
+                        value={formData.socialMedia?.linkedin || ""}
                         onChange={(e) =>
                           handleSocialMediaChange("linkedin", e.target.value)
                         }
@@ -439,7 +462,7 @@ export function EditCompanyModal({
                       </label>
                       <input
                         type="text"
-                        value={formData.socialMedia.twitter || ""}
+                        value={formData.socialMedia?.twitter || ""}
                         onChange={(e) =>
                           handleSocialMediaChange("twitter", e.target.value)
                         }
@@ -453,7 +476,7 @@ export function EditCompanyModal({
                       </label>
                       <input
                         type="text"
-                        value={formData.socialMedia.facebook || ""}
+                        value={formData.socialMedia?.facebook || ""}
                         onChange={(e) =>
                           handleSocialMediaChange("facebook", e.target.value)
                         }

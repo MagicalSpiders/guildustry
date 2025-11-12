@@ -55,7 +55,7 @@ const navigation: Array<{
 
 export function DashboardNav() {
   const pathname = usePathname();
-  const { signOut, user, profile } = useAuth();
+  const { signOut, user, profile, loading } = useAuth();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -68,12 +68,37 @@ export function DashboardNav() {
     mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
 
   // Get role from profile (source of truth) or fallback to user metadata
+  // Check user_type first (new), then role (backward compatibility)
   const userRole: UserRole =
-    (profile?.role as UserRole) || (user?.user_metadata?.role as UserRole);
+    (profile?.role as UserRole) ||
+    (user?.user_metadata?.user_type as UserRole) ||
+    (user?.user_metadata?.role as UserRole);
 
-  const handleLogout = () => {
-    signOut();
-    window.location.href = "/";
+  // Debug: Log the role being used
+  useEffect(() => {
+    console.log("🔍 DashboardNav - State:", {
+      loading,
+      hasUser: !!user,
+      userRole,
+      profileRole: profile?.role,
+      userType: user?.user_metadata?.user_type,
+      metadataRole: user?.user_metadata?.role,
+      jobsRoute: userRole ? getJobsRoute(userRole) : "undefined - no role yet",
+    });
+  }, [loading, user, profile, userRole]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // Small delay to ensure Supabase clears localStorage
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Use replace to prevent back button issues
+      window.location.replace("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Force redirect anyway
+      window.location.replace("/");
+    }
   };
 
   return (
@@ -98,71 +123,78 @@ export function DashboardNav() {
 
           {/* Navigation Links */}
           <div className="hidden lg:flex lg:gap-x-8">
-            {navigation.map((item) => {
-              // Hide Company link if user is not an employer
-              if (item.employerOnly && userRole !== "employer") {
-                return null;
-              }
+            {!loading &&
+              navigation.map((item) => {
+                // Don't render links until we have a valid user role
+                if (!userRole) {
+                  return null;
+                }
 
-              // Hide Profile link if user is not a candidate
-              if (item.candidateOnly && userRole !== "candidate") {
-                return null;
-              }
+                // Hide Company link if user is not an employer
+                if (item.employerOnly && userRole !== "employer") {
+                  return null;
+                }
 
-              // For Dashboard, Jobs, Applicants, Profile, and Notifications links, use dynamic href based on user role
-              let href = item.href;
-              if (item.name === "Dashboard") {
-                href = getDashboardRoute(userRole);
-              } else if (item.name === "Jobs") {
-                href = getJobsRoute(userRole);
-              } else if (item.name === "Applicants") {
-                href = getApplicantsRoute(userRole);
-              } else if (item.name === "Profile") {
-                href = getProfileRoute(userRole);
-              } else if (item.name === "Notifications") {
-                href = getNotificationsRoute(userRole);
-              }
+                // Hide Profile link if user is not a candidate
+                if (item.candidateOnly && userRole !== "candidate") {
+                  return null;
+                }
 
-              // Check if current path matches the href or any of the role-specific paths
-              const isActive =
-                pathname === href ||
-                (item.name === "Dashboard" &&
-                  (pathname === "/dashboard" ||
-                    pathname === "/candidate/dashboard" ||
-                    pathname === "/employer/dashboard")) ||
-                (item.name === "Jobs" &&
-                  (pathname === "/candidate/jobs" ||
-                    pathname === "/dashboard/jobs" ||
-                    pathname === "/employer/jobs")) ||
-                (item.name === "Resources" &&
-                  pathname === "/candidate/resources") ||
-                (item.name === "Company" && pathname === "/employer/profile") ||
-                (item.name === "Profile" &&
-                  (pathname === "/candidate/profile" ||
-                    pathname === "/employer/profile" ||
-                    pathname === "/profile")) ||
-                (item.name === "Notifications" &&
-                  (pathname === "/employer/notifications" ||
-                    pathname === "/dashboard/notifications")) ||
-                (item.name === "Applicants" &&
-                  (pathname === "/candidate/applications" ||
-                    pathname === "/employer/applicants" ||
-                    pathname === "/dashboard/applicants"));
-              return (
-                <Link
-                  key={item.name}
-                  href={href}
-                  className={`text-sm font-medium leading-6 transition-colors duration-200 flex items-center gap-2 ${
-                    isActive
-                      ? "text-main-text"
-                      : "text-main-light-text hover:text-main-text"
-                  }`}
-                >
-                  <Icon icon={item.icon} className="h-5 w-5" />
-                  {item.name}
-                </Link>
-              );
-            })}
+                // For Dashboard, Jobs, Applicants, Profile, and Notifications links, use dynamic href based on user role
+                let href = item.href;
+                if (item.name === "Dashboard") {
+                  href = getDashboardRoute(userRole);
+                } else if (item.name === "Jobs") {
+                  href = getJobsRoute(userRole);
+                } else if (item.name === "Applicants") {
+                  href = getApplicantsRoute(userRole);
+                } else if (item.name === "Profile") {
+                  href = getProfileRoute(userRole);
+                } else if (item.name === "Notifications") {
+                  href = getNotificationsRoute(userRole);
+                }
+
+                // Check if current path matches the href or any of the role-specific paths
+                const isActive =
+                  pathname === href ||
+                  (item.name === "Dashboard" &&
+                    (pathname === "/dashboard" ||
+                      pathname === "/candidate/dashboard" ||
+                      pathname === "/employer/dashboard")) ||
+                  (item.name === "Jobs" &&
+                    (pathname === "/candidate/jobs" ||
+                      pathname === "/dashboard/jobs" ||
+                      pathname === "/employer/jobs")) ||
+                  (item.name === "Resources" &&
+                    pathname === "/candidate/resources") ||
+                  (item.name === "Company" &&
+                    pathname === "/employer/profile") ||
+                  (item.name === "Profile" &&
+                    (pathname === "/candidate/profile" ||
+                      pathname === "/employer/profile" ||
+                      pathname === "/profile")) ||
+                  (item.name === "Notifications" &&
+                    (pathname === "/employer/notifications" ||
+                      pathname === "/dashboard/notifications")) ||
+                  (item.name === "Applicants" &&
+                    (pathname === "/candidate/applications" ||
+                      pathname === "/employer/applicants" ||
+                      pathname === "/dashboard/applicants"));
+                return (
+                  <Link
+                    key={item.name}
+                    href={href}
+                    className={`text-sm font-medium leading-6 transition-colors duration-200 flex items-center gap-2 ${
+                      isActive
+                        ? "text-main-text"
+                        : "text-main-light-text hover:text-main-text"
+                    }`}
+                  >
+                    <Icon icon={item.icon} className="h-5 w-5" />
+                    {item.name}
+                  </Link>
+                );
+              })}
           </div>
 
           {/* Actions */}

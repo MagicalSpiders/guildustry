@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/components/AuthProvider";
+import { PageSkeleton } from "@/src/components/ui/PageSkeleton";
 
 export default function CandidateDashboardLayout({
   children,
@@ -13,7 +14,7 @@ export default function CandidateDashboardLayout({
   const router = useRouter();
 
   // Get role from profile or user metadata
-  const userRole = profile?.role || user?.user_metadata?.role;
+  const userRole = profile?.role || user?.user_metadata?.user_type || user?.user_metadata?.role;
 
   useEffect(() => {
     // Wait for auth to load
@@ -33,11 +34,7 @@ export default function CandidateDashboardLayout({
 
   // Show loading state while checking auth
   if (loading) {
-    return (
-      <div className="min-h-screen bg-main-bg flex items-center justify-center">
-        <div className="text-main-light-text">Loading...</div>
-      </div>
-    );
+    return <PageSkeleton variant="dashboard" />;
   }
 
   // Don't render if not authenticated or not a candidate

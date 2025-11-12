@@ -26,7 +26,8 @@ export function getJobsRoute(role: UserRole): string {
   } else if (role === "employer") {
     return "/employer/jobs";
   }
-  return "/dashboard/jobs";
+  // Fallback to candidate jobs if role is undefined
+  return "/candidate/jobs";
 }
 
 /**
@@ -38,7 +39,8 @@ export function getApplicantsRoute(role: UserRole): string {
   } else if (role === "employer") {
     return "/employer/applicants";
   }
-  return "/dashboard/applicants";
+  // Fallback to candidate applications if role is undefined
+  return "/candidate/applications";
 }
 
 /**
@@ -64,13 +66,14 @@ export function getProfileRoute(role: UserRole): string {
 }
 
 /**
- * Get the notifications URL (employer only, but also available at /dashboard/notifications)
+ * Get the notifications URL based on user role
  */
 export function getNotificationsRoute(role: UserRole): string {
   if (role === "employer") {
     return "/employer/notifications";
   }
-  return "/dashboard/notifications";
+  // Fallback to employer notifications if role is undefined
+  return "/employer/notifications";
 }
 
 /**

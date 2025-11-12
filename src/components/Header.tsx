@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "./Button";
 import { ThemeToggle } from "./ThemeToggle";
+import { useAuth } from "./AuthProvider";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
@@ -17,6 +19,8 @@ const navigation = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, systemTheme } = useTheme();
+  const { isAuthenticated, user, signOut } = useAuth();
+  const router = useRouter();
   // Use mounted state to prevent hydration mismatch
   const [mounted, setMounted] = useState(false);
 
@@ -25,7 +29,34 @@ export function Header() {
   }, []);
 
   // Default to dark logo until theme is determined to prevent hydration mismatch
-  const logoSrc = mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+  const logoSrc =
+    mounted && theme === "light" ? "/logo.webp" : "/darkLogo.webp";
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // Small delay to ensure Supabase clears localStorage
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Use replace to prevent back button issues
+      window.location.replace("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Force redirect anyway
+      window.location.replace("/");
+    }
+  };
+
+  const handleDashboard = () => {
+    const userRole =
+      user?.user_metadata?.user_type || user?.user_metadata?.role;
+    if (userRole === "employer") {
+      router.push("/employer/dashboard");
+    } else if (userRole === "candidate") {
+      router.push("/candidate/dashboard");
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-subtle">
@@ -75,15 +106,28 @@ export function Header() {
           {/* Desktop actions */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4 lg:items-center">
             <ThemeToggle />
-            <Link
-              href="/auth/sign-in"
-              className="text-sm font-medium leading-6 text-main-light-text hover:text-main-text transition-colors duration-200"
-            >
-              Sign In
-            </Link>
-            <Button variant="accent" size="sm" asChild>
-              <Link href="/auth/sign-up">Get Started</Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button variant="outline" size="sm" onClick={handleDashboard}>
+                  Dashboard
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/sign-in"
+                  className="text-sm font-medium leading-6 text-main-light-text hover:text-main-text transition-colors duration-200"
+                >
+                  Sign In
+                </Link>
+                <Button variant="accent" size="sm" asChild>
+                  <Link href="/auth/sign-up">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -103,21 +147,48 @@ export function Header() {
               ))}
               <div className="flex items-center gap-3 px-3 py-2">
                 <ThemeToggle />
-                <Link
-                  href="/auth/sign-in"
-                  className="text-base font-medium text-main-light-text hover:text-main-text transition-colors duration-200"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <Button variant="accent" size="sm" asChild>
-                  <Link
-                    href="/auth/sign-up"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                </Button>
+                {isAuthenticated ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleDashboard();
+                      }}
+                    >
+                      Dashboard
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/auth/sign-in"
+                      className="text-base font-medium text-main-light-text hover:text-main-text transition-colors duration-200"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Button variant="accent" size="sm" asChild>
+                      <Link
+                        href="/auth/sign-up"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Get Started
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
-import { PostJobModal } from "./PostJobModal";
 
 interface SummaryCardProps {
   title: string;
@@ -58,7 +57,7 @@ export function EmployerHero({
 }: {
   companyName?: string;
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="mb-8">
@@ -77,7 +76,7 @@ export function EmployerHero({
           size="lg"
           icon="lucide:plus"
           iconPosition="left"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => router.push("/employer/postJob")}
         >
           Post New Job
         </Button>
@@ -118,8 +117,6 @@ export function EmployerHero({
           />
         </Link>
       </div>
-
-      <PostJobModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

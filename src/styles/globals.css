@@ -457,3 +457,20 @@ select option {
     opacity: 1;
   }
 }
+
+/* Skeleton shimmer animation */
+@keyframes skeleton-shimmer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-skeleton {
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}

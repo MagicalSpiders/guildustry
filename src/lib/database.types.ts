@@ -8,7 +8,7 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export interface Database {
   public: {
@@ -72,6 +72,77 @@ export interface Database {
           updated_at?: string;
         };
       };
+      companies: {
+        Row: {
+          id: string; // UUID
+          owner_id: string; // UUID from auth.users
+          name: string;
+          industry: string;
+          headquarters: string;
+          founded: string;
+          website: string | null;
+          description: string | null;
+          size: string | null;
+          logo_url: string | null;
+          specialties: string[];
+          values: string[];
+          benefits: string[];
+          contact_email: string;
+          contact_phone: string;
+          contact_address: string;
+          linkedin: string | null;
+          twitter: string | null;
+          facebook: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name: string;
+          industry: string;
+          headquarters: string;
+          founded: string;
+          website?: string | null;
+          description?: string | null;
+          size?: string | null;
+          logo_url?: string | null;
+          specialties?: string[];
+          values?: string[];
+          benefits?: string[];
+          contact_email: string;
+          contact_phone: string;
+          contact_address: string;
+          linkedin?: string | null;
+          twitter?: string | null;
+          facebook?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          name?: string;
+          industry?: string;
+          headquarters?: string;
+          founded?: string;
+          website?: string | null;
+          description?: string | null;
+          size?: string | null;
+          logo_url?: string | null;
+          specialties?: string[];
+          values?: string[];
+          benefits?: string[];
+          contact_email?: string;
+          contact_phone?: string;
+          contact_address?: string;
+          linkedin?: string | null;
+          twitter?: string | null;
+          facebook?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -85,7 +156,12 @@ export interface Database {
   };
 }
 
-export type UserProfile = Database['public']['Tables']['profiles']['Row'];
-export type UserProfileInsert = Database['public']['Tables']['profiles']['Insert'];
-export type UserProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+export type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];
+export type UserProfileInsert =
+  Database["public"]["Tables"]["profiles"]["Insert"];
+export type UserProfileUpdate =
+  Database["public"]["Tables"]["profiles"]["Update"];
 
+export type Company = Database["public"]["Tables"]["companies"]["Row"];
+export type CompanyInsert = Database["public"]["Tables"]["companies"]["Insert"];
+export type CompanyUpdate = Database["public"]["Tables"]["companies"]["Update"];

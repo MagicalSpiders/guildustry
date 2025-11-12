@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/Button";
-import { PostJobModal } from "@/src/app/employer/dashboard/components/PostJobModal";
 
 export function JobsHeader() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
@@ -22,11 +21,10 @@ export function JobsHeader() {
         size="lg"
         icon="lucide:plus"
         iconPosition="left"
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => router.push("/employer/postJob")}
       >
         Post New Job
       </Button>
-      <PostJobModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
