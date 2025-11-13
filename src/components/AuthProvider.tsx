@@ -37,10 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Load user profile (for candidates)
   const loadProfile = async () => {
     try {
+      console.log("[Profile] Loading candidate profile...");
       const userProfile = await getUserProfile();
+      console.log(`[Profile] ${userProfile ? "Loaded" : "Not found"}`);
       setProfile(userProfile);
-    } catch (error) {
-      console.error("Error loading profile:", error);
+    } catch (error: any) {
+      console.error("[Profile] Error:", error.message);
       setProfile(null);
     }
   };
@@ -48,17 +50,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Load company (for employers)
   const loadCompany = async () => {
     try {
-      console.log("🏢 AuthProvider: Loading company for employer...");
+      console.log("[Company] Loading employer company...");
       const userCompany = await getCompanyByOwner();
-      console.log("🏢 AuthProvider: Company loaded", {
-        hasCompany: !!userCompany,
-        companyId: userCompany?.id,
-        companyName: userCompany?.name,
-        ownerId: userCompany?.owner_id,
-      });
+      console.log(`[Company] ${userCompany ? "Loaded" : "Not found"}`);
       setCompany(userCompany);
-    } catch (error) {
-      console.error("❌ AuthProvider: Error loading company:", error);
+    } catch (error: any) {
+      console.error("[Company] Error:", error.message);
       setCompany(null);
     }
   };
@@ -72,7 +69,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Load data based on user role
   const loadUserData = async (userRole: string) => {
-    console.log("👤 AuthProvider: Loading user data for role:", userRole);
     if (userRole === "candidate") {
       await loadProfile();
     } else if (userRole === "employer") {
@@ -82,50 +78,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth state
   useEffect(() => {
-    // Get initial session with timeout to prevent hanging
+    // Get initial session - Supabase automatically handles persistence
     const initAuth = async () => {
       try {
+        console.log("[Auth] Initializing session...");
         const {
           data: { session },
           error,
         } = await supabase.auth.getSession();
 
         if (error) {
-          console.error("❌ Failed to get session:", error);
+          console.error("[Auth] Session error:", error.message);
           setLoading(false);
           return;
         }
 
         setSession(session);
         setUser(session?.user ?? null);
+
         if (session?.user) {
-          const suppress =
-            typeof window !== "undefined"
-              ? localStorage.getItem("suppress_initial_profile_fetch") === "1"
-              : false;
-          console.log("🔐 AuthProvider: Initial session check", {
-            hasUser: !!session.user,
-            userEmail: session.user.email,
-            suppress,
-          });
-          if (!suppress) {
-            const userRole = getUserType(session.user);
-            console.log("🔐 AuthProvider: User role detected", { userRole });
-            if (userRole) {
-              console.log(
-                "🔐 AuthProvider: Calling loadUserData for role:",
-                userRole
-              );
-              await loadUserData(userRole);
-            } else {
-              console.log("⚠️ AuthProvider: No user role found in metadata");
-            }
-          } else {
-            console.log("⏭️ AuthProvider: Suppressing initial data fetch");
+          const userRole = getUserType(session.user);
+          console.log(`[Auth] Session found - Role: ${userRole}`);
+          if (userRole) {
+            await loadUserData(userRole);
           }
+        } else {
+          console.log("[Auth] No session found");
         }
       } catch (error) {
-        console.error("❌ Auth initialization error:", error);
+        console.error("[Auth] Initialization error:", error);
       } finally {
         setLoading(false);
       }
@@ -137,30 +118,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log("🔄 Auth state changed:", _event);
+      console.log(`[Auth] State changed: ${_event}`);
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
         const userRole = getUserType(session.user);
-        console.log("👤 User detected:", {
-          email: session.user.email,
-          role: userRole,
-        });
-
-        const suppress =
-          typeof window !== "undefined"
-            ? localStorage.getItem("suppress_initial_profile_fetch") === "1"
-            : false;
-        if (!suppress) {
-          if (userRole) {
-            console.log("📊 Loading data for role:", userRole);
-            await loadUserData(userRole);
-          }
-        } else {
-          console.log("⏭️ Suppressing initial profile/company fetch");
+        console.log(`[Auth] User authenticated - Role: ${userRole}`);
+        if (userRole) {
+          await loadUserData(userRole);
         }
       } else {
-        console.log("👋 User signed out");
+        console.log("[Auth] User signed out");
         setProfile(null);
         setCompany(null);
       }
@@ -175,6 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     role: "candidate" | "employer"
   ) => {
+    console.log(`[Auth] Signing up as ${role}`);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -186,48 +156,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    if (error) throw error;
-
+    if (error) {
+      console.error("[Auth] Signup error:", error.message);
+      throw error;
+    }
+    console.log("[Auth] Signup successful - Email verification required");
     // Session will be automatically set by onAuthStateChange listener
-    return;
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    console.log("[Auth] Signing in...");
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
-
+    if (error) {
+      console.error("[Auth] Sign in error:", error.message);
+      throw error;
+    }
+    console.log("[Auth] Sign in successful");
     // Session will be automatically set by onAuthStateChange listener
-    return;
   };
 
   const signOut = async () => {
-    console.log("🚪 Signing out...");
-
+    console.log("[Auth] Signing out...");
     // Clear state FIRST before calling Supabase signOut
     setProfile(null);
     setCompany(null);
     setUser(null);
     setSession(null);
 
-    // Clear localStorage immediately
+    // Clear localStorage
     if (typeof window !== "undefined") {
-      localStorage.removeItem("suppress_initial_profile_fetch");
       localStorage.removeItem("has_seen_candidate_post_login");
       localStorage.removeItem("has_seen_employer_post_login");
     }
 
-    // Now sign out from Supabase with local scope
+    // Now sign out from Supabase
     const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) {
-      console.error("❌ Sign out error:", error);
+      console.error("[Auth] Sign out error:", error.message);
       // Don't throw - we already cleared local state
     }
-
-    console.log("✅ Sign out successful - state cleared");
+    console.log("[Auth] Signed out successfully");
   };
 
   const refreshProfile = async () => {

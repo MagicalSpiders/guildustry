@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { ContactHero } from "@/src/app/contact/components/Hero";
-import { HowCanWeHelp } from "@/src/app/contact/components/HowCanWeHelp";
-import { ContactForm } from "@/src/app/contact/components/ContactForm";
-import { OtherWays } from "@/src/app/contact/components/OtherWays";
+import { ContactHero } from "@/app/contact/components/Hero";
+import { HowCanWeHelp } from "@/app/contact/components/HowCanWeHelp";
+import { ContactForm } from "@/app/contact/components/ContactForm";
+import { OtherWays } from "@/app/contact/components/OtherWays";
 
 export const metadata: Metadata = {
   title: "Contact Us – Get in Touch | Guildustry",

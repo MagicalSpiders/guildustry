@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { AboutHero } from "@/src/app/about/components/Hero";
-import { OurMission } from "@/src/app/about/components/OurMission";
-import { OurValues } from "@/src/app/about/components/OurValues";
-import { OurVision } from "@/src/app/about/components/OurVision";
+import { AboutHero } from "@/app/about/components/Hero";
+import { OurMission } from "@/app/about/components/OurMission";
+import { OurValues } from "@/app/about/components/OurValues";
+import { OurVision } from "@/app/about/components/OurVision";
 
 export const metadata: Metadata = {
   title: "About Guildustry – Building the Future of American Manufacturing",
@@ -20,5 +20,3 @@ export default function AboutPage() {
     </>
   );
 }
-
-

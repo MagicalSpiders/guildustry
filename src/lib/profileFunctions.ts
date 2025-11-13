@@ -7,10 +7,13 @@ import type { UserProfile, UserProfileInsert, UserProfileUpdate } from './databa
  * @returns The created profile or throws an error
  */
 export async function insertUserProfile(profileData: UserProfileInsert): Promise<UserProfile> {
+  console.log('[Profile] Creating new profile...');
+  
   // Check if user is authenticated
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
+    console.error('[Profile] Auth error:', authError?.message);
     throw new Error('User must be authenticated to create a profile');
   }
 
@@ -21,6 +24,7 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
     created_by: user.id,
   };
 
+  console.log('[Profile] Inserting profile data');
   const { data, error } = await supabase
     .from('profiles')
     .insert(dataToInsert)
@@ -29,11 +33,14 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
 
   if (error) {
     if (error.code === '23505') {
+      console.error('[Profile] Duplicate profile detected');
       throw new Error('A profile already exists for this user');
     }
+    console.error('[Profile] Insert error:', error.message);
     throw new Error(`Failed to create profile: ${error.message}`);
   }
 
+  console.log('[Profile] Profile created successfully');
   return data;
 }
 
@@ -43,10 +50,13 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
  * @returns The updated profile or throws an error
  */
 export async function updateUserProfile(updates: UserProfileUpdate): Promise<UserProfile> {
+  console.log('[Profile] Updating profile...');
+  
   // Check if user is authenticated
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
+    console.error('[Profile] Auth error:', authError?.message);
     throw new Error('User must be authenticated to update profile');
   }
 
@@ -58,13 +68,16 @@ export async function updateUserProfile(updates: UserProfileUpdate): Promise<Use
     .single();
 
   if (error) {
+    console.error('[Profile] Update error:', error.message);
     throw new Error(`Failed to update profile: ${error.message}`);
   }
 
   if (!data) {
+    console.error('[Profile] Profile not found');
     throw new Error('Profile not found');
   }
 
+  console.log('[Profile] Profile updated successfully');
   return data;
 }
 
@@ -128,6 +141,8 @@ export async function deleteUserProfile(): Promise<boolean> {
  * @returns The public URL of the uploaded file
  */
 export async function uploadResume(file: File, userId: string): Promise<string> {
+  console.log('[Profile] Uploading resume:', file.name);
+  
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}_${Date.now()}.${fileExt}`;
   const filePath = `resumes/${fileName}`;
@@ -140,6 +155,7 @@ export async function uploadResume(file: File, userId: string): Promise<string> 
     });
 
   if (uploadError) {
+    console.error('[Profile] Resume upload error:', uploadError.message);
     throw new Error(`Failed to upload resume: ${uploadError.message}`);
   }
 
@@ -147,6 +163,7 @@ export async function uploadResume(file: File, userId: string): Promise<string> 
     .from('resume')
     .getPublicUrl(filePath);
 
+  console.log('[Profile] Resume uploaded successfully');
   return data.publicUrl;
 }
 

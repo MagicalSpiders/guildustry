@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CompanyHeader } from "@/src/app/employer/profile/components/CompanyHeader";
-import { CompanyStats } from "@/src/app/employer/profile/components/CompanyStats";
-import { CompanyDescription } from "@/src/app/employer/profile/components/CompanyDescription";
-import { CompanyDetails } from "@/src/app/employer/profile/components/CompanyDetails";
-import { CompanyBenefits } from "@/src/app/employer/profile/components/CompanyBenefits";
-import { CompanyContact } from "@/src/app/employer/profile/components/CompanyContact";
-import { EditCompanyModal } from "@/src/app/employer/profile/components/EditCompanyModal";
-import { CompanyProfile } from "@/src/app/employer/profile/data/mockCompanyData";
+import { CompanyHeader } from "@/app/employer/profile/components/CompanyHeader";
+import { CompanyStats } from "@/app/employer/profile/components/CompanyStats";
+import { CompanyDescription } from "@/app/employer/profile/components/CompanyDescription";
+import { CompanyDetails } from "@/app/employer/profile/components/CompanyDetails";
+import { CompanyBenefits } from "@/app/employer/profile/components/CompanyBenefits";
+import { CompanyContact } from "@/app/employer/profile/components/CompanyContact";
+import { EditCompanyModal } from "@/app/employer/profile/components/EditCompanyModal";
+import { CompanyProfile } from "@/app/employer/profile/data/mockCompanyData";
 import { useAuth } from "@/src/components/AuthProvider";
 import { updateCompany, getCompanyByOwner } from "@/src/lib/companyFunctions";
 import type { Company } from "@/src/lib/database.types";
@@ -32,41 +32,15 @@ export default function EmployerProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("🏢 EmployerProfilePage: useEffect triggered", {
-      isAuthenticated,
-      hasAuthCompany: !!authCompany,
-      authCompanyId: authCompany?.id,
-      authCompanyName: authCompany?.name,
-      userId: user?.id,
-      userEmail: user?.email,
-      currentCompany: company?.id,
-      loading,
-    });
-
     if (!isAuthenticated) {
-      console.log(
-        "❌ EmployerProfilePage: User not authenticated, redirecting to sign-in"
-      );
+      console.log("[Flow] Not authenticated - redirecting to sign-in");
       router.push("/auth/sign-in");
       return;
     }
 
-    console.log("✅ EmployerProfilePage: User is authenticated");
-
     // Convert database company to UI company format
     if (authCompany) {
-      console.log(
-        "📦 EmployerProfilePage: Converting authCompany to UI format",
-        {
-          companyId: authCompany.id,
-          companyName: authCompany.name,
-          industry: authCompany.industry,
-          hasDescription: !!authCompany.description,
-          specialtiesCount: authCompany.specialties?.length || 0,
-          benefitsCount: authCompany.benefits?.length || 0,
-        }
-      );
-
+      console.log("[Company] Converting to UI format");
       const uiCompany: CompanyProfile = {
         id: authCompany.id,
         companyName: authCompany.name,
@@ -97,28 +71,16 @@ export default function EmployerProfilePage() {
           facebook: authCompany.facebook || undefined,
         },
       };
-      console.log("✅ EmployerProfilePage: UI company created, setting state", {
-        uiCompanyId: uiCompany.id,
-        uiCompanyName: uiCompany.companyName,
-      });
       setCompany(uiCompany);
       setLoading(false);
     } else {
-      console.log(
-        "⚠️ EmployerProfilePage: No authCompany found - attempting to fetch directly"
-      );
+      console.log("[Company] Not in AuthProvider - fetching directly");
       // Fallback: Try to fetch company directly if AuthProvider hasn't loaded it
       const fetchCompanyDirectly = async () => {
         try {
-          console.log(
-            "🔍 EmployerProfilePage: Fetching company directly from database"
-          );
           const fetchedCompany = await getCompanyByOwner();
           if (fetchedCompany) {
-            console.log("✅ EmployerProfilePage: Company fetched directly", {
-              companyId: fetchedCompany.id,
-              companyName: fetchedCompany.name,
-            });
+            console.log("[Company] Fetched directly from database");
             const uiCompany: CompanyProfile = {
               id: fetchedCompany.id,
               companyName: fetchedCompany.name,
@@ -153,15 +115,10 @@ export default function EmployerProfilePage() {
             // Refresh AuthProvider's company state
             await refreshCompany();
           } else {
-            console.log(
-              "⚠️ EmployerProfilePage: No company found in database - will show setup page"
-            );
+            console.log("[Company] No company found - will show setup page");
           }
-        } catch (error) {
-          console.error(
-            "❌ EmployerProfilePage: Error fetching company directly:",
-            error
-          );
+        } catch (error: any) {
+          console.error("[Company] Fetch error:", error.message);
         } finally {
           setLoading(false);
         }
@@ -175,10 +132,7 @@ export default function EmployerProfilePage() {
   };
 
   const handleSave = async (updatedCompany: CompanyProfile) => {
-    console.log("💾 EmployerProfilePage: Saving company", {
-      companyId: updatedCompany.id,
-      companyName: updatedCompany.companyName,
-    });
+    console.log("[Company] Saving updates");
     setSaving(true);
     setError(null);
     try {
@@ -204,43 +158,24 @@ export default function EmployerProfilePage() {
       });
 
       // Refresh company data from backend
-      console.log("🔄 EmployerProfilePage: Refreshing company data");
       await refreshCompany();
-      console.log(
-        "✅ EmployerProfilePage: Company saved and refreshed successfully"
-      );
+      console.log("[Company] Saved successfully");
       setIsEditModalOpen(false);
     } catch (err: any) {
-      console.error("❌ EmployerProfilePage: Failed to update company:", err);
+      console.error("[Company] Save error:", err.message);
       setError(err.message || "Failed to update company");
     } finally {
       setSaving(false);
     }
   };
 
-  console.log("🎨 EmployerProfilePage: Render decision", {
-    loading,
-    hasCompany: !!company,
-    companyId: company?.id,
-    companyName: company?.companyName,
-    isAuthenticated,
-    hasAuthCompany: !!authCompany,
-  });
-
   if (loading) {
-    console.log("⏳ EmployerProfilePage: Rendering loading state");
     return <PageSkeleton variant="profile" />;
   }
 
   // If no company exists, redirect to setup
   if (!company) {
-    console.log(
-      "🚫 EmployerProfilePage: No company found - rendering setup page",
-      {
-        authCompanyExists: !!authCompany,
-        authCompanyId: authCompany?.id,
-      }
-    );
+    console.log("[Flow] No company - showing setup page");
     return (
       <div className="min-h-screen bg-main-bg text-main-text">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
@@ -259,11 +194,6 @@ export default function EmployerProfilePage() {
       </div>
     );
   }
-
-  console.log("✅ EmployerProfilePage: Rendering company profile", {
-    companyId: company.id,
-    companyName: company.companyName,
-  });
 
   return (
     <div className="min-h-screen bg-main-bg text-main-text">

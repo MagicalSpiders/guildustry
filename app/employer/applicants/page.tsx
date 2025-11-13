@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ApplicantsHeader } from "@/src/app/employer/applicants/components/ApplicantsHeader";
-import { ApplicantsStats } from "@/src/app/employer/applicants/components/ApplicantsStats";
-import { ApplicantsSearchAndFilters } from "@/src/app/employer/applicants/components/ApplicantsSearchAndFilters";
-import { ApplicantsTabs } from "@/src/app/employer/applicants/components/ApplicantsTabs";
-import { ApplicantsList } from "@/src/app/employer/applicants/components/ApplicantsList";
-import { Applicant } from "@/src/app/employer/applicants/components/ApplicantCard";
+import { ApplicantsHeader } from "@/app/employer/applicants/components/ApplicantsHeader";
+import { ApplicantsStats } from "@/app/employer/applicants/components/ApplicantsStats";
+import { ApplicantsSearchAndFilters } from "@/app/employer/applicants/components/ApplicantsSearchAndFilters";
+import { ApplicantsTabs } from "@/app/employer/applicants/components/ApplicantsTabs";
+import { ApplicantsList } from "@/app/employer/applicants/components/ApplicantsList";
+import { Applicant } from "@/app/employer/applicants/components/ApplicantCard";
 
 // Mock data - replace with API call
 const mockApplicants: Applicant[] = [

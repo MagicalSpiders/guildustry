@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Stats } from "@/src/app/candidate/applications/components/Stats";
-import { Filters } from "@/src/app/candidate/applications/components/Filters";
-import { ApplicationCard } from "@/src/app/candidate/applications/components/ApplicationCard";
-import { data } from "@/src/app/candidate/applications/data";
+import { Stats } from "@/app/candidate/applications/components/Stats";
+import { Filters } from "@/app/candidate/applications/components/Filters";
+import { ApplicationCard } from "@/app/candidate/applications/components/ApplicationCard";
+import { data } from "@/app/candidate/applications/data";
 
 const tabs = [
   { key: "all", label: "All" },
@@ -24,13 +24,16 @@ export default function CandidateApplicationsPage() {
     let list = data.filter((a) =>
       !q
         ? true
-        : [a.title, a.company, a.location].some((f) => f.toLowerCase().includes(q))
+        : [a.title, a.company, a.location].some((f) =>
+            f.toLowerCase().includes(q)
+          )
     );
     if (tab !== "all") {
       list = list.filter((a) => a.category === tab);
     }
     list.sort((a, b) => {
-      if (sort === "date") return new Date(b.applied).getTime() - new Date(a.applied).getTime();
+      if (sort === "date")
+        return new Date(b.applied).getTime() - new Date(a.applied).getTime();
       return a.title.localeCompare(b.title);
     });
     return list;
@@ -38,7 +41,9 @@ export default function CandidateApplicationsPage() {
 
   const stats = useMemo(() => {
     const total = data.length;
-    const interviews = data.filter((d) => d.status === "Interview Scheduled").length;
+    const interviews = data.filter(
+      (d) => d.status === "Interview Scheduled"
+    ).length;
     const underReview = data.filter((d) => d.status === "Under Review").length;
     const pending = data.filter((d) => d.status === "Pending").length;
     return { total, interviews, underReview, pending };
@@ -48,8 +53,12 @@ export default function CandidateApplicationsPage() {
     <div className="min-h-screen bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
         <div className="mb-6">
-          <h1 className="text-3xl sm:text-4xl font-title font-bold">My Applications</h1>
-          <p className="mt-2 text-main-light-text">Track and manage your job applications</p>
+          <h1 className="text-3xl sm:text-4xl font-title font-bold">
+            My Applications
+          </h1>
+          <p className="mt-2 text-main-light-text">
+            Track and manage your job applications
+          </p>
         </div>
 
         <Stats {...stats} />
@@ -80,5 +89,3 @@ export default function CandidateApplicationsPage() {
     </div>
   );
 }
-
-

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { JobsHeader } from "@/src/app/employer/jobs/components/JobsHeader";
-import { JobsStats } from "@/src/app/employer/jobs/components/JobsStats";
-import { SearchAndFilters } from "@/src/app/employer/jobs/components/SearchAndFilters";
-import { JobsTabs } from "@/src/app/employer/jobs/components/JobsTabs";
-import { JobsList } from "@/src/app/employer/jobs/components/JobsList";
-import { JobDetails } from "@/src/app/employer/jobs/components/JobDetails";
-import { Job } from "@/src/app/employer/jobs/components/JobCard";
+import { JobsHeader } from "@/app/employer/jobs/components/JobsHeader";
+import { JobsStats } from "@/app/employer/jobs/components/JobsStats";
+import { SearchAndFilters } from "@/app/employer/jobs/components/SearchAndFilters";
+import { JobsTabs } from "@/app/employer/jobs/components/JobsTabs";
+import { JobsList } from "@/app/employer/jobs/components/JobsList";
+import { JobDetails } from "@/app/employer/jobs/components/JobDetails";
+import { Job } from "@/app/employer/jobs/components/JobCard";
 
 // Mock data - replace with API call
 const mockJobs: Job[] = [

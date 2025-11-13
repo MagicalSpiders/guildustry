@@ -71,7 +71,7 @@ export function NoticeModal({
   const styles = variantStyles[variant];
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
@@ -83,7 +83,7 @@ export function NoticeModal({
 
       {/* Modal */}
       <div
-        className={`relative z-61 w-full max-w-md rounded-2xl border ${
+        className={`relative z-50 w-full max-w-md rounded-2xl border ${
           styles.borderColor
         } bg-surface shadow-2xl transition-all duration-300 ${
           isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
@@ -120,7 +120,7 @@ export function NoticeModal({
             <button
               type="button"
               onClick={secondaryAction.onClick}
-              className="flex-1 px-5 py-2.5 rounded-lg border border-subtle bg-light-bg text-main-text hover:border-main-accent/50 hover:bg-surface transition-all text-sm font-medium"
+              className="flex-1 px-5 cursor-pointer py-2.5 rounded-lg border border-subtle bg-light-bg text-main-text hover:border-main-accent/50 hover:bg-surface transition-all text-sm font-medium"
             >
               {secondaryAction.label}
             </button>
@@ -129,7 +129,7 @@ export function NoticeModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-5 py-2.5 rounded-lg border border-subtle bg-light-bg text-main-text hover:border-main-accent/50 hover:bg-surface transition-all text-sm font-medium"
+                className="flex-1 px-5 cursor-pointer py-2.5 rounded-lg border border-subtle bg-light-bg text-main-text hover:border-main-accent/50 hover:bg-surface transition-all text-sm font-medium"
               >
                 Close
               </button>

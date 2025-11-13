@@ -13,7 +13,7 @@ import { supabase } from "@/src/lib/supabase";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { NoticeModal } from "@/src/components/NoticeModal";
-import { Toast } from "@/src/app/employer/notifications/components/Toast";
+import { Toast } from "@/app/employer/notifications/components/Toast";
 
 type AuthMode = "login" | "signup";
 
@@ -151,6 +151,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
       return;
     }
 
+    console.log("[Flow] Resending verification email");
     setIsResendingEmail(true);
     try {
       const { error } = await supabase.auth.resend({
@@ -160,6 +161,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
       if (error) throw error;
 
+      console.log("[Flow] Verification email resent successfully");
       setNoticeTitle("Confirmation Email Sent!");
       setNoticeDescription(
         `We've sent a new confirmation email to ${pendingEmail}. Please check your inbox and click the link to verify your email address.`
@@ -167,7 +169,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
       setNoticeVariant("success");
       setNoticeOpen(true);
     } catch (error: any) {
-      console.error("Resend email error:", error);
+      console.error("[Flow] Resend email error:", error.message);
       setNoticeTitle("Failed to Resend Email");
       setNoticeDescription(
         error?.message || "Please try again later or contact support."
@@ -202,19 +204,17 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log("🔐 Login attempt with role:", data.role);
-
       if (mode === "signup") {
+        console.log(`[Flow] Signup: ${data.role}`);
         // Sign up with Supabase
         await signUp(data.email, data.password, data.role);
-        console.log("✅ Sign up successful with role:", data.role);
         // Store email for potential resend
         setPendingEmail(data.email);
         // Store email in localStorage for URL error scenarios
         if (typeof window !== "undefined") {
           localStorage.setItem("pending_email_verification", data.email);
         }
-        // Note: Supabase may require email confirmation depending on your settings
+        console.log("[Flow] Signup successful - showing verification notice");
         setNoticeTitle("Account Created Successfully!");
         setNoticeDescription(
           `Just one more step! We've sent a confirmation email to ${data.email}. Please check your inbox and click the link to verify your email address.`
@@ -222,26 +222,28 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
         setNoticeVariant("success");
         setNoticeOpen(true);
       } else {
+        console.log("[Flow] Sign in attempt");
         // Sign in with Supabase
-        // Suppress initial profile fetch for first-login candidate flow
-        if (typeof window !== "undefined") {
-          localStorage.setItem("suppress_initial_profile_fetch", "1");
-        }
-        await signIn(data.email, data.password);
-        console.log("✅ Sign in successful");
+        const { data: signInData, error: signInError } =
+          await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password,
+          });
 
-        // Get the ACTUAL user role from Supabase (not the form selection)
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        if (signInError) {
+          throw signInError;
+        }
+
+        // Use session from signIn response
+        const session = signInData?.session;
         // Check user_type first, then fall back to role for backward compatibility
         const actualRole =
           session?.user?.user_metadata?.user_type ||
           session?.user?.user_metadata?.role;
-        console.log("🔍 Actual user role from Supabase:", actualRole);
+
+        console.log(`[Flow] Sign in successful - Role: ${actualRole}`);
 
         if (!actualRole) {
-          console.error("⚠️ No role found in user metadata");
           router.push("/dashboard");
           return;
         }
@@ -251,21 +253,37 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
         setToastDescription(undefined);
         setToastVisible(true);
 
-        // Employers go directly to dashboard, candidates get first-login prompt
-        console.log("🚀 Routing based on actual role:", actualRole);
+        // Handle first-login flows for both roles
         if (actualRole === "employer") {
-          // Employers: always go to dashboard
-          console.log("➡️ Redirecting to /employer/dashboard");
-          router.push("/employer/dashboard");
+          // Employers: check if first login
+          const hasSeenPostLogin =
+            typeof window !== "undefined"
+              ? localStorage.getItem("has_seen_employer_post_login") === "1"
+              : false;
+
+          if (!hasSeenPostLogin) {
+            console.log(
+              "[Flow] First-time employer - showing company profile prompt"
+            );
+            setNoticeTitle("Complete your company profile?");
+            setNoticeDescription(
+              "Would you like to set up your company profile now? This helps candidates learn about your company."
+            );
+            setNoticeVariant("info");
+            setNoticeOpen(true);
+          } else {
+            console.log("[Flow] Returning employer - redirecting to dashboard");
+            router.push("/employer/dashboard");
+          }
         } else if (actualRole === "candidate") {
-          // Candidates: show profile prompt on first login
+          // Candidates: check if first login
           const hasSeenPostLogin =
             typeof window !== "undefined"
               ? localStorage.getItem("has_seen_candidate_post_login") === "1"
               : false;
 
           if (!hasSeenPostLogin) {
-            console.log("ℹ️ First-time candidate - showing profile modal");
+            console.log("[Flow] First-time candidate - showing profile prompt");
             setNoticeTitle("Complete your profile?");
             setNoticeDescription(
               "Would you like to fill your candidate profile now to get better matches?"
@@ -273,23 +291,18 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             setNoticeVariant("info");
             setNoticeOpen(true);
           } else {
-            console.log("➡️ Redirecting to /candidate/dashboard");
+            console.log(
+              "[Flow] Returning candidate - redirecting to dashboard"
+            );
             router.push("/candidate/dashboard");
           }
         } else {
-          // Fallback
-          console.log("⚠️ Unknown role, redirecting to /dashboard");
           router.push("/dashboard");
         }
         return;
       }
-
-      // Show toast on successful signup
-      setToastMessage("Logged in successfully");
-      setToastDescription(undefined);
-      setToastVisible(true);
     } catch (error: any) {
-      console.error("Authentication error:", error);
+      console.error("[Flow] Auth error:", error.message);
 
       // Check if error is related to email confirmation
       const errorMessage = error?.message?.toLowerCase() || "";
@@ -522,16 +535,18 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
         variant={noticeVariant}
         onClose={() => {
           setNoticeOpen(false);
-          // Only redirect for profile prompt after successful login
-          // Don't redirect for signup confirmation or errors
-          if (
-            noticeVariant === "info" &&
-            noticeTitle === "Complete your profile?" &&
-            typeof window !== "undefined"
-          ) {
-            localStorage.setItem("has_seen_candidate_post_login", "1");
-            localStorage.removeItem("suppress_initial_profile_fetch");
-            router.push("/candidate/dashboard");
+          // Handle redirect after closing modal
+          if (noticeVariant === "info" && typeof window !== "undefined") {
+            // Candidate profile prompt
+            if (noticeTitle === "Complete your profile?") {
+              localStorage.setItem("has_seen_candidate_post_login", "1");
+              router.push("/candidate/dashboard");
+            }
+            // Employer company profile prompt
+            else if (noticeTitle === "Complete your company profile?") {
+              localStorage.setItem("has_seen_employer_post_login", "1");
+              router.push("/employer/dashboard");
+            }
           }
         }}
         primaryAction={
@@ -542,8 +557,19 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
                   setNoticeOpen(false);
                   if (typeof window !== "undefined") {
                     localStorage.setItem("has_seen_candidate_post_login", "1");
-                    localStorage.removeItem("suppress_initial_profile_fetch");
-                    router.push("/candidate/profile/edit");
+                    router.push("/candidate/profile");
+                  }
+                },
+              }
+            : noticeVariant === "info" &&
+              noticeTitle === "Complete your company profile?"
+            ? {
+                label: "Set Up Company",
+                onClick: () => {
+                  setNoticeOpen(false);
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem("has_seen_employer_post_login", "1");
+                    router.push("/employer/profile/setup");
                   }
                 },
               }
@@ -559,23 +585,27 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             : undefined
         }
         secondaryAction={
-          noticeVariant === "info" && noticeTitle === "Complete your profile?"
+          noticeVariant === "info" &&
+          (noticeTitle === "Complete your profile?" ||
+            noticeTitle === "Complete your company profile?")
             ? {
                 label: "Skip for now",
                 onClick: () => {
                   setNoticeOpen(false);
                   if (typeof window !== "undefined") {
-                    localStorage.setItem("has_seen_candidate_post_login", "1");
-                    localStorage.removeItem("suppress_initial_profile_fetch");
-                    router.push("/candidate/dashboard");
+                    if (noticeTitle === "Complete your profile?") {
+                      localStorage.setItem(
+                        "has_seen_candidate_post_login",
+                        "1"
+                      );
+                      router.push("/candidate/dashboard");
+                    } else {
+                      localStorage.setItem("has_seen_employer_post_login", "1");
+                      router.push("/employer/dashboard");
+                    }
                   }
                 },
               }
-            : noticeVariant === "info" &&
-              (noticeTitle === "Email Verification Required" ||
-                noticeTitle === "Email Verification Link Expired") &&
-              pendingEmail
-            ? undefined
             : undefined
         }
       />

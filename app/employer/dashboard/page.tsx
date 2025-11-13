@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { EmployerHero } from "@/src/app/employer/dashboard/components/EmployerHero";
-import { RecentJobPostings } from "@/src/app/employer/dashboard/components/RecentJobPostings";
-import { RecentApplicants } from "@/src/app/employer/dashboard/components/RecentApplicants";
+import { EmployerHero } from "@/app/employer/dashboard/components/EmployerHero";
+import { RecentJobPostings } from "@/app/employer/dashboard/components/RecentJobPostings";
+import { RecentApplicants } from "@/app/employer/dashboard/components/RecentApplicants";
 
 export const metadata: Metadata = {
   title: "Employer Dashboard – Guildustry",

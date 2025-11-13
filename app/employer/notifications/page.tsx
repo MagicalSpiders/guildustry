@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { NotificationsHeader } from "@/src/app/employer/notifications/components/NotificationsHeader";
-import { NotificationsStats } from "@/src/app/employer/notifications/components/NotificationsStats";
-import { NotificationsTabs } from "@/src/app/employer/notifications/components/NotificationsTabs";
-import { NotificationsList } from "@/src/app/employer/notifications/components/NotificationsList";
-import { ViewApplicationModal } from "@/src/app/employer/notifications/components/ViewApplicationModal";
-import { ViewDetailsModal } from "@/src/app/employer/notifications/components/ViewDetailsModal";
-import { Toast } from "@/src/app/employer/notifications/components/Toast";
+import { NotificationsHeader } from "@/app/employer/notifications/components/NotificationsHeader";
+import { NotificationsStats } from "@/app/employer/notifications/components/NotificationsStats";
+import { NotificationsTabs } from "@/app/employer/notifications/components/NotificationsTabs";
+import { NotificationsList } from "@/app/employer/notifications/components/NotificationsList";
+import { ViewApplicationModal } from "@/app/employer/notifications/components/ViewApplicationModal";
+import { ViewDetailsModal } from "@/app/employer/notifications/components/ViewDetailsModal";
+import { Toast } from "@/app/employer/notifications/components/Toast";
 import {
   mockNotifications,
   Notification,
-} from "@/src/app/employer/notifications/data";
+} from "@/app/employer/notifications/data";
 
 export default function EmployerNotificationsPage() {
   const [notifications, setNotifications] =

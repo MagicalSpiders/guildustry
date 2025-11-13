@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ResourcesHeader } from "@/src/app/candidate/resources/components/ResourcesHeader";
-import { ResourcesTabs } from "@/src/app/candidate/resources/components/ResourcesTabs";
-import { Trade101Tab } from "@/src/app/candidate/resources/components/Trade101Tab";
-import { CertificationsTab } from "@/src/app/candidate/resources/components/CertificationsTab";
-import { ResourcesTab } from "@/src/app/candidate/resources/components/ResourcesTab";
-import { InterviewPrepTab } from "@/src/app/candidate/resources/components/InterviewPrepTab";
-import { trades } from "@/src/app/candidate/resources/data/trades";
-import { certifications } from "@/src/app/candidate/resources/data/certifications";
-import { resources } from "@/src/app/candidate/resources/data/resources";
-import { interviewPrep } from "@/src/app/candidate/resources/data/interviewPrep";
+import { ResourcesHeader } from "@/app/candidate/resources/components/ResourcesHeader";
+import { ResourcesTabs } from "@/app/candidate/resources/components/ResourcesTabs";
+import { Trade101Tab } from "@/app/candidate/resources/components/Trade101Tab";
+import { CertificationsTab } from "@/app/candidate/resources/components/CertificationsTab";
+import { ResourcesTab } from "@/app/candidate/resources/components/ResourcesTab";
+import { InterviewPrepTab } from "@/app/candidate/resources/components/InterviewPrepTab";
+import { trades } from "@/app/candidate/resources/data/trades";
+import { certifications } from "@/app/candidate/resources/data/certifications";
+import { resources } from "@/app/candidate/resources/data/resources";
+import { interviewPrep } from "@/app/candidate/resources/data/interviewPrep";
 
 export default function CandidateResourcesPage() {
   const [activeTab, setActiveTab] = useState("trade101");

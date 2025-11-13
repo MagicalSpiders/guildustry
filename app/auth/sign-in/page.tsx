@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AuthForm } from "@/src/app/auth/components/AuthForm";
+import { AuthForm } from "@/app/auth/components/AuthForm";
 
 export const metadata: Metadata = {
   title: "Sign In - Guildustry",

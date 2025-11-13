@@ -80,8 +80,6 @@ export async function updateCompany(updates: CompanyUpdate): Promise<Company> {
  * @returns The user's company or null if not found
  */
 export async function getCompanyByOwner(): Promise<Company | null> {
-  console.log("🔍 getCompanyByOwner: Starting to fetch company...");
-
   // Check if user is authenticated
   const {
     data: { user },
@@ -89,21 +87,9 @@ export async function getCompanyByOwner(): Promise<Company | null> {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    console.error("❌ getCompanyByOwner: User not authenticated", {
-      authError,
-    });
     throw new Error("User must be authenticated to get company");
   }
 
-  console.log("✅ getCompanyByOwner: User authenticated", {
-    userId: user.id,
-    userEmail: user.email,
-  });
-
-  console.log(
-    "🔍 getCompanyByOwner: Querying companies table with owner_id:",
-    user.id
-  );
   const { data, error } = await supabase
     .from("companies")
     .select("*")
@@ -113,25 +99,10 @@ export async function getCompanyByOwner(): Promise<Company | null> {
   if (error) {
     if (error.code === "PGRST116") {
       // No company found
-      console.log(
-        "⚠️ getCompanyByOwner: No company found for owner_id:",
-        user.id
-      );
       return null;
     }
-    console.error("❌ getCompanyByOwner: Error fetching company", {
-      errorCode: error.code,
-      errorMessage: error.message,
-      ownerId: user.id,
-    });
     throw new Error(`Failed to fetch company: ${error.message}`);
   }
-
-  console.log("✅ getCompanyByOwner: Company found", {
-    companyId: data?.id,
-    companyName: data?.name,
-    ownerId: data?.owner_id,
-  });
 
   return data;
 }

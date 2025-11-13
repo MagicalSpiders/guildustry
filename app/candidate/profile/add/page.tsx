@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,9 +18,9 @@ import { TradeStep } from "@/src/app/profile/steps/Trade";
 import { ResumeStep } from "@/src/app/profile/steps/Resume";
 import { AssessmentStep } from "@/src/app/profile/steps/Assessment";
 import { useAuth } from "@/src/components/AuthProvider";
-import { insertUserProfile, updateUserProfile, uploadResume } from "@/src/lib/profileFunctions";
+import { insertUserProfile, uploadResume } from "@/src/lib/profileFunctions";
 import { useRouter } from "next/navigation";
-
+import { PageSkeleton } from "@/src/components/ui/PageSkeleton";
 
 const steps = [
   { id: "personal", title: "Personal" },
@@ -29,10 +29,18 @@ const steps = [
   { id: "assessment", title: "Assessment" },
 ];
 
-export default function ProfilePage() {
+const stepNames = ["Personal", "Trade", "Resume", "Assessment"];
+const stepSchemas = [
+  personalSchema,
+  tradeSchema,
+  resumeSchema,
+  assessmentSchema,
+];
+
+export default function AddProfilePage() {
   const [current, setCurrent] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
   const router = useRouter();
 
   const methods = useForm<ProfileFormValues>({
@@ -50,52 +58,82 @@ export default function ProfilePage() {
       resume_file_url: null,
       role: "candidate",
       priority: 1,
+      q1: undefined,
+      q2: undefined,
     },
-    mode: "onChange",
+    mode: "onBlur", // Only validate when user leaves a field
   });
 
-  // Load existing profile if available
+  // Pre-fill email from auth user
   useEffect(() => {
-    if (!authLoading && profile) {
-      methods.reset({
-        fullname: profile.fullname,
-        email: profile.email,
-        phone_number: profile.phone_number,
-        city: profile.city,
-        state: profile.state,
-        primary_trade: profile.primary_trade,
-        years_of_experience: profile.years_of_experience,
-        shift_preference: profile.shift_preference,
-        has_valid_licence: profile.has_valid_licence,
-        resume_file_url: profile.resume_file_url,
-        role: profile.role as "candidate" | "employer",
-        priority: profile.priority,
-      });
-    } else if (!authLoading && user) {
-      // Pre-fill email from auth user
+    if (!authLoading && user) {
+      console.log("[Profile] Pre-filling email from auth");
       methods.setValue("email", user.email || "");
     }
-  }, [authLoading, profile, user]); // eslint-disable-line
+  }, [authLoading, user, methods]);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      console.log("[Flow] Not authenticated - redirecting to sign-in");
+      router.push("/auth/sign-in");
+    }
+  }, [authLoading, user, router]);
+
+  // If profile already exists, redirect to view
+  useEffect(() => {
+    if (!authLoading && profile) {
+      console.log("[Flow] Profile already exists - redirecting to view");
+      router.push("/candidate/profile/view");
+    }
+  }, [authLoading, profile, router]);
 
   const goNext = async () => {
-    const stepResolver = [personalSchema, tradeSchema, resumeSchema, assessmentSchema][current];
+    const currentStepName = stepNames[current];
+    const stepResolver = stepSchemas[current];
     const data = methods.getValues();
+
+    console.log(
+      `[Profile] Step ${current + 1}/4: ${currentStepName} - Validating...`
+    );
+
     try {
+      // Validate only the current step's fields
       stepResolver.parse(data);
+      console.log(`[Profile] Step ${current + 1}/4: Validation passed`);
+
+      // Clear any previous errors for this step
+      methods.clearErrors();
+
       if (current < steps.length - 1) {
-        setCurrent((c) => c + 1);
+        setCurrent(current + 1);
       } else {
-        // Final step - save profile to Supabase
+        // Final step - save profile
+        console.log("[Profile] Final step reached - saving profile");
         await handleSubmit();
       }
-    } catch (e) {
-      // trigger field validation display
+    } catch (e: any) {
+      console.error(`[Profile] Step ${current + 1}/4: Validation failed`);
+
+      // Manually set errors for the fields that failed validation
+      if (e.errors) {
+        e.errors.forEach((error: any) => {
+          const fieldName = error.path[0];
+          methods.setError(fieldName, {
+            type: "manual",
+            message: error.message,
+          });
+        });
+      }
+
+      // Trigger validation to show error messages
       await methods.trigger();
     }
   };
 
   const handleSubmit = async () => {
     if (!user) {
+      console.error("[Profile] No user found");
       alert("You must be logged in to save your profile");
       router.push("/auth/sign-in");
       return;
@@ -104,12 +142,13 @@ export default function ProfilePage() {
     setIsSubmitting(true);
     try {
       const data = methods.getValues();
-      
+
       // Handle resume file upload if present
       let resumeUrl = data.resume_file_url;
       const resumeFile = (data as any).resumeFile as File | undefined;
-      
+
       if (resumeFile) {
+        console.log("[Profile] Uploading resume file");
         resumeUrl = await uploadResume(resumeFile, user.id);
       }
 
@@ -131,39 +170,41 @@ export default function ProfilePage() {
         company_id: data.company_id || null,
       };
 
-      if (profile) {
-        // Update existing profile
-        await updateUserProfile(profileData);
-      } else {
-        // Create new profile
-        await insertUserProfile(profileData);
-      }
+      await insertUserProfile(profileData);
+      await refreshProfile();
 
-      alert("Profile saved successfully!");
-      router.push("/candidate/profile/userprofile");
+      console.log("[Profile] Profile created - redirecting to view");
+      alert("Profile created successfully!");
+      router.push("/candidate/profile/view");
     } catch (error: any) {
-      console.error("Error saving profile:", error);
+      console.error("[Profile] Save error:", error.message);
       alert(error.message || "Failed to save profile. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const goBack = () => setCurrent((c) => Math.max(0, c - 1));
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/auth/sign-in");
+  const goBack = () => {
+    if (current > 0) {
+      console.log(`[Profile] Going back to step ${current}/${steps.length}`);
+      setCurrent(current - 1);
     }
-  }, [authLoading, user, router]);
+  };
+
+  if (authLoading) {
+    return <PageSkeleton variant="profile" />;
+  }
 
   return (
     <div className="min-h-screen bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-title font-bold">Profile Settings</h1>
-          <p className="mt-2 text-main-light-text">Manage your profile information and preferences.</p>
+          <h1 className="text-3xl sm:text-4xl font-title font-bold">
+            Create Your Profile
+          </h1>
+          <p className="mt-2 text-main-light-text">
+            Complete your profile to showcase your skills and experience.
+          </p>
         </div>
 
         {/* Stepper */}
@@ -193,7 +234,7 @@ export default function ProfilePage() {
             />
             {isSubmitting && (
               <p className="mt-4 text-center text-sm text-main-light-text">
-                Saving your profile...
+                Creating your profile...
               </p>
             )}
           </form>

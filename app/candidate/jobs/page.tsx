@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { JobsHeader } from "@/src/app/candidate/jobs/components/JobsHeader";
-import { JobsStats } from "@/src/app/candidate/jobs/components/JobsStats";
-import { SearchAndFilters } from "@/src/app/candidate/jobs/components/SearchAndFilters";
-import { JobsList } from "@/src/app/candidate/jobs/components/JobsList";
-import { JobDetails } from "@/src/app/candidate/jobs/components/JobDetails";
-import { mockJobs, CandidateJob } from "@/src/app/candidate/jobs/data/mockJobs";
+import { JobsHeader } from "@/app/candidate/jobs/components/JobsHeader";
+import { JobsStats } from "@/app/candidate/jobs/components/JobsStats";
+import { SearchAndFilters } from "@/app/candidate/jobs/components/SearchAndFilters";
+import { JobsList } from "@/app/candidate/jobs/components/JobsList";
+import { JobDetails } from "@/app/candidate/jobs/components/JobDetails";
+import { mockJobs, CandidateJob } from "@/app/candidate/jobs/data/mockJobs";
 
 export default function CandidateJobsPage() {
   const [jobs, setJobs] = useState<CandidateJob[]>(mockJobs);
