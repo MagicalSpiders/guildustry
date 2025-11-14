@@ -26,7 +26,7 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
 
   console.log('[Profile] Inserting profile data');
   const { data, error } = await supabase
-    .from('profiles')
+    .from('candidate_profile')
     .insert(dataToInsert)
     .select()
     .single();
@@ -61,7 +61,7 @@ export async function updateUserProfile(updates: UserProfileUpdate): Promise<Use
   }
 
   const { data, error } = await supabase
-    .from('profiles')
+    .from('candidate_profile')
     .update(updates)
     .eq('id', user.id)
     .select()
@@ -94,7 +94,7 @@ export async function getUserProfile(): Promise<UserProfile | null> {
   }
 
   const { data, error } = await supabase
-    .from('profiles')
+    .from('candidate_profile')
     .select('*')
     .eq('id', user.id)
     .single();
@@ -123,7 +123,7 @@ export async function deleteUserProfile(): Promise<boolean> {
   }
 
   const { error } = await supabase
-    .from('profiles')
+    .from('candidate_profile')
     .delete()
     .eq('id', user.id);
 

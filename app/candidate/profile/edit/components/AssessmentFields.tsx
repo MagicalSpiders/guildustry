@@ -2,43 +2,100 @@ import { useFormContext } from "react-hook-form";
 import type { ProfileFormValues } from "@/src/app/profile/schema";
 
 export function AssessmentFields() {
-  const { register } = useFormContext<ProfileFormValues>();
+  const { register, formState: { errors } } = useFormContext<ProfileFormValues>();
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-medium mb-2 text-main-text">
+        <label className="block text-sm font-medium mb-2 text-main-text">
           1) On a high-stakes project, what's your priority?
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="safety" {...register("q1")} /> Safety first
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.priority_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Safety first" 
+              {...register("priority_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Safety first</span>
           </label>
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="speed" {...register("q1")} /> Deliver on time
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.priority_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Deliver on time" 
+              {...register("priority_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Deliver on time</span>
           </label>
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="cost" {...register("q1")} /> Control costs
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.priority_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Control costs" 
+              {...register("priority_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Control costs</span>
           </label>
         </div>
+        {errors.priority_choice && (
+          <p className="mt-1 text-sm text-red-500">
+            {errors.priority_choice.message as string}
+          </p>
+        )}
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-2 text-main-text">
+        <label className="block text-sm font-medium mb-2 text-main-text">
           2) Which 3D shape results from rotating this 2D profile?
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="cylinder" {...register("q2")} /> Cylinder
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.shape_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Cylinder" 
+              {...register("shape_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Cylinder</span>
           </label>
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="sphere" {...register("q2")} /> Sphere
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.shape_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Sphere" 
+              {...register("shape_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Sphere</span>
           </label>
-          <label className="flex items-center gap-2 rounded-lg border border-subtle bg-light-bg px-3 py-2">
-            <input type="radio" value="torus" {...register("q2")} /> Torus
+          <label className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+            errors.shape_choice ? "border-red-500" : "border-subtle bg-light-bg hover:border-main-accent/50"
+          }`}>
+            <input 
+              type="radio" 
+              value="Torus" 
+              {...register("shape_choice")}
+              className="text-main-accent"
+            />
+            <span className="text-sm text-main-text">Torus</span>
           </label>
         </div>
+        {errors.shape_choice && (
+          <p className="mt-1 text-sm text-red-500">
+            {errors.shape_choice.message as string}
+          </p>
+        )}
       </div>
     </div>
   );
 }
-

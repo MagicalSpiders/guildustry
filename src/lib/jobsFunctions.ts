@@ -175,14 +175,24 @@ export async function deleteJob(jobId: string): Promise<boolean> {
 }
 
 /**
+ * Job with company information
+ */
+export type JobWithCompany = Job & {
+  company?: {
+    id: string;
+    name: string;
+  };
+};
+
+/**
  * Get list of open jobs (for candidates to browse)
  * @param limit - Optional limit on number of jobs to return
- * @returns Array of open jobs
+ * @returns Array of open jobs with company information
  */
-export async function getOpenJobs(limit?: number): Promise<Job[]> {
+export async function getOpenJobs(limit?: number): Promise<JobWithCompany[]> {
   let query = supabase
     .from("jobs")
-    .select("*")
+    .select("*, company:companies(id, name)")
     .eq("status", "open")
     .order("posted_date", { ascending: false });
 
@@ -196,7 +206,7 @@ export async function getOpenJobs(limit?: number): Promise<Job[]> {
     throw new Error(`Failed to fetch open jobs: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as JobWithCompany[];
 }
 
 /**

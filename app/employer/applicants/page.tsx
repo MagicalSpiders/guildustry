@@ -1,185 +1,181 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ApplicantsHeader } from "@/app/employer/applicants/components/ApplicantsHeader";
 import { ApplicantsStats } from "@/app/employer/applicants/components/ApplicantsStats";
 import { ApplicantsSearchAndFilters } from "@/app/employer/applicants/components/ApplicantsSearchAndFilters";
 import { ApplicantsTabs } from "@/app/employer/applicants/components/ApplicantsTabs";
 import { ApplicantsList } from "@/app/employer/applicants/components/ApplicantsList";
 import { Applicant } from "@/app/employer/applicants/components/ApplicantCard";
+import { getApplicationsForEmployer, updateApplication, ApplicationWithRelations } from "@/src/lib/applicationsFunctions";
+import { NoticeModal } from "@/src/components/NoticeModal";
 
-// Mock data - replace with API call
-const mockApplicants: Applicant[] = [
-  {
-    id: "1",
-    name: "John Smith",
-    status: "interviewScheduled",
-    jobTitle: "Licensed Electrician",
-    location: "New York, NY",
-    experience: "5 years",
-    rating: 4.8,
-    appliedDate: "2025-10-14",
-    education: "Technical School",
-    employmentType: "Full-time",
-    shiftPattern: "Day Shift",
-    transportation: "Has License & Vehicle",
-    skills: [
-      { name: "Residential Wiring", matched: true },
-      { name: "Commercial Projects", matched: true },
-      { name: "OSHA Certified", matched: false },
-      { name: "Panel Installation", matched: false },
-    ],
-    certifications: [
-      { name: "Journeyman Electrician License", matched: true },
-      { name: "OSHA 30-Hour Safety", matched: true },
-      { name: "CPR/First Aid", matched: false },
-    ],
-    assessment: {
-      overall: 92,
-      technicalAptitude: 95,
-      problemSolving: 90,
-      safetyAwareness: 88,
-      adaptability: 92,
-    },
-  },
-  {
-    id: "2",
-    name: "Sarah Johnson",
-    status: "new",
-    jobTitle: "Master Plumber",
-    location: "Brooklyn, NY",
-    experience: "3 years",
-    rating: 4.5,
-    appliedDate: "2025-10-15",
-    education: "Associate Degree",
-    employmentType: "Full-time",
-    shiftPattern: "Day Shift",
-    transportation: "Has License & Vehicle",
-    skills: [
-      { name: "Pipe Installation", matched: true },
-      { name: "Blueprint Reading", matched: true },
-      { name: "Welding", matched: true },
-      { name: "HVAC Installation", matched: false },
-    ],
-    certifications: [
-      { name: "Master Plumber License", matched: true },
-      { name: "OSHA 10-Hour Safety", matched: true },
-      { name: "CPR/First Aid", matched: true },
-    ],
-    assessment: {
-      overall: 88,
-      technicalAptitude: 85,
-      problemSolving: 92,
-      safetyAwareness: 90,
-      adaptability: 85,
-    },
-  },
-  {
-    id: "3",
-    name: "Michael Chen",
-    status: "underReview",
-    jobTitle: "Licensed Electrician",
-    location: "Manhattan, NY",
-    experience: "7 years",
-    rating: 4.9,
-    appliedDate: "2025-10-13",
-    education: "Bachelor's Degree",
-    employmentType: "Full-time",
-    shiftPattern: "Flexible",
-    transportation: "Has License & Vehicle",
-    skills: [
-      { name: "Residential Wiring", matched: true },
-      { name: "Commercial Projects", matched: true },
-      { name: "OSHA Certified", matched: true },
-      { name: "Panel Installation", matched: true },
-    ],
-    certifications: [
-      { name: "Master Electrician License", matched: true },
-      { name: "OSHA 30-Hour Safety", matched: true },
-      { name: "CPR/First Aid", matched: true },
-    ],
-    assessment: {
-      overall: 96,
-      technicalAptitude: 98,
-      problemSolving: 95,
-      safetyAwareness: 96,
-      adaptability: 94,
-    },
-  },
-  {
-    id: "4",
-    name: "Emily Rodriguez",
-    status: "shortlisted",
-    jobTitle: "HVAC Technician",
-    location: "Queens, NY",
-    experience: "4 years",
-    rating: 4.6,
-    appliedDate: "2025-10-12",
-    education: "Trade School Certificate",
-    employmentType: "Full-time",
-    shiftPattern: "Day Shift",
-    transportation: "Has License & Vehicle",
-    skills: [
-      { name: "HVAC Installation", matched: true },
-      { name: "HVAC Repair", matched: true },
-      { name: "Circuit Installation", matched: true },
-      { name: "Safety Compliance", matched: true },
-    ],
-    certifications: [
-      { name: "EPA 608 Certification", matched: true },
-      { name: "OSHA 10-Hour Safety", matched: true },
-      { name: "NATE Certification", matched: true },
-    ],
-    assessment: {
-      overall: 90,
-      technicalAptitude: 92,
-      problemSolving: 88,
-      safetyAwareness: 91,
-      adaptability: 89,
-    },
-  },
-  {
-    id: "5",
-    name: "Robert Martinez",
-    status: "rejected",
-    jobTitle: "Licensed Electrician",
-    location: "New York, NY",
-    experience: "2 years",
-    rating: 3.8,
-    appliedDate: "2025-10-11",
-    education: "High School",
-    employmentType: "Part-time",
-    shiftPattern: "Night Shift",
-    transportation: "No License/Vehicle",
-    skills: [
-      { name: "Residential Wiring", matched: true },
-      { name: "Commercial Projects", matched: false },
-      { name: "OSHA Certified", matched: false },
-      { name: "Panel Installation", matched: false },
-    ],
-    certifications: [
-      { name: "Journeyman Electrician License", matched: true },
-      { name: "OSHA 10-Hour Safety", matched: false },
-      { name: "CPR/First Aid", matched: false },
-    ],
-  },
-];
+// Map backend status to UI status
+const mapStatus = (status: string): Applicant["status"] => {
+  const statusMap: Record<string, Applicant["status"]> = {
+    pending: "new",
+    underReview: "underReview",
+    shortlisted: "shortlisted",
+    interviewScheduled: "interviewScheduled",
+    rejected: "rejected",
+  };
+  return statusMap[status] || "new";
+};
 
 export default function EmployerApplicantsPage() {
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [noticeModal, setNoticeModal] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+    variant: "success" | "error" | "info";
+  }>({
+    open: false,
+    title: "",
+    variant: "info",
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState("All Jobs");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Fetch applications
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        setNoticeModal({
+          open: true,
+          title: "Loading Applicants...",
+          description: "Please wait while we fetch applicant data.",
+          variant: "info",
+        });
+
+        const apps = await getApplicationsForEmployer();
+
+        // Transform ApplicationWithRelations to Applicant format
+        const transformedApplicants: Applicant[] = apps.map((app) => {
+          const profile = app.candidate_profile;
+          const job = app.jobs;
+          const submittedDate = new Date(app.submitted_at);
+          const formattedDate = submittedDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+
+          return {
+            id: app.id,
+            name: profile?.fullname || "Unknown Candidate",
+            status: mapStatus(app.status),
+            jobTitle: job?.title || "Unknown Position",
+            location: `${profile?.city || ""}, ${profile?.state || ""}`.trim() || job?.location || "Unknown Location",
+            experience: profile?.years_of_experience
+              ? `${profile.years_of_experience} years`
+              : "Not specified",
+            rating: 4.5, // Placeholder - not in database
+            appliedDate: formattedDate,
+            education: "Not specified", // Placeholder - not in database
+            employmentType: job?.job_type || "Not specified",
+            shiftPattern: profile?.shift_preference || "Not specified",
+            transportation: profile?.has_valid_licence
+              ? "Has License & Vehicle"
+              : "No License/Vehicle",
+            skills: job?.skills?.map((skill) => ({ name: skill, matched: true })) || [],
+            certifications: [], // Placeholder - not in database
+            assessment: {
+              overall: 85, // Placeholder
+              technicalAptitude: 85,
+              problemSolving: 85,
+              safetyAwareness: 85,
+              adaptability: 85,
+            },
+          };
+        });
+
+        setApplicants(transformedApplicants);
+        setNoticeModal({ open: false, title: "", variant: "info" });
+      } catch (err: any) {
+        const errorMessage =
+          err.message || "Failed to load applicants. Please try again later.";
+        setError(errorMessage);
+        setNoticeModal({
+          open: true,
+          title: "Error Loading Applicants",
+          description: errorMessage,
+          variant: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  // Handle status update
+  const handleStatusUpdate = async (applicantId: string, newStatus: Applicant["status"]) => {
+    try {
+      setNoticeModal({
+        open: true,
+        title: "Updating Status...",
+        description: "Please wait while we update the application status.",
+        variant: "info",
+      });
+
+      // Map UI status back to backend status
+      const statusMap: Record<Applicant["status"], string> = {
+        new: "pending",
+        underReview: "underReview",
+        shortlisted: "shortlisted",
+        interviewScheduled: "interviewScheduled",
+        rejected: "rejected",
+      };
+
+      await updateApplication(applicantId, {
+        status: statusMap[newStatus],
+      });
+
+      // Update local state
+      setApplicants((prev) =>
+        prev.map((app) =>
+          app.id === applicantId ? { ...app, status: newStatus } : app
+        )
+      );
+
+      setNoticeModal({
+        open: true,
+        title: "Status Updated",
+        description: "Application status has been updated successfully.",
+        variant: "success",
+      });
+
+      setTimeout(() => {
+        setNoticeModal({ open: false, title: "", variant: "info" });
+      }, 2000);
+    } catch (err: any) {
+      setNoticeModal({
+        open: true,
+        title: "Update Failed",
+        description: err.message || "Failed to update status. Please try again.",
+        variant: "error",
+      });
+    }
+  };
+
   // Get unique jobs for filter
   const availableJobs = useMemo(() => {
-    const jobs = new Set(mockApplicants.map((app) => app.jobTitle));
+    const jobs = new Set(applicants.map((app) => app.jobTitle));
     return ["All Jobs", ...Array.from(jobs)];
-  }, []);
+  }, [applicants]);
 
   // Filter applicants based on search, filters, and tab
   const filteredApplicants = useMemo(() => {
-    let filtered = [...mockApplicants];
+    let filtered = [...applicants];
 
     // Search filter
     if (searchQuery) {
@@ -231,55 +227,87 @@ export default function EmployerApplicantsPage() {
     }
 
     return filtered;
-  }, [searchQuery, selectedJob, selectedStatus, activeTab]);
+  }, [applicants, searchQuery, selectedJob, selectedStatus, activeTab]);
 
   // Calculate stats
   const stats = useMemo(() => {
     return {
-      total: mockApplicants.length,
-      new: mockApplicants.filter((app) => app.status === "new").length,
-      interviews: mockApplicants.filter((app) => app.status === "interviewScheduled").length,
-      shortlisted: mockApplicants.filter((app) => app.status === "shortlisted").length,
+      total: applicants.length,
+      new: applicants.filter((app) => app.status === "new").length,
+      interviews: applicants.filter((app) => app.status === "interviewScheduled").length,
+      shortlisted: applicants.filter((app) => app.status === "shortlisted").length,
     };
-  }, []);
+  }, [applicants]);
 
   // Calculate tab counts
   const tabCounts = useMemo(() => {
     return {
-      all: mockApplicants.length,
-      new: mockApplicants.filter((app) => app.status === "new").length,
-      underReview: mockApplicants.filter((app) => app.status === "underReview").length,
-      shortlisted: mockApplicants.filter((app) => app.status === "shortlisted").length,
-      interviews: mockApplicants.filter((app) => app.status === "interviewScheduled").length,
+      all: applicants.length,
+      new: applicants.filter((app) => app.status === "new").length,
+      underReview: applicants.filter((app) => app.status === "underReview").length,
+      shortlisted: applicants.filter((app) => app.status === "shortlisted").length,
+      interviews: applicants.filter((app) => app.status === "interviewScheduled").length,
     };
-  }, []);
+  }, [applicants]);
 
   return (
-    <div className="min-h-screen bg-main-bg text-main-text">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
-        <ApplicantsHeader />
-        <ApplicantsStats
-          total={stats.total}
-          new={stats.new}
-          interviews={stats.interviews}
-          shortlisted={stats.shortlisted}
-        />
+    <>
+      <NoticeModal
+        open={noticeModal.open}
+        title={noticeModal.title}
+        description={noticeModal.description}
+        variant={noticeModal.variant}
+        onClose={() =>
+          setNoticeModal({ open: false, title: "", variant: "info" })
+        }
+        primaryAction={
+          noticeModal.variant === "error"
+            ? {
+                label: "Retry",
+                onClick: () => {
+                  setNoticeModal({ open: false, title: "", variant: "info" });
+                  window.location.reload();
+                },
+              }
+            : undefined
+        }
+      />
 
-        <ApplicantsSearchAndFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedJob={selectedJob}
-          onJobChange={setSelectedJob}
-          selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
-          jobs={availableJobs}
-        />
+      <div className="min-h-screen bg-main-bg text-main-text">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
+          <ApplicantsHeader />
+          <ApplicantsStats
+            total={stats.total}
+            new={stats.new}
+            interviews={stats.interviews}
+            shortlisted={stats.shortlisted}
+          />
 
-        <ApplicantsTabs activeTab={activeTab} onTabChange={setActiveTab} counts={tabCounts} />
+          <ApplicantsSearchAndFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedJob={selectedJob}
+            onJobChange={setSelectedJob}
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            jobs={availableJobs}
+          />
 
-        <ApplicantsList applicants={filteredApplicants} />
+          <ApplicantsTabs activeTab={activeTab} onTabChange={setActiveTab} counts={tabCounts} />
+
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-main-light-text">Loading applicants...</p>
+            </div>
+          ) : (
+            <ApplicantsList
+              applicants={filteredApplicants}
+              onStatusUpdate={handleStatusUpdate}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

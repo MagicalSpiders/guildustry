@@ -107,6 +107,16 @@ export default function PostJobPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [noticeModal, setNoticeModal] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+    variant: "success" | "error" | "info";
+  }>({
+    open: false,
+    title: "",
+    variant: "info",
+  });
   const totalSteps = 4;
   const stepTitles = [
     "Role Basics",
@@ -200,6 +210,14 @@ export default function PostJobPage() {
     setSubmitError(null);
 
     try {
+      // Show loading modal
+      setNoticeModal({
+        open: true,
+        title: "Creating Job Posting...",
+        description: "Please wait while we create your job posting.",
+        variant: "info",
+      });
+
       await insertJob({
         title: data.title,
         description: data.description,
@@ -217,11 +235,28 @@ export default function PostJobPage() {
         posted_date: new Date().toISOString(),
       });
 
-      // Success - redirect to jobs page
-      router.push("/employer/jobs");
+      // Show success modal
+      setNoticeModal({
+        open: true,
+        title: "Job Posted Successfully!",
+        description: "Your job posting has been created and is pending admin approval. You will be redirected to your jobs page.",
+        variant: "success",
+      });
+
+      // Redirect after a short delay
+      setTimeout(() => {
+        router.push("/employer/jobs");
+      }, 2000);
     } catch (error: any) {
       console.error("Failed to create job:", error);
-      setSubmitError(error.message || "Failed to create job posting");
+      const errorMessage = error.message || "Failed to create job posting";
+      setSubmitError(errorMessage);
+      setNoticeModal({
+        open: true,
+        title: "Failed to Create Job",
+        description: errorMessage,
+        variant: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -410,6 +445,29 @@ export default function PostJobPage() {
             router.push("/employer/dashboard");
           },
         }}
+      />
+
+      {/* Job Posting Notice Modal */}
+      <NoticeModal
+        open={noticeModal.open}
+        title={noticeModal.title}
+        description={noticeModal.description}
+        variant={noticeModal.variant}
+        onClose={() => {
+          if (noticeModal.variant !== "info") {
+            setNoticeModal({ open: false, title: "", variant: "info" });
+          }
+        }}
+        primaryAction={
+          noticeModal.variant === "error"
+            ? {
+                label: "OK",
+                onClick: () => {
+                  setNoticeModal({ open: false, title: "", variant: "info" });
+                },
+              }
+            : undefined
+        }
       />
     </div>
   );

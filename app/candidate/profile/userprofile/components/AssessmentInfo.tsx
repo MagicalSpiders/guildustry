@@ -1,24 +1,12 @@
 import { Icon } from "@iconify/react";
-import type { ProfileFormValues } from "@/src/app/profile/schema";
+import type { UserProfile } from "@/src/lib/database.types";
 
 interface AssessmentInfoProps {
-  data: ProfileFormValues;
+  data: UserProfile;
 }
 
-const q1Labels: Record<string, string> = {
-  safety: "Safety first",
-  speed: "Deliver on time",
-  cost: "Control costs",
-};
-
-const q2Labels: Record<string, string> = {
-  cylinder: "Cylinder",
-  sphere: "Sphere",
-  torus: "Torus",
-};
-
 export function AssessmentInfo({ data }: AssessmentInfoProps) {
-  const hasData = data.q1 || data.q2;
+  const hasData = (data as any).priority_choice || (data as any).shape_choice;
 
   if (!hasData) {
     return (
@@ -39,26 +27,26 @@ export function AssessmentInfo({ data }: AssessmentInfoProps) {
         Assessment
       </h2>
       <div className="space-y-6">
-        {data.q1 && (
+        {(data as any).priority_choice && (
           <div>
             <p className="text-sm font-medium text-main-text mb-3">
               1) On a high-stakes project, what's your priority?
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-subtle bg-light-bg">
               <Icon icon="lucide:check-circle" className="w-4 h-4 text-main-accent" />
-              <span className="text-sm text-main-text">{q1Labels[data.q1] || data.q1}</span>
+              <span className="text-sm text-main-text">{(data as any).priority_choice}</span>
             </div>
           </div>
         )}
 
-        {data.q2 && (
+        {(data as any).shape_choice && (
           <div>
             <p className="text-sm font-medium text-main-text mb-3">
               2) Which 3D shape results from rotating this 2D profile?
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-subtle bg-light-bg">
               <Icon icon="lucide:check-circle" className="w-4 h-4 text-main-accent" />
-              <span className="text-sm text-main-text">{q2Labels[data.q2] || data.q2}</span>
+              <span className="text-sm text-main-text">{(data as any).shape_choice}</span>
             </div>
           </div>
         )}
@@ -66,4 +54,3 @@ export function AssessmentInfo({ data }: AssessmentInfoProps) {
     </div>
   );
 }
-

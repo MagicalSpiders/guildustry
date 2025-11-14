@@ -1,27 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm, FormProvider } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   profileSchema,
   type ProfileFormValues,
 } from "@/src/app/profile/schema";
-import { Button } from "@/src/components/Button";
-import { PersonalFields } from "@/app/candidate/profile/edit/components/PersonalFields";
-import { TradeFields } from "@/app/candidate/profile/edit/components/TradeFields";
-import { ResumeField } from "@/app/candidate/profile/edit/components/ResumeField";
-import { AssessmentFields } from "@/app/candidate/profile/edit/components/AssessmentFields";
 import { useAuth } from "@/src/components/AuthProvider";
-import { updateUserProfile, uploadResume } from "@/src/lib/profileFunctions";
+import { useRouter } from "next/navigation";
 import { PageSkeleton } from "@/src/components/ui/PageSkeleton";
+import { useProfileUpdate } from "./components/useProfileUpdate";
+import { ProfileUpdateModal } from "./components/ProfileUpdateModal";
+import { EditProfileHeader } from "./components/EditProfileHeader";
+import { EditProfileForm } from "./components/EditProfileForm";
 
 export default function ProfileEditPage() {
   const router = useRouter();
-  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const { user, profile, loading: authLoading } = useAuth();
+
   const methods = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema) as any,
     defaultValues: {
@@ -37,11 +34,18 @@ export default function ProfileEditPage() {
       resume_file_url: null,
       role: "candidate",
       priority: 1,
-      q1: undefined,
-      q2: undefined,
+      priority_choice: undefined as
+        | "Safety first"
+        | "Deliver on time"
+        | "Control costs"
+        | undefined,
+      shape_choice: undefined as "Cylinder" | "Sphere" | "Torus" | undefined,
     },
-    mode: "onBlur", // Only validate when user leaves a field
+    mode: "onBlur",
   });
+
+  // Custom hook for profile update
+  const update = useProfileUpdate(methods);
 
   // Load existing profile
   useEffect(() => {
@@ -60,8 +64,16 @@ export default function ProfileEditPage() {
         resume_file_url: profile.resume_file_url,
         role: profile.role as "candidate" | "employer",
         priority: profile.priority,
-        q1: undefined,
-        q2: undefined,
+        priority_choice: (profile as any).priority_choice as
+          | "Safety first"
+          | "Deliver on time"
+          | "Control costs"
+          | undefined,
+        shape_choice: (profile as any).shape_choice as
+          | "Cylinder"
+          | "Sphere"
+          | "Torus"
+          | undefined,
       });
     } else if (!authLoading && user) {
       methods.setValue("email", user.email || "");
@@ -84,60 +96,14 @@ export default function ProfileEditPage() {
     }
   }, [authLoading, profile, router]);
 
-  const onSave = methods.handleSubmit(async (data) => {
-    if (!user) {
-      console.error("[Profile] No user found");
-      alert("You must be logged in to save your profile");
-      router.push("/auth/sign-in");
-      return;
-    }
-
-    console.log("[Profile] Saving profile updates");
-    setIsSubmitting(true);
-    try {
-      // Handle resume file upload if present
-      let resumeUrl = data.resume_file_url;
-      const resumeFile = (data as any).resumeFile as File | undefined;
-      
-      if (resumeFile) {
-        console.log("[Profile] Uploading new resume file");
-        resumeUrl = await uploadResume(resumeFile, user.id);
-      }
-
-      const profileData = {
-        fullname: data.fullname,
-        email: data.email,
-        phone_number: data.phone_number,
-        city: data.city,
-        state: data.state,
-        primary_trade: data.primary_trade,
-        years_of_experience: data.years_of_experience,
-        shift_preference: data.shift_preference,
-        has_valid_licence: data.has_valid_licence || false,
-        resume_file_url: resumeUrl,
-        role: data.role || "candidate",
-        priority: data.priority || 1,
-        company_id: data.company_id || null,
-      };
-
-      await updateUserProfile(profileData);
-      await refreshProfile();
-      
-      console.log("[Profile] Profile updated - redirecting to view");
-      alert("Profile updated successfully!");
-      router.push("/candidate/profile/view");
-    } catch (error: any) {
-      console.error("[Profile] Update error:", error.message);
-      alert(error.message || "Failed to update profile. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  });
-
   const onCancel = () => {
     console.log("[Flow] Edit cancelled - returning to view");
     router.push("/candidate/profile/view");
   };
+
+  const onSave = methods.handleSubmit(async (data) => {
+    await update.handleSave();
+  });
 
   if (authLoading) {
     return <PageSkeleton variant="profile" />;
@@ -146,67 +112,22 @@ export default function ProfileEditPage() {
   return (
     <div className="min-h-screen bg-main-bg text-main-text">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-title font-bold">
-              Edit Profile
-            </h1>
-            <p className="mt-2 text-main-light-text">
-              Update your profile information and preferences.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" size="sm" onClick={onCancel} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button variant="accent" size="sm" onClick={onSave} disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </div>
+        <EditProfileHeader
+          onCancel={onCancel}
+          onSave={onSave}
+          isSubmitting={update.isSubmitting}
+        />
 
-        <FormProvider {...methods}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSave();
-            }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          >
-            {/* Personal Information */}
-            <section className="rounded-2xl border border-subtle bg-surface p-6 shadow-elevated">
-              <h2 className="text-xl font-title font-bold mb-4 text-main-text">
-                Personal Information
-              </h2>
-              <PersonalFields />
-            </section>
-
-            {/* Trade & Experience */}
-            <section className="rounded-2xl border border-subtle bg-surface p-6 shadow-elevated">
-              <h2 className="text-xl font-title font-bold mb-4 text-main-text">
-                Trade & Experience
-              </h2>
-              <TradeFields />
-            </section>
-
-            {/* Resume */}
-            <section className="rounded-2xl border border-subtle bg-surface p-6 shadow-elevated lg:col-span-2">
-              <h2 className="text-xl font-title font-bold mb-4 text-main-text">
-                Resume
-              </h2>
-              <ResumeField />
-            </section>
-
-            {/* Assessment */}
-            <section className="rounded-2xl border border-subtle bg-surface p-6 shadow-elevated lg:col-span-2">
-              <h2 className="text-xl font-title font-bold mb-4 text-main-text">
-                Assessment
-              </h2>
-              <AssessmentFields />
-            </section>
-          </form>
-        </FormProvider>
+        <EditProfileForm methods={methods} onSubmit={onSave} />
       </div>
+
+      <ProfileUpdateModal
+        open={update.noticeOpen}
+        title={update.noticeTitle}
+        description={update.noticeDescription}
+        variant={update.noticeVariant}
+        onClose={update.closeNotice}
+      />
     </div>
   );
 }

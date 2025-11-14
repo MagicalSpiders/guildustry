@@ -27,8 +27,7 @@ export function StepControls({
       <Button
         variant="accent"
         size="sm"
-        type={isLast ? "button" : "submit"}
-        onClick={onNext}
+        type="submit"
         disabled={!canNext}
       >
         {isLast ? "Save Profile" : "Continue"}

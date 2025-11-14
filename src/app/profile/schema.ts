@@ -28,19 +28,21 @@ export const tradeSchema = z.object({
   }).default("any"),
 });
 
-// Step 3: Resume
+// Step 3: Resume (Optional)
 export const resumeSchema = z.object({
-  resume_file_url: z.string().url("Invalid URL").nullable().optional(),
+  resume_file_url: z.string().nullable().optional()
+    .or(z.literal(""))
+    .transform(val => val === "" ? null : val),
 });
 
-// Step 4: Assessment (Optional)
+// Step 4: Assessment (Required)
 export const assessmentSchema = z.object({
-  q1: z.enum(["safety", "speed", "cost"], {
-    errorMap: () => ({ message: "Please select an option" }),
-  }).optional(),
-  q2: z.enum(["cylinder", "sphere", "torus"], {
-    errorMap: () => ({ message: "Please select an option" }),
-  }).optional(),
+  priority_choice: z.enum(["Safety first", "Deliver on time", "Control costs"], {
+    errorMap: () => ({ message: "Please select your priority" }),
+  }),
+  shape_choice: z.enum(["Cylinder", "Sphere", "Torus"], {
+    errorMap: () => ({ message: "Please select a shape" }),
+  }),
 });
 
 // Metadata fields

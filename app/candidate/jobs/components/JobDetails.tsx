@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
 import { CandidateJob } from "../data/mockJobs";
+import { ApplicationModal } from "./ApplicationModal";
+import { insertApplication } from "@/src/lib/applicationsFunctions";
 
 interface JobDetailsProps {
   job: CandidateJob | null;
@@ -10,6 +13,33 @@ interface JobDetailsProps {
 }
 
 export function JobDetails({ job, onApply }: JobDetailsProps) {
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+
+  const handleApplyClick = () => {
+    if (job && !job.hasApplied) {
+      setShowApplicationModal(true);
+    }
+  };
+
+  const handleSubmitApplication = async (
+    coverLetter: string,
+    resumeUrl?: string
+  ) => {
+    if (!job) throw new Error("No job selected");
+
+    await insertApplication({
+      job_id: job.id,
+      applicant_id: "", // Will be set by insertApplication function
+      status: "pending",
+      cover_letter: coverLetter,
+      resume_url: resumeUrl || null,
+      submitted_at: new Date().toISOString(),
+    });
+
+    // Notify parent component to refresh
+    onApply?.(job.id);
+  };
+
   if (!job) {
     return (
       <div className="rounded-lg bg-surface border border-subtle p-8 text-center">
@@ -83,7 +113,7 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
               variant="accent"
               size="lg"
               className="w-full"
-              onClick={() => onApply?.(job.id)}
+              onClick={handleApplyClick}
             >
               <Icon icon="lucide:send" className="w-5 h-5 mr-2" />
               Apply Now
@@ -190,6 +220,14 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
           </div>
         </div>
       )}
+
+      {/* Application Modal */}
+      <ApplicationModal
+        open={showApplicationModal}
+        jobTitle={job.title}
+        onClose={() => setShowApplicationModal(false)}
+        onSubmit={handleSubmitApplication}
+      />
     </div>
   );
 }

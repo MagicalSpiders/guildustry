@@ -141,7 +141,7 @@ export function NoticeModal({
               type="button"
               onClick={primaryAction.onClick}
               disabled={primaryAction.disabled}
-              className="flex-1 px-5 py-2.5 rounded-lg bg-main-accent text-main-bg font-medium hover:opacity-90 active:scale-95 transition-all text-sm shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-5 py-2.5 cursor-pointer rounded-lg bg-main-accent text-main-bg font-medium hover:opacity-90 active:scale-95 transition-all text-sm shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {primaryAction.label}
             </button>

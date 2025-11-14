@@ -4,9 +4,10 @@ import { Applicant, ApplicantCard } from "./ApplicantCard";
 
 interface ApplicantsListProps {
   applicants: Applicant[];
+  onStatusUpdate?: (applicantId: string, newStatus: Applicant["status"]) => void;
 }
 
-export function ApplicantsList({ applicants }: ApplicantsListProps) {
+export function ApplicantsList({ applicants, onStatusUpdate }: ApplicantsListProps) {
   return (
     <div className="space-y-4">
       {applicants.length === 0 ? (
@@ -15,7 +16,11 @@ export function ApplicantsList({ applicants }: ApplicantsListProps) {
         </div>
       ) : (
         applicants.map((applicant) => (
-          <ApplicantCard key={applicant.id} applicant={applicant} />
+          <ApplicantCard
+            key={applicant.id}
+            applicant={applicant}
+            onStatusUpdate={onStatusUpdate}
+          />
         ))
       )}
     </div>
