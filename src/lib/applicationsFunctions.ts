@@ -4,6 +4,10 @@ import type {
   ApplicationInsert,
   ApplicationUpdate,
 } from "./database.types";
+import {
+  createApplicationStatusNotification,
+  createNewApplicationNotification,
+} from "./notificationsFunctions";
 
 /**
  * Application with related data (job and candidate profile)
@@ -13,6 +17,7 @@ export type ApplicationWithRelations = Application & {
     id: string;
     title: string;
     company_id: string;
+    employer_id?: string;
     location: string;
     salary_min: number;
     salary_max: number;
@@ -81,7 +86,7 @@ export async function insertApplication(
     .from("applications")
     .insert(dataToInsert)
     .select(
-      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
+      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, posted_date, employer_id), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
     )
     .single();
 
@@ -89,7 +94,24 @@ export async function insertApplication(
     throw new Error(`Failed to submit application: ${error.message}`);
   }
 
-  return data as unknown as ApplicationWithRelations;
+  const result = data as unknown as ApplicationWithRelations;
+
+  // Create notification for employer about new application
+  if (result.jobs?.employer_id && result.jobs?.title && result.candidate_profile?.fullname) {
+    try {
+      await createNewApplicationNotification(
+        result.jobs.employer_id,
+        result.id,
+        result.jobs.title,
+        result.candidate_profile.fullname
+      );
+    } catch (notifError) {
+      console.error("Failed to create notification:", notifError);
+      // Don't throw error, application was created successfully
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -102,6 +124,20 @@ export async function updateApplication(
   appId: string,
   updates: ApplicationUpdate
 ): Promise<Application> {
+  // First get the current application to check if status is changing
+  const { data: currentAppData, error: fetchError } = await supabase
+    .from("applications")
+    .select("*, jobs(title, employer_id), candidate_profile(fullname)")
+    .eq("id", appId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(`Failed to fetch application: ${fetchError.message}`);
+  }
+
+  const currentApp = currentAppData as any;
+
+  // Update the application
   const { data, error } = await supabase
     .from("applications")
     .update(updates)
@@ -111,6 +147,26 @@ export async function updateApplication(
 
   if (error) {
     throw new Error(`Failed to update application: ${error.message}`);
+  }
+
+  // If status changed, create notification for candidate
+  if (
+    updates.status &&
+    updates.status !== currentApp.status &&
+    currentApp.applicant_id &&
+    currentApp.jobs?.title
+  ) {
+    try {
+      await createApplicationStatusNotification(
+        currentApp.applicant_id,
+        appId,
+        currentApp.jobs.title,
+        updates.status
+      );
+    } catch (notifError) {
+      console.error("Failed to create notification:", notifError);
+      // Don't throw error, application was updated successfully
+    }
   }
 
   return data;
@@ -254,5 +310,6 @@ export async function deleteApplication(appId: string): Promise<boolean> {
 
   return true;
 }
+
 
 

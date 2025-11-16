@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
+import { ScheduleInterviewModal } from "./ScheduleInterviewModal";
 
 export interface Applicant {
   id: string;
@@ -29,9 +31,17 @@ export interface Applicant {
 
 interface ApplicantCardProps {
   applicant: Applicant;
+  onStatusUpdate?: (applicantId: string, newStatus: Applicant["status"]) => void;
 }
 
-export function ApplicantCard({ applicant }: ApplicantCardProps) {
+export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps) {
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+
+  const handleInterviewScheduled = () => {
+    // Update status to interviewScheduled
+    onStatusUpdate?.(applicant.id, "interviewScheduled");
+    setIsScheduleModalOpen(false);
+  };
   const getStatusBadge = () => {
     const statusConfig = {
       new: { label: "New", className: "bg-green-500/20 text-green-400 border-green-500/30" },
@@ -259,12 +269,25 @@ export function ApplicantCard({ applicant }: ApplicantCardProps) {
         <Button variant="outline" size="sm">
           Message
         </Button>
-        {applicant.status !== "rejected" && (
-          <Button variant="outline" size="sm">
+        {applicant.status !== "rejected" && applicant.status !== "interviewScheduled" && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsScheduleModalOpen(true)}
+          >
             Schedule Interview
           </Button>
         )}
       </div>
+
+      <ScheduleInterviewModal
+        open={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+        applicationId={applicant.id}
+        candidateName={applicant.name}
+        jobTitle={applicant.jobTitle}
+        onSuccess={handleInterviewScheduled}
+      />
     </div>
   );
 }

@@ -45,7 +45,7 @@ type FormData = LoginFormData | SignupFormData;
 
 export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, profile } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -276,26 +276,52 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             router.push("/employer/dashboard");
           }
         } else if (actualRole === "candidate") {
-          // Candidates: check if first login
-          const hasSeenPostLogin =
-            typeof window !== "undefined"
-              ? localStorage.getItem("has_seen_candidate_post_login") === "1"
-              : false;
+          // Wait a bit for profile to load after sign-in, then check if profile exists
+          setTimeout(async () => {
+            try {
+              // Check if user has a profile by fetching it
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) {
+                router.push("/candidate/dashboard");
+                return;
+              }
 
-          if (!hasSeenPostLogin) {
-            console.log("[Flow] First-time candidate - showing profile prompt");
-            setNoticeTitle("Complete your profile?");
-            setNoticeDescription(
-              "Would you like to fill your candidate profile now to get better matches?"
-            );
-            setNoticeVariant("info");
-            setNoticeOpen(true);
-          } else {
-            console.log(
-              "[Flow] Returning candidate - redirecting to dashboard"
-            );
-            router.push("/candidate/dashboard");
-          }
+              const { data: userProfile, error: profileError } = await supabase
+                .from("candidate_profile")
+                .select("id")
+                .eq("created_by", user.id)
+                .single();
+
+              // PGRST116 means no rows returned (no profile found) - this is expected if no profile exists
+              // If userProfile exists, we have a profile. If error is PGRST116, no profile exists (userProfile will be null).
+              const hasProfile = !!userProfile;
+              const hasSeenPostLogin =
+                typeof window !== "undefined"
+                  ? localStorage.getItem("has_seen_candidate_post_login") === "1"
+                  : false;
+
+              if (!hasProfile && !hasSeenPostLogin) {
+                console.log("[Flow] Candidate without profile - showing profile prompt");
+                setNoticeTitle("Complete your profile?");
+                setNoticeDescription(
+                  "Would you like to fill your candidate profile now to get better matches?"
+                );
+                setNoticeVariant("info");
+                setNoticeOpen(true);
+              } else {
+                console.log(
+                  hasProfile
+                    ? "[Flow] Candidate with profile - redirecting to dashboard"
+                    : "[Flow] Returning candidate - redirecting to dashboard"
+                );
+                router.push("/candidate/dashboard");
+              }
+            } catch (error) {
+              // If there's an error, just redirect to dashboard
+              console.error("[Flow] Error checking profile:", error);
+              router.push("/candidate/dashboard");
+            }
+          }, 500); // Wait 500ms for profile to load
         } else {
           router.push("/dashboard");
         }

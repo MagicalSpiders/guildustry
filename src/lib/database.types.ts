@@ -306,6 +306,76 @@ export interface Database {
           updated_at?: string;
         };
       };
+      notifications: {
+        Row: {
+          id: string; // UUID
+          user_id: string; // UUID
+          type: string; // 'system_alert' | 'job_update' | 'application_status' | 'interview_reminder' | 'company_news'
+          title: string;
+          message: string;
+          read: boolean;
+          metadata?: Json | null;
+          created_at: string; // TIMESTAMPTZ
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          type: string;
+          title: string;
+          message: string;
+          read?: boolean;
+          metadata?: Json | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          type?: string;
+          title?: string;
+          message?: string;
+          read?: boolean;
+          metadata?: Json | null;
+          created_at?: string;
+        };
+      };
+      interviews: {
+        Row: {
+          id: string; // UUID
+          application_id: string; // UUID
+          interview_date: string; // TIMESTAMPTZ
+          status: string; // 'scheduled' | 'completed' | 'cancelled' | 'rescheduled'
+          type: string; // 'phone' | 'in-person' | 'video'
+          notes?: string | null;
+          location?: string | null;
+          interviewers?: string[] | null; // Array of user IDs
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          id?: string;
+          application_id: string;
+          interview_date: string;
+          status?: string;
+          type: string;
+          notes?: string | null;
+          location?: string | null;
+          interviewers?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          application_id?: string;
+          interview_date?: string;
+          status?: string;
+          type?: string;
+          notes?: string | null;
+          location?: string | null;
+          interviewers?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -314,7 +384,9 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      interview_status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled';
+      interview_type: 'phone' | 'in-person' | 'video';
+      notification_type: 'system_alert' | 'job_update' | 'application_status' | 'interview_reminder' | 'company_news';
     };
   };
 }
@@ -347,3 +419,20 @@ export type ApplicationInsert =
   Database["public"]["Tables"]["applications"]["Insert"];
 export type ApplicationUpdate =
   Database["public"]["Tables"]["applications"]["Update"];
+
+export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
+export type NotificationInsert =
+  Database["public"]["Tables"]["notifications"]["Insert"];
+export type NotificationUpdate =
+  Database["public"]["Tables"]["notifications"]["Update"];
+
+export type Interview = Database["public"]["Tables"]["interviews"]["Row"];
+export type InterviewInsert =
+  Database["public"]["Tables"]["interviews"]["Insert"];
+export type InterviewUpdate =
+  Database["public"]["Tables"]["interviews"]["Update"];
+
+// Enum types
+export type InterviewStatus = Database["public"]["Enums"]["interview_status"];
+export type InterviewType = Database["public"]["Enums"]["interview_type"];
+export type NotificationType = Database["public"]["Enums"]["notification_type"];

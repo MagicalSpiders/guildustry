@@ -137,6 +137,32 @@ export const mockCompany = (overrides = {}) => ({
   ...overrides,
 })
 
+export const mockNotification = (overrides = {}) => ({
+  id: 'test-notification-id',
+  user_id: 'test-user-id',
+  type: 'application_status',
+  title: 'Application Update',
+  message: 'Your application has been reviewed',
+  read: false,
+  metadata: { applicationId: 'test-application-id' },
+  created_at: new Date().toISOString(),
+  ...overrides,
+})
+
+export const mockInterview = (overrides = {}) => ({
+  id: 'test-interview-id',
+  application_id: 'test-application-id',
+  interview_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+  status: 'scheduled',
+  type: 'phone',
+  notes: 'Technical interview with the engineering team',
+  location: 'remote',
+  interviewers: ['test-employer-id'],
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  ...overrides,
+})
+
 // Helper to wait for async operations
 export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0))
 

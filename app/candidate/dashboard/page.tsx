@@ -105,7 +105,7 @@ export default function CandidateDashboardPage() {
                 {
                   icon: "lucide:user-cog",
                   label: "Edit Profile",
-                  href: "/profile/edit",
+                  href: "/candidate/profile/edit",
                 },
                 { icon: "lucide:book-open", label: "Browse Resources" },
                 { icon: "lucide:bell", label: "View Notifications" },
