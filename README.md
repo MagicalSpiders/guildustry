@@ -1,485 +1,213 @@
-## Guildustry Web Platform – Requirements
+# 🏗️ Guildustry
 
-Guildustry is a multi‑portal digital platform that connects skilled trades candidates with employers and supports administrators with management and reporting. This README defines the scope, structure, theming, UX rules, and the first deliverable (Homepage with Navbar + Hero only).
+> Connecting skilled trades professionals with employers in the construction and trades industry
 
-### Tech Stack
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38bdf8?logo=tailwind-css)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ecf8e?logo=supabase)](https://supabase.com/)
 
-- Next.js (App Router) + React 18
-- TypeScript
-- Tailwind CSS
-- Iconify React (icons)
-- next-themes (Dark/Light theming)
+---
 
-### Phase 1 Goals
+## 📋 Overview
 
-- Marketing website with pages: `Homepage`, `For Candidates`, `For Employers`, `About`, `Contact`, `Sign Up`, `Sign In` (page shells acceptable initially).
-- Implement Homepage with Navbar + Hero first (mobile‑first, accessible, theme‑aware).
+Guildustry is a modern job board platform designed specifically for skilled trades professionals. Whether you're an electrician, plumber, HVAC technician, or any other trades professional, Guildustry helps you find high-paying jobs that offer stability—without the burden of college debt.
 
-### Project Structure
+For employers, Guildustry provides a streamlined way to post job openings, manage applicants, schedule interviews, and find the right talent for your construction and trades projects.
 
-- `src/app` – App Router pages
-  - `/(marketing)/page.tsx` (Homepage)
-  - `/candidates/page.tsx`
-  - `/employers/page.tsx`
-  - `/about/page.tsx`
-  - `/contact/page.tsx`
-  - `/auth/sign-in/page.tsx`
-  - `/auth/sign-up/page.tsx`
-- `src/components` – shared UI (e.g., `Button.tsx`, `Header.tsx`, `ThemeToggle.tsx`, `Footer.tsx`)
-- `src/app/homepage/components` – page‑local components for Homepage (e.g., `Hero.tsx`)
-- `src/styles` – global CSS (Tailwind entry + theme utilities)
-- `public/fonts` – fonts (Red Hat Display, Cambria)
-- `public/media` – assets (placeholder `tradesMen.mp4` to be added later)
+## ✨ Key Features
 
-Notes
+### 👷 For Candidates
 
-- Components used only by a specific page should live under that page, e.g., `src/app/homepage/components/Hero.tsx`.
-- Shared primitives live in `src/components`.
+- **Profile Creation** - Build a detailed profile showcasing your skills and experience
+- **Job Discovery** - Browse and search through available job openings
+- **Easy Applications** - Apply to jobs with a simple, streamlined process
+- **Application Tracking** - Monitor the status of your applications in real-time
+- **Interview Management** - View and manage scheduled interviews
+- **Notifications** - Stay updated on application status changes and interview invitations
 
-### Theming & Design System
+### 🏢 For Employers
 
-- Dual themes: Dark (default) and Light. Use `next-themes` and toggle via `data-theme` on `<html>`.
-- Palette: black/white base with accent `#f59f0a` (primary brand accent). Keep UI clean, minimal, professional.
-- Typography
-  - Titles/headings: Red Hat Display
-  - Body/UI: Cambria (serif). Fallbacks allowed per platform.
-- Use Tailwind defaults for spacing and breakpoints; containers should follow `container mx-auto px-4 sm:px-6 lg:px-8` and `max-w-7xl/8xl` as needed.
+- **Job Posting** - Create detailed job postings with a multi-step form
+- **Applicant Management** - View and manage all applicants in one place
+- **Interview Scheduling** - Schedule interviews directly from applicant profiles
+- **Status Updates** - Update application statuses and keep candidates informed
+- **Real-time Notifications** - Get notified when new applications are submitted
 
-### Accessibility & UX
+## 🛠️ Tech Stack
 
-- Target WCAG AA contrast.
-- Fully keyboard navigable; visible focus ring (`focus-visible`).
-- Respect `prefers-reduced-motion` for animations.
-- Semantic landmarks (`header`, `main`, `nav`, `footer`) and descriptive `aria-label`s for icon-only buttons.
+### Frontend
 
-### Iconography
+- **Next.js 14** - React framework with App Router
+- **React 18** - UI library
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Iconify React** - Icon library
+- **next-themes** - Dark/Light theme support
 
-- Use Iconify React for all icons (CTA arrows, briefcase, menu, theme toggle, etc.).
+### Backend & Database
 
-### Navbar (Homepage)
+- **Supabase** - Backend-as-a-Service
+  - PostgreSQL database
+  - Authentication
+  - Real-time subscriptions
+  - Row Level Security (RLS)
 
-- Left: text logotype `Guildustry` (SVG later).
-- Links: `For Candidates`, `For Employers`, `About`, `Contact`.
-- Actions: `Sign In` (link) and `Get Started` (accent button → Sign Up).
-- Mobile: sticky top, hamburger → popover/drawer. Theme toggle present on all breakpoints.
+### Database Schema
 
-### Hero (Homepage)
+- `candidate_profile` - Candidate information and skills
+- `companies` - Employer company profiles
+- `jobs` - Job postings
+- `applications` - Job applications
+- `interviews` - Scheduled interviews
+- `notifications` - User notifications
 
-- Background: will host `tradesMen.mp4` video. For now, render a clean white/light panel with subtle overlay matching the provided reference image. Keep Dark/Light contrast correct.
-- Eyebrow badge: “100% FREE for Candidates” (pill; subtle surface; accent border/text).
-- Headline (stacked, responsive):
-  - “America Needs Builders.”
-  - “Step Into the Future of Skilled Trades.”
-- Subcopy: “Find high-paying jobs that offer stability—without the burden of college debt.”
-- CTAs:
-  - Primary: “Find Your Opportunity” (accent, arrow‑right icon)
-  - Secondary: “Post an Opening” (outline/ghost, briefcase icon)
-- Motion: tasteful slide‑in on load; respect reduced motion.
+## 🚀 Getting Started
 
-### Routing
+### Prerequisites
 
-- Use App Router with `export const metadata` per page for basic SEO.
+- Node.js 18+ and npm/yarn/pnpm
+- Supabase account and project
 
-### Packages
+### Installation
 
-- `next`, `react`, `react-dom`
-- `tailwindcss`, `postcss`, `autoprefixer`
-- `@iconify/react`
-- `next-themes`
-- `clsx`
-- `eslint`, `prettier`
+1. **Clone the repository**
 
-### Scripts
+   ```bash
+   git clone https://github.com/yourusername/guildustry.git
+   cd guildustry
+   ```
 
-- `dev`: run development server
-- `build`: production build
-- `start`: start production server
-- `lint`: run ESLint
-- `type-check`: run TypeScript compiler in noEmit mode
+2. **Install dependencies**
 
-### Getting Started
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-1. Install dependencies
+3. **Set up environment variables**
 
-```bash
-npm install
+   Create a `.env.local` file in the root directory:
+
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+5. **Open your browser**
+
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+guildustry/
+├── app/
+│   ├── candidate/          # Candidate-facing pages
+│   │   ├── jobs/           # Job browsing and details
+│   │   ├── applications/   # Application tracking
+│   │   └── profile/        # Profile management
+│   ├── employer/           # Employer-facing pages
+│   │   ├── jobs/           # Job posting and management
+│   │   ├── applicants/     # Applicant management
+│   │   └── profile/        # Company profile
+│   ├── auth/               # Authentication pages
+│   └── (marketing)/        # Marketing pages
+├── src/
+│   ├── components/         # Shared React components
+│   ├── lib/                # Backend functions and utilities
+│   └── styles/             # Global styles and theme
+├── public/                 # Static assets
+└── docs/                   # Documentation
 ```
 
-2. Run the dev server
+## 🔄 Core Workflow
 
-```bash
-npm run dev
-# http://localhost:3000
+```
+1. Employer creates company profile → Posts job
+2. Candidate creates profile → Browses jobs → Applies
+3. Employer reviews applications → Updates status → Schedules interviews
+4. System sends notifications to both parties
+5. Candidate views interviews → Attends interview
 ```
 
-### Styling & Theme CSS
+## 🎨 Design System
 
-Place the following as `src/styles/theme.css` and import from your Tailwind entry (e.g., `src/styles/globals.css`). This file provides fonts, variables, utilities, and animations (Dark default with Light overrides). Replace font file paths if needed.
+### Theming
 
-```css
-@import "tailwindcss";
+- **Dark Mode** (default) - Professional dark theme
+- **Light Mode** - Clean light theme
+- **Accent Color** - `#f59f0a` (amber/orange)
 
-/* Font Declarations */
-@font-face {
-  font-family: "Red Hat Display";
-  src: url("../fonts/RedHatDisplayVariableFont_wght.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+### Typography
 
-@font-face {
-  font-family: "Cambria";
-  src: url("../fonts/RedHatDisplayVariableFont_wght.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+- **Headings** - Red Hat Display
+- **Body Text** - Cambria (serif)
 
-/* Set default font */
-body {
-  font-family: "Red Hat Display", sans-serif;
-  color-scheme: dark;
-  color: var(--color-main-text);
-  background-color: var(--color-main-bg);
-  background-image: linear-gradient(
-      30deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      150deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      30deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      150deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      60deg,
-      var(--color-pattern-stroke) 25%,
-      transparent 25.5%,
-      transparent 75%,
-      var(--color-pattern-stroke) 75%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(60deg, var(--color-pattern-stroke) 25%, transparent 25.5%, transparent
-        75%, var(--color-pattern-stroke) 75%, var(--color-pattern-stroke));
-  background-size: 20px 35px;
-  background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
-}
+### Accessibility
 
-/* Body overrides for light theme */
-[data-theme="light"] body {
-  color-scheme: light;
-  background-color: var(--color-main-bg);
-  background-image: linear-gradient(
-      30deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      150deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      30deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      150deg,
-      var(--color-pattern-stroke) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--color-pattern-stroke) 87.5%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(
-      60deg,
-      var(--color-pattern-stroke) 25%,
-      transparent 25.5%,
-      transparent 75%,
-      var(--color-pattern-stroke) 75%,
-      var(--color-pattern-stroke)
-    ), linear-gradient(60deg, var(--color-pattern-stroke) 25%, transparent 25.5%, transparent
-        75%, var(--color-pattern-stroke) 75%, var(--color-pattern-stroke));
-  background-size: 20px 35px;
-  background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
-}
+- WCAG AA contrast compliance
+- Full keyboard navigation
+- Screen reader support
+- Reduced motion support
 
-@keyframes slideIn {
-  0% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+## 📝 Available Scripts
 
-.animate-highlight-fade {
-  animation: highlightFade 1.5s ease-out;
-}
-.animate-slide-in {
-  animation: slideIn 0.5s ease-out;
-}
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
 
-@layer theme {
-  :root {
-    --color-main-bg: #080808;
-    --color-main-bg-rgb: 8, 8, 8;
-    --color-light-bg: #1b212c;
-    --color-main-accent: #f59f0a; /* brand accent */
-    --color-main-highlight: #f59f0a;
-    --color-main-text: #ffffff;
-    --color-main-light-text: #e5e5e5;
-    --color-surface-bg: #111111;
-    --color-border-subtle: rgba(255, 255, 255, 0.12);
-    --color-pattern-stroke: rgba(255, 255, 255, 0.014);
-    --color-surface-bg-rgb: 17, 17, 17;
-    --color-main-accent-rgb: 245, 159, 10;
-    --color-border-subtle-rgb: 255, 255, 255;
-  }
-}
+## 🔐 Authentication
 
-/* Light theme overrides - apply on <html data-theme="light"> */
-[data-theme="light"] {
-  --color-main-bg: #e0e0e0;
-  --color-main-bg-rgb: 224, 224, 224;
-  --color-light-bg: #ffffff;
-  --color-main-accent: #f59f0a;
-  --color-main-highlight: #f59f0a;
-  --color-main-text: #0f172a;
-  --color-main-light-text: #334155;
-  --color-surface-bg: #ffffff;
-  --color-border-subtle: rgba(0, 0, 0, 0.16);
-  --color-pattern-stroke: rgba(0, 0, 0, 0.034);
-  --color-surface-bg-rgb: 255, 255, 255;
-  --color-main-accent-rgb: 245, 159, 10;
-  --color-border-subtle-rgb: 0, 0, 0;
-}
+Guildustry uses Supabase Authentication with email/password:
 
-/* Accent theme variants (optional) */
-[data-accent="amber"] {
-  --color-main-accent: #f59f0a;
-  --color-main-highlight: #f59f0a;
-}
+- Users sign up/sign in with email and password
+- Role is stored in user metadata (`candidate` or `employer`)
+- Profile/company data is loaded based on role
+- Protected routes redirect based on authentication status
 
-@layer utilities {
-  .bg-main-bg {
-    background-color: var(--color-main-bg);
-  }
-  .bg-light-bg {
-    background-color: var(--color-light-bg);
-  }
-  .bg-main-accent {
-    background-color: var(--color-main-accent);
-  }
-  .bg-main-highlight {
-    background-color: var(--color-main-highlight);
-  }
-  .text-main-bg {
-    color: var(--color-main-bg);
-  }
-  .text-light-bg {
-    color: var(--color-light-bg);
-  }
-  .text-main-accent {
-    color: var(--color-main-accent);
-  }
-  .text-main-highlight {
-    color: var(--color-main-highlight);
-  }
-  .text-main-text {
-    color: var(--color-main-text);
-  }
-  .text-main-light-text {
-    color: var(--color-main-light-text);
-  }
-  .border-main-bg {
-    border-color: var(--color-main-bg);
-  }
-  .border-light-bg {
-    border-color: var(--color-light-bg);
-  }
-  .border-main-accent {
-    border-color: var(--color-main-accent);
-  }
-  .border-main-highlight {
-    border-color: var(--color-main-highlight);
-  }
-  .border-main-text {
-    border-color: var(--color-main-text);
-  }
-  .border-main-light-text {
-    border-color: var(--color-main-light-text);
-  }
-  .border-subtle {
-    border-color: var(--color-border-subtle);
-  }
-  .bg-surface {
-    background-color: var(--color-surface-bg);
-  }
-  .shadow-elevated {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.08);
-  }
-  .from-main-accent {
-    --tw-gradient-from: var(--color-main-accent);
-  }
-  .to-main-highlight {
-    --tw-gradient-to: var(--color-main-highlight);
-  }
-  .from-main-bg {
-    --tw-gradient-from: var(--color-main-bg);
-  }
-  .to-light-bg {
-    --tw-gradient-to: var(--color-light-bg);
-  }
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .animate-fade-in {
-    animation: fade-in 0.3s ease-in;
-  }
-  .bg-grid {
-    background-image: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.04) 1px,
-        transparent 1px
-      ), linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent
-          1px);
-    background-size: 24px 24px, 24px 24px;
-    background-position: 0 0, 0 0;
-  }
-  [data-theme="light"] .bg-grid {
-    background-image: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.04) 1px,
-        transparent 1px
-      ), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  }
-  .font-mono {
-    font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
-  }
-  .font-display {
-    font-family: "Red Hat Display", sans-serif;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .max-w-8xl {
-    max-width: 88rem !important;
-  }
-  .max-w-9xl {
-    max-width: 96rem !important;
-  }
-  .max-w-10xl {
-    max-width: 104rem !important;
-  }
-  .grid-cols-21 {
-    grid-template-columns: repeat(21, minmax(0, 1fr));
-  }
-}
+## 🔔 Notification System
 
-@layer components {
-  .theme-kol {
-    --color-primary: var(--color-main-accent);
-    --color-secondary: var(--color-main-highlight);
-    --color-accent: var(--color-light-bg);
-    --color-background: var(--color-main-bg);
-    --color-text: var(--color-main-text);
-    --color-text-light: var(--color-main-light-text);
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-}
+- Real-time notifications via Supabase subscriptions
+- Auto-created for:
+  - New applications
+  - Application status changes
+  - Interview scheduling
+- Shown in dedicated notifications pages for both candidates and employers
 
-@media (max-width: 640px) {
-  .wallet-adapter-button {
-    font-size: 14px !important;
-  }
-}
-```
+## 📖 Documentation
 
-### Implementation Notes
+For more detailed documentation, check out the [docs](./docs/) directory:
 
-- Use `next/link` and `next/image` where applicable.
-- Prefer semantic components; create `Button` variants (accent/outline) and reuse in hero/nav.
-- Mobile first; progressively enhance layout for md/lg breakpoints.
+- [Project Overview](./docs/PROJECT_OVERVIEW.md)
 
-### Future Phases (high level)
+## 🤝 Contributing
 
-- Candidate/Employer portals, Admin area, authentication, analytics, and CMS for marketing content.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 📄 License
 
-## Getting Started
+This project is licensed under the MIT License.
 
-First, run the development server:
+## 🙏 Acknowledgments
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Built with ❤️ for the skilled trades community.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Made with Next.js and Supabase**
