@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { JobsHeader } from "@/app/employer/jobs/components/JobsHeader";
 import { JobsStats } from "@/app/employer/jobs/components/JobsStats";
 import { SearchAndFilters } from "@/app/employer/jobs/components/SearchAndFilters";
@@ -8,99 +8,16 @@ import { JobsTabs } from "@/app/employer/jobs/components/JobsTabs";
 import { JobsList } from "@/app/employer/jobs/components/JobsList";
 import { JobDetails } from "@/app/employer/jobs/components/JobDetails";
 import { Job } from "@/app/employer/jobs/components/JobCard";
-
-// Mock data - replace with API call
-const mockJobs: Job[] = [
-  {
-    id: "1",
-    title: "Licensed Electrician",
-    company: "My Company",
-    location: "New York, NY",
-    salary: "$65,000 - $85,000",
-    posted: "5 days ago",
-    status: "active",
-    isMyPost: true,
-    applicants: 12,
-  },
-  {
-    id: "2",
-    title: "Master Plumber",
-    company: "My Company",
-    location: "Brooklyn, NY",
-    salary: "$70,000 - $90,000",
-    posted: "3 days ago",
-    status: "active",
-    isMyPost: true,
-    applicants: 8,
-  },
-  {
-    id: "3",
-    title: "Construction Supervisor",
-    company: "My Company",
-    location: "Manhattan, NY",
-    salary: "$75,000 - $95,000",
-    posted: "1 week ago",
-    status: "draft",
-    isMyPost: true,
-  },
-  {
-    id: "4",
-    title: "Licensed Electrician",
-    company: "ABC Construction",
-    location: "New York, NY",
-    salary: "$60,000 - $80,000",
-    posted: "2 days ago",
-    status: "active",
-    isMyPost: false,
-    matchScore: 92,
-  },
-  {
-    id: "5",
-    title: "HVAC Technician",
-    company: "CoolAir Systems",
-    location: "Queens, NY",
-    salary: "$55,000 - $75,000",
-    posted: "4 days ago",
-    status: "active",
-    isMyPost: false,
-    matchScore: 85,
-  },
-  {
-    id: "6",
-    title: "Welder",
-    company: "MetalWorks Inc",
-    location: "Brooklyn, NY",
-    salary: "$50,000 - $70,000",
-    posted: "6 days ago",
-    status: "active",
-    isMyPost: false,
-    matchScore: 78,
-  },
-  {
-    id: "7",
-    title: "Carpenter",
-    company: "BuildRight LLC",
-    location: "Manhattan, NY",
-    salary: "$58,000 - $78,000",
-    posted: "1 week ago",
-    status: "active",
-    isMyPost: false,
-    matchScore: 88,
-  },
-  {
-    id: "8",
-    title: "Plumber",
-    company: "PipeDreams Co",
-    location: "New York, NY",
-    salary: "$62,000 - $82,000",
-    posted: "3 days ago",
-    status: "active",
-    isMyPost: false,
-    matchScore: 90,
-  },
-];
+import { getOwnJobs } from "@/src/lib/jobsFunctions";
+import { useAuth } from "@/src/components/AuthProvider";
+import { PageSkeleton } from "@/src/components/ui/PageSkeleton";
+import { getCompanyByOwner } from "@/src/lib/companyFunctions";
 
 export default function EmployerJobsPage() {
+  const { user, loading: authLoading } = useAuth();
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     trade: "All Trades",
@@ -109,11 +26,80 @@ export default function EmployerJobsPage() {
     type: "All Types",
   });
   const [activeTab, setActiveTab] = useState("all");
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(mockJobs[0]?.id || null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+
+  // Fetch jobs from database
+  useEffect(() => {
+    const fetchJobs = async () => {
+      if (authLoading) return;
+      
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const dbJobs = await getOwnJobs();
+        const company = await getCompanyByOwner();
+        
+        // Transform database jobs to Job format
+        const transformedJobs: Job[] = dbJobs.map((job) => {
+          const postedDate = new Date(job.posted_date);
+          const now = new Date();
+          const diffTime = Math.abs(now.getTime() - postedDate.getTime());
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          
+          let postedText = "";
+          if (diffDays === 0) {
+            postedText = "Today";
+          } else if (diffDays === 1) {
+            postedText = "1 day ago";
+          } else if (diffDays < 7) {
+            postedText = `${diffDays} days ago`;
+          } else if (diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            postedText = `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+          } else {
+            const months = Math.floor(diffDays / 30);
+            postedText = `${months} month${months > 1 ? "s" : ""} ago`;
+          }
+
+          return {
+            id: job.id,
+            title: job.title,
+            company: company?.name || "My Company",
+            location: job.location,
+            salary: `$${job.salary_min.toLocaleString()} - $${job.salary_max.toLocaleString()}`,
+            posted: postedText,
+            status: job.status as "active" | "closed" | null,
+            isMyPost: true,
+            applicants: 0, // TODO: Fetch applicant count
+          };
+        });
+
+        setJobs(transformedJobs);
+        
+        // Auto-select first job
+        if (transformedJobs.length > 0 && !selectedJobId) {
+          setSelectedJobId(transformedJobs[0].id);
+        }
+      } catch (err: any) {
+        console.error("Failed to fetch jobs:", err);
+        setError(err.message || "Failed to load jobs");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, [user, authLoading]);
 
   // Filter jobs based on search, filters, and tab
   const filteredJobs = useMemo(() => {
-    let filtered = [...mockJobs];
+    let filtered = [...jobs];
 
     // Search filter
     if (searchQuery) {
@@ -138,7 +124,7 @@ export default function EmployerJobsPage() {
         filtered = filtered.filter((job) => job.status === "active");
         break;
       case "drafts":
-        filtered = filtered.filter((job) => job.status === "draft");
+        filtered = filtered.filter((job) => job.status === null || job.status === undefined);
         break;
       default:
         // "all" - no filter
@@ -163,34 +149,58 @@ export default function EmployerJobsPage() {
     }
 
     return filtered;
-  }, [searchQuery, filters, activeTab]);
+  }, [searchQuery, filters, activeTab, jobs]);
 
   // Calculate tab counts
   const tabCounts = useMemo(() => {
-    const myPosts = mockJobs.filter((job) => job.isMyPost).length;
-    const available = mockJobs.filter((job) => !job.isMyPost && job.status === "active").length;
-    const active = mockJobs.filter((job) => job.status === "active").length;
-    const drafts = mockJobs.filter((job) => job.status === "draft").length;
+    const myPosts = jobs.filter((job) => job.isMyPost).length;
+    const available = jobs.filter((job) => !job.isMyPost && job.status === "active").length;
+    const active = jobs.filter((job) => job.status === "active").length;
+    const drafts = jobs.filter((job) => job.status === null || job.status === undefined).length;
 
     return {
-      all: mockJobs.length,
+      all: jobs.length,
       myPosts,
       available,
       active,
       drafts,
     };
-  }, []);
+  }, [jobs]);
 
   const selectedJob = filteredJobs.find((job) => job.id === selectedJobId) || null;
 
   // Auto-select first job if current selection is not in filtered list
-  if (selectedJobId && !selectedJob && filteredJobs.length > 0) {
-    setSelectedJobId(filteredJobs[0].id);
-  }
+  useEffect(() => {
+    if (selectedJobId && !selectedJob && filteredJobs.length > 0) {
+      setSelectedJobId(filteredJobs[0].id);
+    } else if (!selectedJobId && filteredJobs.length > 0) {
+      setSelectedJobId(filteredJobs[0].id);
+    }
+  }, [selectedJobId, selectedJob, filteredJobs]);
 
   const handleFilterChange = (filter: string, value: string) => {
     setFilters((prev) => ({ ...prev, [filter]: value }));
   };
+
+  if (loading || authLoading) {
+    return <PageSkeleton variant="dashboard" />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-main-bg text-main-text flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-main-accent text-main-bg rounded-lg hover:opacity-90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-main-bg text-main-text">
@@ -227,4 +237,3 @@ export default function EmployerJobsPage() {
     </div>
   );
 }
-

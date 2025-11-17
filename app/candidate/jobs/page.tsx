@@ -86,7 +86,7 @@ export default function CandidateJobsPage() {
             location: job.location,
             salary: `$${job.salary_min.toLocaleString()} - $${job.salary_max.toLocaleString()}`,
             posted: postedText,
-            status: job.status as "active" | "draft" | "pending",
+            status: job.status as "active" | "pending" | "closed",
             matchScore,
             tradeSpecialty: job.trade_specialty,
             employmentType: job.job_type,
@@ -204,17 +204,24 @@ export default function CandidateJobsPage() {
     try {
       const applications = await getOwnApplications();
       const appliedJobIds = applications.map((app) => app.job_id);
-      
-      // Update the job to mark as applied
+
+      // Update all jobs to reflect current application status
       setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job.id === jobId ? { ...job, hasApplied: true } : job
-        )
+        prevJobs.map((job) => ({
+          ...job,
+          hasApplied: appliedJobIds.includes(job.id)
+        }))
       );
       // Keep the selected job visible
       setSelectedJobId(jobId);
     } catch (error) {
       console.error("Failed to refresh applications:", error);
+      // If refresh fails, still mark this specific job as applied (optimistic update)
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === jobId ? { ...job, hasApplied: true } : job
+        )
+      );
     }
   };
 

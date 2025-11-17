@@ -21,6 +21,8 @@ interface AuthContextType {
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  resetPasswordForEmail: (email: string) => Promise<void>;
+  updatePassword: (newPassword: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
   refreshCompany: () => Promise<void>;
 }
@@ -210,6 +212,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await loadCompany();
   };
 
+  const resetPasswordForEmail = async (email: string) => {
+    console.log("[Auth] Requesting password reset for:", email);
+    const redirectTo = `${window.location.origin}/auth/update-password`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+
+    if (error) {
+      console.error("[Auth] Password reset error:", error.message);
+      throw error;
+    }
+    console.log("[Auth] Password reset email sent successfully");
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    console.log("[Auth] Updating password...");
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      console.error("[Auth] Password update error:", error.message);
+      throw error;
+    }
+    console.log("[Auth] Password updated successfully");
+  };
+
   const isAuthenticated = !!user;
 
   return (
@@ -224,6 +254,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signIn,
         signOut,
+        resetPasswordForEmail,
+        updatePassword,
         refreshProfile,
         refreshCompany,
       }}

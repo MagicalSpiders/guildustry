@@ -153,6 +153,8 @@ export interface Database {
           description: string | null;
           size: string | null;
           logo_url: string | null;
+          members_count: number;
+          ownerprofile: string | null; // UUID
           specialties: string[];
           values: string[];
           benefits: string[];
@@ -176,6 +178,8 @@ export interface Database {
           description?: string | null;
           size?: string | null;
           logo_url?: string | null;
+          members_count?: number;
+          ownerprofile?: string | null;
           specialties?: string[];
           values?: string[];
           benefits?: string[];
@@ -199,6 +203,8 @@ export interface Database {
           description?: string | null;
           size?: string | null;
           logo_url?: string | null;
+          members_count?: number;
+          ownerprofile?: string | null;
           specialties?: string[];
           values?: string[];
           benefits?: string[];
@@ -221,7 +227,7 @@ export interface Database {
           salary_min: number;
           salary_max: number;
           job_type: string; // 'full-time' | 'part-time' | 'contract' | 'temporary'
-          status: string; // 'open' | 'closed' | 'draft'
+          status: string | null; // 'open' | 'closed' | null
           requirements?: string | null;
           skills?: string[] | null;
           trade_specialty: string;
@@ -384,9 +390,14 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
-      interview_status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled';
-      interview_type: 'phone' | 'in-person' | 'video';
-      notification_type: 'system_alert' | 'job_update' | 'application_status' | 'interview_reminder' | 'company_news';
+      interview_status: "scheduled" | "completed" | "cancelled" | "rescheduled";
+      interview_type: "phone" | "in-person" | "video";
+      notification_type:
+        | "system_alert"
+        | "job_update"
+        | "application_status"
+        | "interview_reminder"
+        | "company_news";
     };
   };
 }

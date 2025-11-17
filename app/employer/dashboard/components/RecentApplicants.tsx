@@ -79,7 +79,7 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
 
 export function RecentApplicants({ applicants }: RecentApplicantsProps) {
   return (
-    <div className="rounded-lg bg-surface border border-subtle p-6">
+    <div className="rounded-lg bg-surface border border-subtle p-6 flex flex-col h-full">
       <div className="mb-6">
         <h2 className="text-2xl font-title font-bold text-main-text mb-2">
           Recent Applicants
@@ -89,17 +89,19 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
         </p>
       </div>
 
-      <div className="space-y-4 mb-6">
+      <div className="space-y-4 mb-6 flex-1">
         {applicants.map((applicant) => (
           <ApplicantCard key={applicant.id} applicant={applicant} />
         ))}
       </div>
 
-      <Link href="/employer/applicants">
-        <Button variant="outline" className="w-full">
-          View All Applicants
-        </Button>
-      </Link>
+      <div className="mt-auto">
+        <Link href="/employer/applicants">
+          <Button variant="outline" className="w-full">
+            View All Applicants
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

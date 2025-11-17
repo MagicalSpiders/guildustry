@@ -5,7 +5,7 @@ export interface CandidateJob {
   location: string;
   salary: string;
   posted: string;
-  status: "active" | "draft" | "pending";
+  status: "active" | "pending" | "closed";
   matchScore: number;
   tradeSpecialty: string;
   employmentType: string;

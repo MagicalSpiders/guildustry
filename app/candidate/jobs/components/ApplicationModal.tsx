@@ -10,6 +10,7 @@ interface ApplicationModalProps {
   jobTitle: string;
   onClose: () => void;
   onSubmit: (coverLetter: string, resumeUrl?: string) => Promise<void>;
+  onSuccess?: (jobTitle: string) => void;
 }
 
 export function ApplicationModal({
@@ -17,6 +18,7 @@ export function ApplicationModal({
   jobTitle,
   onClose,
   onSubmit,
+  onSuccess,
 }: ApplicationModalProps) {
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
@@ -54,27 +56,23 @@ export function ApplicationModal({
 
       await onSubmit(coverLetter, resumeUrl || undefined);
 
-      setNoticeModal({
-        open: true,
-        title: "Application Submitted!",
-        description: `Your application for ${jobTitle} has been submitted successfully.`,
-        variant: "success",
-      });
-
       // Reset form
       setCoverLetter("");
       setResumeUrl("");
 
-      // Close modal after success
-      setTimeout(() => {
-        setNoticeModal({ open: false, title: "", variant: "info" });
-        onClose();
-      }, 2000);
+      // Close modal immediately and show success notification
+      onClose();
+
+      // Call success callback after modal closes
+      if (onSuccess) {
+        onSuccess(jobTitle);
+      }
     } catch (error: any) {
       setNoticeModal({
         open: true,
         title: "Application Failed",
-        description: error.message || "Failed to submit application. Please try again.",
+        description:
+          error.message || "Failed to submit application. Please try again.",
         variant: "error",
       });
     } finally {
@@ -179,11 +177,7 @@ export function ApplicationModal({
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 p-6 border-t border-subtle">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <Button variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
             <Button
@@ -193,7 +187,10 @@ export function ApplicationModal({
             >
               {loading ? (
                 <>
-                  <Icon icon="lucide:loader-2" className="w-5 h-5 mr-2 animate-spin" />
+                  <Icon
+                    icon="lucide:loader-2"
+                    className="w-5 h-5 mr-2 animate-spin"
+                  />
                   Submitting...
                 </>
               ) : (
@@ -209,6 +206,3 @@ export function ApplicationModal({
     </>
   );
 }
-
-
-

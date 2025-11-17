@@ -43,7 +43,7 @@ export function RecentApplications({ items }: { items: Application[] }) {
           </div>
         ))}
 
-        <div className="px-5 sm:px-6 py-4 mt-auto">
+        <div className="px-5 self-end sm:px-6 py-4 mt-auto">
           <a
             href="/candidate/applications"
             className="block w-full text-center text-sm font-medium px-4 py-2 rounded-lg border border-subtle bg-light-bg hover:border-main-accent hover:text-main-accent transition-colors"

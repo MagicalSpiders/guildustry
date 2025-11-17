@@ -6,6 +6,7 @@ import { Button } from "@/src/components/Button";
 import { CandidateJob } from "../data/mockJobs";
 import { ApplicationModal } from "./ApplicationModal";
 import { insertApplication } from "@/src/lib/applicationsFunctions";
+import { NoticeModal } from "@/src/components/NoticeModal";
 
 interface JobDetailsProps {
   job: CandidateJob | null;
@@ -14,11 +15,18 @@ interface JobDetailsProps {
 
 export function JobDetails({ job, onApply }: JobDetailsProps) {
   const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successJobTitle, setSuccessJobTitle] = useState("");
 
   const handleApplyClick = () => {
     if (job && !job.hasApplied) {
       setShowApplicationModal(true);
     }
+  };
+
+  const handleApplicationSuccess = (jobTitle: string) => {
+    setSuccessJobTitle(jobTitle);
+    setShowSuccessModal(true);
   };
 
   const handleSubmitApplication = async (
@@ -29,7 +37,6 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
 
     await insertApplication({
       job_id: job.id,
-      applicant_id: "", // Will be set by insertApplication function
       status: "pending",
       cover_letter: coverLetter,
       resume_url: resumeUrl || null,
@@ -104,14 +111,14 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
         {/* Apply Button */}
         <div className="mt-4">
           {job.hasApplied ? (
-            <Button variant="outline" size="lg" className="w-full" disabled>
+            <Button variant="outline" size="md" className="w-full" disabled>
               <Icon icon="lucide:check" className="w-5 h-5 mr-2" />
               Already Applied
             </Button>
           ) : (
             <Button
               variant="accent"
-              size="lg"
+              size="md"
               className="w-full"
               onClick={handleApplyClick}
             >
@@ -227,6 +234,16 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
         jobTitle={job.title}
         onClose={() => setShowApplicationModal(false)}
         onSubmit={handleSubmitApplication}
+        onSuccess={handleApplicationSuccess}
+      />
+
+      {/* Success Notice Modal */}
+      <NoticeModal
+        open={showSuccessModal}
+        title="Application Submitted!"
+        description={`Your application for ${successJobTitle} has been submitted successfully. The employer will review your application and get back to you soon.`}
+        variant="success"
+        onClose={() => setShowSuccessModal(false)}
       />
     </div>
   );

@@ -57,7 +57,7 @@ export function EmployersHero() {
 
         {/* CTA */}
         <div ref={ctaRef} className="mt-10 flex justify-center">
-          <Button variant="accent" size="lg" asChild>
+          <Button variant="accent" size="md" asChild>
             <Link href="/employers" className="inline-flex items-center gap-2">
               <span>Start Hiring Today</span>
               <Icon icon="lucide:arrow-right" className="w-5 h-5" />

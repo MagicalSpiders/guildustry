@@ -73,7 +73,7 @@ export function EmployerHero({
         </div>
         <Button
           variant="accent"
-          size="lg"
+          size="md"
           icon="lucide:plus"
           iconPosition="left"
           onClick={() => router.push("/employer/postJob")}

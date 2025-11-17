@@ -45,7 +45,14 @@ type FormData = LoginFormData | SignupFormData;
 
 export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const { signIn, signUp, profile } = useAuth();
+  const {
+    signIn,
+    signUp,
+    resetPasswordForEmail,
+    profile,
+    company,
+    loading: authLoading,
+  } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -62,6 +69,9 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
   );
   const [pendingEmail, setPendingEmail] = useState<string>("");
   const [isResendingEmail, setIsResendingEmail] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isSendingReset, setIsSendingReset] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -138,6 +148,42 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
+
+  // Function to handle password reset request
+  const handleForgotPassword = async () => {
+    if (!resetEmail) {
+      setNoticeTitle("Email Required");
+      setNoticeDescription(
+        "Please enter your email address to reset your password."
+      );
+      setNoticeVariant("info");
+      setNoticeOpen(true);
+      return;
+    }
+
+    try {
+      setIsSendingReset(true);
+      await resetPasswordForEmail(resetEmail);
+      setNoticeTitle("Password Reset Email Sent!");
+      setNoticeDescription(
+        `We've sent a password reset link to ${resetEmail}. Please check your inbox and click the link to reset your password.`
+      );
+      setNoticeVariant("success");
+      setNoticeOpen(true);
+      setShowForgotPassword(false);
+      setResetEmail("");
+    } catch (error: any) {
+      console.error("[Flow] Password reset error:", error.message);
+      setNoticeTitle("Failed to Send Reset Email");
+      setNoticeDescription(
+        error?.message || "Please try again later or contact support."
+      );
+      setNoticeVariant("error");
+      setNoticeOpen(true);
+    } finally {
+      setIsSendingReset(false);
+    }
+  };
 
   // Function to resend confirmation email
   const handleResendEmail = async () => {
@@ -255,53 +301,73 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
         // Handle first-login flows for both roles
         if (actualRole === "employer") {
-          // Employers: check if first login
-          const hasSeenPostLogin =
-            typeof window !== "undefined"
-              ? localStorage.getItem("has_seen_employer_post_login") === "1"
-              : false;
-
-          if (!hasSeenPostLogin) {
-            console.log(
-              "[Flow] First-time employer - showing company profile prompt"
-            );
-            setNoticeTitle("Complete your company profile?");
-            setNoticeDescription(
-              "Would you like to set up your company profile now? This helps candidates learn about your company."
-            );
-            setNoticeVariant("info");
-            setNoticeOpen(true);
-          } else {
-            console.log("[Flow] Returning employer - redirecting to dashboard");
-            router.push("/employer/dashboard");
-          }
-        } else if (actualRole === "candidate") {
-          // Wait a bit for profile to load after sign-in, then check if profile exists
+          // Wait a bit for company to load from AuthProvider, then check directly from database
+          // This ensures we get the most up-to-date company status
           setTimeout(async () => {
             try {
-              // Check if user has a profile by fetching it
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) {
-                router.push("/candidate/dashboard");
-                return;
-              }
+              // Check directly from database to get current state
+              const { getCompanyByOwner } = await import(
+                "@/src/lib/companyFunctions"
+              );
+              const companyData = await getCompanyByOwner();
+              const companyExists = companyData !== null;
 
-              const { data: userProfile, error: profileError } = await supabase
-                .from("candidate_profile")
-                .select("id")
-                .eq("created_by", user.id)
-                .single();
+              console.log(
+                `[Flow] Company check: ${
+                  companyExists ? "exists" : "not found"
+                }`
+              );
 
-              // PGRST116 means no rows returned (no profile found) - this is expected if no profile exists
-              // If userProfile exists, we have a profile. If error is PGRST116, no profile exists (userProfile will be null).
-              const hasProfile = !!userProfile;
+              // Only show prompt if company doesn't exist AND user hasn't seen it
               const hasSeenPostLogin =
                 typeof window !== "undefined"
-                  ? localStorage.getItem("has_seen_candidate_post_login") === "1"
+                  ? localStorage.getItem("has_seen_employer_post_login") === "1"
+                  : false;
+
+              if (!companyExists && !hasSeenPostLogin) {
+                console.log(
+                  "[Flow] First-time employer - showing company profile prompt"
+                );
+                setNoticeTitle("Complete your company profile?");
+                setNoticeDescription(
+                  "Would you like to set up your company profile now? This helps candidates learn about your company."
+                );
+                setNoticeVariant("info");
+                setNoticeOpen(true);
+              } else {
+                if (companyExists) {
+                  console.log(
+                    "[Flow] Employer with company - redirecting to dashboard"
+                  );
+                } else {
+                  console.log(
+                    "[Flow] Returning employer - redirecting to dashboard"
+                  );
+                }
+                router.push("/employer/dashboard");
+              }
+            } catch (error) {
+              console.error("[Flow] Error checking company:", error);
+              // On error, just redirect to dashboard
+              router.push("/employer/dashboard");
+            }
+          }, 800); // Give AuthProvider time to load company (increased from 500ms)
+        } else if (actualRole === "candidate") {
+          // Wait a bit for profile to load after sign-in, then check if profile exists
+          setTimeout(() => {
+            try {
+              // Check if AuthProvider has loaded the profile
+              const hasProfile = !!profile;
+              const hasSeenPostLogin =
+                typeof window !== "undefined"
+                  ? localStorage.getItem("has_seen_candidate_post_login") ===
+                    "1"
                   : false;
 
               if (!hasProfile && !hasSeenPostLogin) {
-                console.log("[Flow] Candidate without profile - showing profile prompt");
+                console.log(
+                  "[Flow] Candidate without profile - showing profile prompt"
+                );
                 setNoticeTitle("Complete your profile?");
                 setNoticeDescription(
                   "Would you like to fill your candidate profile now to get better matches?"
@@ -321,7 +387,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
               console.error("[Flow] Error checking profile:", error);
               router.push("/candidate/dashboard");
             }
-          }, 500); // Wait 500ms for profile to load
+          }, 800); // Wait 800ms for profile to load (increased from 500ms)
         } else {
           router.push("/dashboard");
         }
@@ -446,12 +512,23 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
 
             {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium mb-2 text-main-light-text"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-main-light-text"
+                >
+                  Password
+                </label>
+                {mode === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm cursor-pointer text-main-accent hover:text-main-highlight transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <input
                 type="password"
                 id="password"
@@ -469,6 +546,63 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
                 </p>
               )}
             </div>
+
+            {/* Forgot Password Form */}
+            {showForgotPassword && mode === "login" && (
+              <div className="p-4 rounded-lg border border-subtle bg-light-bg space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-main-text">
+                    Reset Password
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetEmail("");
+                    }}
+                    className="text-main-light-text hover:text-main-text"
+                  >
+                    <Icon icon="lucide:x" className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-xs text-main-light-text">
+                  Enter your email address and we'll send you a link to reset
+                  your password.
+                </p>
+                <div>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-2 rounded-lg border border-subtle bg-surface text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="accent"
+                    size="sm"
+                    onClick={handleForgotPassword}
+                    disabled={isSendingReset || !resetEmail}
+                    className="flex-1"
+                  >
+                    {isSendingReset ? "Sending..." : "Send Reset Link"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetEmail("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Role Selection - Only show during signup */}
             {mode === "signup" && (
@@ -530,7 +664,7 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             <Button
               type="submit"
               variant="accent"
-              size="lg"
+              size="md"
               className="w-full"
               disabled={isSubmitting}
             >

@@ -106,7 +106,7 @@ export function Pricing() {
 
               <Button
                 variant={plan.popular ? "accent" : "outline"}
-                size="lg"
+                size="md"
                 className="w-full mt-auto"
                 asChild
               >

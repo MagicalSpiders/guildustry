@@ -10,7 +10,7 @@ interface JobPosting {
   location: string;
   postedDate: string;
   applicantsCount: number;
-  status: "active" | "draft" | "pending";
+  status: "active" | "closed" | null;
 }
 
 interface RecentJobPostingsProps {
@@ -18,6 +18,30 @@ interface RecentJobPostingsProps {
 }
 
 function JobPostingCard({ job }: { job: JobPosting }) {
+  const getStatusBadge = () => {
+    switch (job.status) {
+      case "active":
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
+            Active
+          </span>
+        );
+      case "closed":
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400 border border-gray-500/30 whitespace-nowrap">
+            Closed
+          </span>
+        );
+      case null:
+      default:
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 whitespace-nowrap">
+            Pending
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="rounded-lg bg-surface border border-subtle p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-4">
@@ -33,9 +57,7 @@ function JobPostingCard({ job }: { job: JobPosting }) {
             </span>
           </div>
         </div>
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
-          Active
-        </span>
+        {getStatusBadge()}
       </div>
     </div>
   );

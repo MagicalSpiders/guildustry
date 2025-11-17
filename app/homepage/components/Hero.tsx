@@ -200,7 +200,7 @@ export function Hero() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="accent" size="lg" asChild>
+            <Button variant="accent" size="md" asChild>
               <Link
                 href="/candidates"
                 className="inline-flex items-center justify-center gap-2"
@@ -212,7 +212,7 @@ export function Hero() {
 
             <Button
               variant="outline"
-              size="lg"
+              size="md"
               icon="lucide:briefcase"
               iconPosition="left"
               asChild

@@ -28,10 +28,6 @@ export function CompanyHeader({ company, onEdit }: CompanyHeaderProps) {
             </div>
           </div>
         </div>
-        <Button variant="outline" size="lg" onClick={onEdit}>
-          <Icon icon="lucide:edit" className="w-5 h-5 mr-2" />
-          Edit Profile
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -57,9 +53,7 @@ export function CompanyHeader({ company, onEdit }: CompanyHeaderProps) {
           <Icon icon="lucide:users" className="w-5 h-5 text-main-accent" />
           <div>
             <p className="text-xs text-main-light-text">Company Size</p>
-            <p className="text-sm font-medium text-main-text">
-              {company.size}
-            </p>
+            <p className="text-sm font-medium text-main-text">{company.size}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg bg-surface border border-subtle p-4">
@@ -80,4 +74,3 @@ export function CompanyHeader({ company, onEdit }: CompanyHeaderProps) {
     </div>
   );
 }
-

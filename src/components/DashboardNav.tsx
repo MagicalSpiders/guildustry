@@ -18,12 +18,14 @@ import {
   type UserRole,
 } from "@/src/lib/routes";
 
+// Notifications will be hidden for candidates in rendering logic below
 const navigation: Array<{
-  name: string;
+  name: string | ((role: UserRole | undefined) => string);
   href: string;
   icon: string;
   employerOnly?: boolean;
   candidateOnly?: boolean;
+  dynamicName?: boolean;
 }> = [
   { name: "Dashboard", href: "/dashboard", icon: "lucide:layout-dashboard" },
   { name: "Jobs", href: "/dashboard/jobs", icon: "gravity-ui:magnifier" },
@@ -33,13 +35,21 @@ const navigation: Array<{
     icon: "lucide:book-open",
     candidateOnly: true,
   },
-  { name: "Applicants", href: "/candidate/applications", icon: "lucide:users" },
+  {
+    // Name will be set dynamically below depending on userRole
+    name: (role: UserRole | undefined) =>
+      role === "candidate" ? "Applications" : "Applicants",
+    dynamicName: true,
+    href: "/candidate/applications",
+    icon: "lucide:users",
+  },
   {
     name: "Company",
     href: "/employer/profile",
     icon: "lucide:building-2",
     employerOnly: true,
   },
+  // Notifications will be hidden for candidates in rendering logic below
   {
     name: "Notifications",
     href: "/dashboard/notifications",
@@ -140,13 +150,24 @@ export function DashboardNav() {
                   return null;
                 }
 
-                // For Dashboard, Jobs, Applicants, Profile, and Notifications links, use dynamic href based on user role
+                // Hide Notifications link if user is a candidate
+                if (item.name === "Notifications" && userRole === "candidate") {
+                  return null;
+                }
+
+                // For Dashboard, Jobs, Applicants/Applications, Profile, Notifications: use dynamic href based on user role
                 let href = item.href;
-                if (item.name === "Dashboard") {
+                if (
+                  (typeof item.name === "string" && item.name === "Dashboard") ||
+                  (typeof item.name === "function" && item.name(userRole) === "Dashboard")
+                ) {
                   href = getDashboardRoute(userRole);
-                } else if (item.name === "Jobs") {
+                } else if (
+                  (typeof item.name === "string" && item.name === "Jobs") ||
+                  (typeof item.name === "function" && item.name(userRole) === "Jobs")
+                ) {
                   href = getJobsRoute(userRole);
-                } else if (item.name === "Applicants") {
+                } else if (item.dynamicName) {
                   href = getApplicantsRoute(userRole);
                 } else if (item.name === "Profile") {
                   href = getProfileRoute(userRole);
@@ -154,35 +175,45 @@ export function DashboardNav() {
                   href = getNotificationsRoute(userRole);
                 }
 
+                // Get the correct display name for the Applicants/Applications link
+                const displayName =
+                  typeof item.name === "function"
+                    ? item.name(userRole)
+                    : item.name;
+
                 // Check if current path matches the href or any of the role-specific paths
                 const isActive =
                   pathname === href ||
-                  (item.name === "Dashboard" &&
+                  (displayName === "Dashboard" &&
                     (pathname === "/dashboard" ||
                       pathname === "/candidate/dashboard" ||
                       pathname === "/employer/dashboard")) ||
-                  (item.name === "Jobs" &&
+                  (displayName === "Jobs" &&
                     (pathname === "/candidate/jobs" ||
                       pathname === "/dashboard/jobs" ||
                       pathname === "/employer/jobs")) ||
-                  (item.name === "Resources" &&
+                  (displayName === "Resources" &&
                     pathname === "/candidate/resources") ||
-                  (item.name === "Company" &&
+                  (displayName === "Company" &&
                     pathname === "/employer/profile") ||
-                  (item.name === "Profile" &&
+                  (displayName === "Profile" &&
                     (pathname === "/candidate/profile" ||
                       pathname === "/employer/profile" ||
                       pathname === "/profile")) ||
-                  (item.name === "Notifications" &&
+                  (displayName === "Notifications" &&
                     (pathname === "/employer/notifications" ||
                       pathname === "/dashboard/notifications")) ||
-                  (item.name === "Applicants" &&
-                    (pathname === "/candidate/applications" ||
+                  (
+                    (displayName === "Applicants" || displayName === "Applications") &&
+                    (
+                      pathname === "/candidate/applications" ||
                       pathname === "/employer/applicants" ||
-                      pathname === "/dashboard/applicants"));
+                      pathname === "/dashboard/applicants"
+                    )
+                  );
                 return (
                   <Link
-                    key={item.name}
+                    key={displayName}
                     href={href}
                     className={`text-sm font-medium leading-6 transition-colors duration-200 flex items-center gap-2 ${
                       isActive
@@ -191,7 +222,7 @@ export function DashboardNav() {
                     }`}
                   >
                     <Icon icon={item.icon} className="h-5 w-5" />
-                    {item.name}
+                    {displayName}
                   </Link>
                 );
               })}

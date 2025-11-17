@@ -28,7 +28,7 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     if (profile) {
-      // Convert profile to ProfileFormValues format
+      // Profile is already UserProfile type, which includes all fields including timestamp
       setProfileData(profile as any);
     } else {
       setProfileData(null);
@@ -78,7 +78,7 @@ export default function UserProfilePage() {
             <div className="mt-6 text-center">
               <Button
                 variant="accent"
-                size="lg"
+                size="md"
                 onClick={() => router.push("/candidate/profile")}
               >
                 <Icon icon="lucide:user-plus" className="w-5 h-5 mr-2" />
@@ -119,16 +119,16 @@ export default function UserProfilePage() {
         {/* Profile Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
-          <PersonalInfo data={profileData} />
+          {profileData && <PersonalInfo data={profileData} />}
 
           {/* Trade & Experience */}
-          <TradeInfo data={profileData} />
+          {profileData && <TradeInfo data={profileData} />}
 
           {/* Resume */}
-          <ResumeInfo data={profileData} />
+          {profileData && <ResumeInfo data={profileData} />}
 
           {/* Assessment */}
-          <AssessmentInfo data={profileData} />
+          {profile && <AssessmentInfo data={profile} />}
         </div>
 
         {/* Action Footer */}

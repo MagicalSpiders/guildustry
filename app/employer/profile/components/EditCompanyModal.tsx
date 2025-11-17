@@ -244,8 +244,12 @@ export function EditCompanyModal({
                         <option value="">Select size</option>
                         <option value="1-10 employees">1-10 employees</option>
                         <option value="11-50 employees">11-50 employees</option>
-                        <option value="50-200 employees">50-200 employees</option>
-                        <option value="200-500 employees">200-500 employees</option>
+                        <option value="50-200 employees">
+                          50-200 employees
+                        </option>
+                        <option value="200-500 employees">
+                          200-500 employees
+                        </option>
                         <option value="500+ employees">500+ employees</option>
                       </select>
                     </div>
@@ -280,7 +284,11 @@ export function EditCompanyModal({
                           type="text"
                           value={specialty}
                           onChange={(e) =>
-                            handleArrayChange("specialties", index, e.target.value)
+                            handleArrayChange(
+                              "specialties",
+                              index,
+                              e.target.value
+                            )
                           }
                           className="flex-1 px-4 py-2 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
                           placeholder="Enter specialty"
@@ -491,10 +499,10 @@ export function EditCompanyModal({
 
             {/* Footer */}
             <div className="flex items-center justify-end gap-3 p-6 border-t border-subtle bg-light-bg/50">
-              <Button variant="outline" size="lg" onClick={handleClose}>
+              <Button variant="outline" size="md" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button variant="accent" size="lg" type="submit">
+              <Button variant="accent" size="md" type="submit">
                 Save Changes
               </Button>
             </div>
@@ -504,4 +512,3 @@ export function EditCompanyModal({
     </div>
   );
 }
-

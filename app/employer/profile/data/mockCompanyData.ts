@@ -7,6 +7,8 @@ export interface CompanyProfile {
   website: string;
   description: string;
   size: string;
+  logo_url: string | null;
+  members_count: number;
   specialties: string[];
   values: string[];
   benefits: string[];
@@ -38,6 +40,8 @@ export const mockCompanyData: CompanyProfile = {
   description:
     "ABC Construction is a leading provider of commercial and residential construction services, specializing in electrical, plumbing, HVAC, and general contracting. With over a decade of experience, we've built a reputation for quality craftsmanship, safety excellence, and innovative solutions. Our team of skilled trades professionals is committed to delivering exceptional results on every project.",
   size: "50-200 employees",
+  logo_url: "https://example.com/logo.png",
+  members_count: 145,
   specialties: [
     "Commercial Construction",
     "Electrical Systems",

@@ -19,6 +19,7 @@ The application uses a **CSS variable-based theming system** that automatically 
 ### Color Variables
 
 #### Dark Mode (Default)
+
 - **Main Background**: `#080808` - Primary page background
 - **Surface Background**: `#111111` - Card and elevated surfaces
 - **Light Background**: `#1b212c` - Secondary surfaces
@@ -28,6 +29,7 @@ The application uses a **CSS variable-based theming system** that automatically 
 - **Border Subtle**: `rgba(255, 255, 255, 0.12)` - Subtle borders
 
 #### Light Mode
+
 - **Main Background**: `#e0e0e0` - Light gray background
 - **Surface Background**: `#ffffff` - White cards
 - **Light Background**: `#ffffff` - White surfaces
@@ -39,20 +41,24 @@ The application uses a **CSS variable-based theming system** that automatically 
 ### Utility Classes
 
 **Backgrounds:**
+
 - `.bg-main-bg` - Primary background
 - `.bg-surface` - Card/surface background
 - `.bg-light-bg` - Secondary surface background
 - `.bg-main-accent` - Accent color background
 
 **Text:**
+
 - `.text-main-text` - Primary text color
 - `.text-main-light-text` - Secondary text color
 - `.text-main-accent` - Accent color text
 
 **Borders:**
+
 - `.border-subtle` - Theme-aware subtle border
 
 **Grid Backgrounds:**
+
 - `.bg-grid` - Geometric grid pattern overlay
 - `.bg-surface/60` - Semi-transparent surface for grid sections
 
@@ -63,10 +69,12 @@ The application uses a **CSS variable-based theming system** that automatically 
 ### Font Pairing
 
 **Titles & Headings**: Red Hat Display
+
 - Weight: Variable (500-700)
 - Use for: All headings (h1-h6), display text, buttons
 
 **Body Text**: Cambria
+
 - Weight: 500
 - Use for: Paragraphs, labels, descriptions, all body copy
 
@@ -74,15 +82,16 @@ The application uses a **CSS variable-based theming system** that automatically 
 
 ```tsx
 // Titles/Headings
-className="font-title" // Red Hat Display
+className = "font-title"; // Red Hat Display
 
 // Body text (default)
-className="font-body" // Cambria (default on body element)
+className = "font-body"; // Cambria (default on body element)
 ```
 
 ### Type Scale
 
 **Headings:**
+
 - `text-6xl` / `lg:text-7xl` - Hero headlines
 - `text-4xl` / `sm:text-5xl` / `lg:text-6xl` - Page titles
 - `text-3xl` / `sm:text-4xl` - Section headings
@@ -91,6 +100,7 @@ className="font-body" // Cambria (default on body element)
 - `text-lg` - Large body text
 
 **Body:**
+
 - `text-lg` / `sm:text-xl` - Large paragraphs
 - `text-base` / `sm:text-lg` - Standard paragraphs
 - `text-sm` - Small text, captions
@@ -111,6 +121,7 @@ className="font-body" // Cambria (default on body element)
 ```
 
 **Spacing:**
+
 - Horizontal padding: `px-4 sm:px-6 lg:px-8`
 - Vertical padding: `py-16 lg:py-20` (sections) or `py-24 sm:py-28 lg:py-36` (hero sections)
 
@@ -140,6 +151,7 @@ className="font-body" // Cambria (default on body element)
 ```
 
 **Variations:**
+
 - Standard: `bg-surface`
 - With shadow: `shadow-elevated`
 - Popular/Featured: `border-main-accent shadow-lg`
@@ -147,17 +159,16 @@ className="font-body" // Cambria (default on body element)
 ### Buttons
 
 Use the `Button` component with variants:
+
 - `variant="accent"` - Primary CTA (orange background)
 - `variant="outline"` - Secondary action (outlined)
-- `size="lg"` - Large buttons for CTAs
+- `size="md"` - Large buttons for CTAs
 - `size="sm"` - Small buttons for navigation
 
 ### Input Fields
 
 ```tsx
-<input
-  className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors"
-/>
+<input className="w-full px-4 py-3 rounded-lg border border-subtle bg-light-bg text-main-text focus:outline-none focus:ring-2 focus:ring-main-accent transition-colors" />
 ```
 
 ### Form Labels
@@ -175,6 +186,7 @@ Use the `Button` component with variants:
 ### Decorative SVGs
 
 Use decorative SVGs in corners or backgrounds with:
+
 - Position: `absolute -right-6 -top-6` or similar
 - Size: `h-20 w-20` or `h-40 w-40`
 - Opacity: `opacity-10`
@@ -193,6 +205,7 @@ Use decorative SVGs in corners or backgrounds with:
 ### Icons
 
 Use Iconify React with Lucide icons:
+
 - Standard size: `w-5 h-5` (20px)
 - Large: `w-6 h-6` (24px)
 - Extra large: `w-8 h-8` (32px)
@@ -251,8 +264,11 @@ useEffect(() => {
     const tl = gsap.timeline({
       defaults: { ease: "power2.out", duration: 0.6 },
     });
-    tl.from(titleRef.current, { y: 20, autoAlpha: 0 })
-      .from(textRef.current, { y: 16, autoAlpha: 0 }, "-=0.25");
+    tl.from(titleRef.current, { y: 20, autoAlpha: 0 }).from(
+      textRef.current,
+      { y: 16, autoAlpha: 0 },
+      "-=0.25"
+    );
   }, rootRef);
   return () => ctx.revert();
 }, []);
@@ -261,6 +277,7 @@ useEffect(() => {
 ### CSS Transitions
 
 Use for hover states and interactive elements:
+
 - `transition-colors` - Color changes
 - `transition-all` - Multiple properties
 - `hover:shadow-lg` - Elevation on hover
@@ -300,15 +317,18 @@ Use for hover states and interactive elements:
 ## Accessibility
 
 ### Semantic HTML
+
 - Use proper heading hierarchy (h1 → h2 → h3)
 - Use semantic elements (`<section>`, `<nav>`, `<article>`, etc.)
 - Use `<label>` for form inputs
 
 ### ARIA Labels
+
 - Add `aria-label` for icon-only buttons
 - Use `aria-hidden="true"` for decorative elements
 
 ### Keyboard Navigation
+
 - Ensure all interactive elements are keyboard accessible
 - Use proper focus states: `focus:ring-2 focus:ring-main-accent`
 
@@ -319,11 +339,13 @@ Use for hover states and interactive elements:
 ### Never Use Tailwind `dark:` Prefix
 
 **❌ Wrong:**
+
 ```tsx
 <div className="bg-white dark:bg-main-bg text-neutral-900 dark:text-main-text">
 ```
 
 **✅ Correct:**
+
 ```tsx
 <div className="bg-main-bg text-main-text">
 ```
@@ -331,6 +353,7 @@ Use for hover states and interactive elements:
 ### Theme-Aware Classes Only
 
 Always use utility classes that adapt automatically:
+
 - `bg-main-bg` instead of `bg-white dark:bg-main-bg`
 - `text-main-text` instead of `text-neutral-900 dark:text-main-text`
 - `text-main-light-text` instead of `text-neutral-600 dark:text-main-light-text`
@@ -340,6 +363,7 @@ Always use utility classes that adapt automatically:
 ### Background Patterns
 
 For sections with grid backgrounds:
+
 - `bg-grid bg-surface/60` - Grid with semi-transparent surface
 - `bg-grid bg-white/60` - Light mode grid (only for specific cases)
 
@@ -432,6 +456,5 @@ src/
 
 ---
 
-*Last Updated: 2025*
-*Version: 1.0*
-
+_Last Updated: 2025_
+_Version: 1.0_

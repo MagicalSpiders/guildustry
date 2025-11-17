@@ -12,7 +12,7 @@ export interface Job {
   salary_min: number;
   salary_max: number;
   job_type: string; // 'full-time' | 'part-time' | 'contract' | 'temporary'
-  status: string; // 'open' | 'closed' | 'draft'
+  status: string | null; // 'open' | 'closed' | null
   requirements?: string;
   skills?: string[];
   trade_specialty: string;
@@ -31,7 +31,7 @@ export interface JobInsert {
   salary_min: number;
   salary_max: number;
   job_type: string;
-  status?: string;
+  status?: string | null;
   requirements?: string;
   skills?: string[];
   trade_specialty: string;
@@ -82,7 +82,7 @@ export async function insertJob(jobData: JobInsert): Promise<Job> {
     posted_by: user.id,
     employer_id: user.id,
     company_id: company.id,
-    status: jobData.status || "draft", // Default to draft
+    status: jobData.status || null, // Default to null (awaiting admin approval, will be set to "open" when approved)
   };
 
   const { data, error } = await supabase

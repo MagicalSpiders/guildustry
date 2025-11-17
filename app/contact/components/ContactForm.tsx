@@ -12,7 +12,9 @@ export function ContactForm() {
     message: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -34,13 +36,18 @@ export function ContactForm() {
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="max-w-2xl mx-auto">
           <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-elevated">
-            <h2 className="text-2xl sm:text-3xl font-title font-bold mb-6 text-main-text">Send Us a Message</h2>
+            <h2 className="text-2xl sm:text-3xl font-title font-bold mb-6 text-main-text">
+              Send Us a Message
+            </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium mb-2 text-main-light-text">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm font-medium mb-2 text-main-light-text"
+                  >
                     First Name
                   </label>
                   <input
@@ -54,7 +61,10 @@ export function ContactForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium mb-2 text-main-light-text">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium mb-2 text-main-light-text"
+                  >
                     Last Name
                   </label>
                   <input
@@ -71,7 +81,10 @@ export function ContactForm() {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-main-light-text">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium mb-2 text-main-light-text"
+                >
                   Email
                 </label>
                 <input
@@ -87,7 +100,10 @@ export function ContactForm() {
 
               {/* Subject */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium mb-2 text-main-light-text">
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-medium mb-2 text-main-light-text"
+                >
                   Subject
                 </label>
                 <input
@@ -103,7 +119,10 @@ export function ContactForm() {
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2 text-main-light-text">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium mb-2 text-main-light-text"
+                >
                   Message
                 </label>
                 <textarea
@@ -118,7 +137,12 @@ export function ContactForm() {
               </div>
 
               {/* Submit button */}
-              <Button type="submit" variant="accent" size="lg" className="w-full">
+              <Button
+                type="submit"
+                variant="accent"
+                size="md"
+                className="w-full"
+              >
                 Send Message
               </Button>
             </form>

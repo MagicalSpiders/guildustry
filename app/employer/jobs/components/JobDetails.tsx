@@ -25,10 +25,11 @@ export function JobDetails({ job }: JobDetailsProps) {
             Active
           </span>
         );
-      case "draft":
+      case null:
+      case undefined:
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-surface border border-subtle text-main-light-text">
-            Draft
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+            Pending Approval
           </span>
         );
       default:

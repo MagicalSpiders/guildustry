@@ -52,11 +52,21 @@ function SummaryCard({
   );
 }
 
+interface EmployerHeroProps {
+  companyName?: string;
+  activeJobsCount: number;
+  totalApplicantsCount: number;
+  interviewsThisMonthCount: number;
+  unreadNotificationsCount: number;
+}
+
 export function EmployerHero({
   companyName = "ABC Construction",
-}: {
-  companyName?: string;
-}) {
+  activeJobsCount,
+  totalApplicantsCount,
+  interviewsThisMonthCount,
+  unreadNotificationsCount,
+}: EmployerHeroProps) {
   const router = useRouter();
 
   return (
@@ -73,7 +83,7 @@ export function EmployerHero({
         </div>
         <Button
           variant="accent"
-          size="lg"
+          size="md"
           icon="lucide:plus"
           iconPosition="left"
           onClick={() => router.push("/employer/postJob")}
@@ -87,7 +97,7 @@ export function EmployerHero({
         <Link href="/employer/jobs">
           <SummaryCard
             title="Active Jobs"
-            value="5"
+            value={activeJobsCount.toString()}
             description="Currently hiring"
             icon="lucide:briefcase"
           />
@@ -95,25 +105,25 @@ export function EmployerHero({
         <Link href="/employer/applicants">
           <SummaryCard
             title="Total Applicants"
-            value="42"
+            value={totalApplicantsCount.toString()}
             description="Across all jobs"
             icon="lucide:users"
           />
         </Link>
         <SummaryCard
           title="Interviews"
-          value="8"
+          value={interviewsThisMonthCount.toString()}
           description="Scheduled this month"
           icon="lucide:calendar"
         />
         <Link href="/employer/notifications">
           <SummaryCard
             title="Notifications"
-            value="3"
+            value={unreadNotificationsCount.toString()}
             description="New updates"
             icon="lucide:bell"
-            badge="NEW"
-            showNotificationDot={true}
+            badge={unreadNotificationsCount > 0 ? "NEW" : undefined}
+            showNotificationDot={unreadNotificationsCount > 0}
           />
         </Link>
       </div>

@@ -3,6 +3,7 @@ import type {
   Application,
   ApplicationInsert,
   ApplicationUpdate,
+  Database,
 } from "./database.types";
 import {
   createApplicationStatusNotification,
@@ -23,6 +24,7 @@ export type ApplicationWithRelations = Application & {
     salary_max: number;
     trade_specialty: string;
     job_type: string;
+    skills?: string[] | null;
     posted_date: string;
   };
   candidate_profile?: {
@@ -34,6 +36,8 @@ export type ApplicationWithRelations = Application & {
     state: string;
     primary_trade: string;
     years_of_experience: number;
+    shift_preference: string;
+    has_valid_licence: boolean;
     resume_file_url: string | null;
   };
 };
@@ -84,9 +88,10 @@ export async function insertApplication(
   // If no existing application, proceed with insertion
   const { data, error } = await supabase
     .from("applications")
-    .insert(dataToInsert)
+    // @ts-expect-error - Supabase type inference issue with complex selects
+    .insert([dataToInsert])
     .select(
-      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, posted_date, employer_id), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
+      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date, employer_id), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
     )
     .single();
 
@@ -140,6 +145,7 @@ export async function updateApplication(
   // Update the application
   const { data, error } = await supabase
     .from("applications")
+    // @ts-expect-error - Supabase type inference issue
     .update(updates)
     .eq("id", appId)
     .select()
@@ -189,7 +195,7 @@ export async function getOwnApplications(): Promise<ApplicationWithRelations[]> 
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
+      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
     )
     .eq("applicant_id", user.id)
     .order("submitted_at", { ascending: false });
@@ -212,7 +218,7 @@ export async function getApplicationsByJobId(
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "*, candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
+      "*, candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
     )
     .eq("job_id", jobId)
     .order("submitted_at", { ascending: false });
@@ -260,7 +266,7 @@ export async function getApplicationsForEmployer(): Promise<
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, resume_file_url)"
+      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
     )
     .in("job_id", jobIds)
     .order("submitted_at", { ascending: false });

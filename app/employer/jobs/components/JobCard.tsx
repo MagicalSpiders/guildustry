@@ -9,7 +9,7 @@ export interface Job {
   location: string;
   salary: string;
   posted: string;
-  status: "active" | "draft" | "pending";
+  status: "active" | "closed" | null;
   isMyPost: boolean;
   applicants?: number;
   matchScore?: number;
@@ -30,10 +30,11 @@ export function JobCard({ job, isSelected, onClick }: JobCardProps) {
             Active
           </span>
         );
-      case "draft":
+      case null:
+      case undefined:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface border border-subtle text-main-light-text">
-            Draft
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+            Pending
           </span>
         );
       default:

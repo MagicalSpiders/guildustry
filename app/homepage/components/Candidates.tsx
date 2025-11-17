@@ -160,7 +160,7 @@ export function Candidates() {
               </li>
             </ul>
             <div className="mt-8">
-              <Button variant="outline" size="lg" asChild>
+              <Button variant="outline" size="md" asChild>
                 <Link
                   href="/candidates"
                   className="inline-flex items-center gap-2"

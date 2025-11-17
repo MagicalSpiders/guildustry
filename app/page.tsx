@@ -26,8 +26,11 @@ export default function HomePage() {
     const errorCode = params.get("error_code");
     const type = params.get("type");
 
-    // If there's an email-related hash, redirect to auth page with the hash
-    if ((error && errorCode) || type === "signup" || type === "recovery") {
+    // If there's an email-related hash, redirect appropriately
+    if (type === "recovery") {
+      console.log("[Flow] Password reset callback - redirecting to update password");
+      router.push(`/auth/update-password${hash}`);
+    } else if ((error && errorCode) || type === "signup") {
       console.log("[Flow] Email confirmation callback - redirecting to auth");
       router.push(`/auth/sign-in${hash}`);
     }

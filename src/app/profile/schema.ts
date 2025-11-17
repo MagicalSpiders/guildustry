@@ -23,9 +23,7 @@ export const tradeSchema = z.object({
     .max(60, "Please enter a valid number of years")
     .or(z.string().regex(/^\d+$/, "Must be a number").transform((v) => Number(v))),
   has_valid_licence: z.boolean().optional().default(false),
-  shift_preference: z.enum(["day", "night", "any"], {
-    errorMap: () => ({ message: "Please select a shift preference" }),
-  }).default("any"),
+  shift_preference: z.enum(["day", "night", "any"]).default("any"),
 });
 
 // Step 3: Resume (Optional)
@@ -37,12 +35,8 @@ export const resumeSchema = z.object({
 
 // Step 4: Assessment (Required)
 export const assessmentSchema = z.object({
-  priority_choice: z.enum(["Safety first", "Deliver on time", "Control costs"], {
-    errorMap: () => ({ message: "Please select your priority" }),
-  }),
-  shape_choice: z.enum(["Cylinder", "Sphere", "Torus"], {
-    errorMap: () => ({ message: "Please select a shape" }),
-  }),
+  priority_choice: z.enum(["Safety first", "Deliver on time", "Control costs"]),
+  shape_choice: z.enum(["Cylinder", "Sphere", "Torus"]),
 });
 
 // Metadata fields

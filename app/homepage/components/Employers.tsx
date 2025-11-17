@@ -54,7 +54,7 @@ export function Employers() {
             </ul>
 
             <div className="mt-8">
-              <Button variant="accent" size="lg" asChild>
+              <Button variant="accent" size="md" asChild>
                 <Link
                   href="/employers"
                   className="inline-flex items-center gap-2"
@@ -97,7 +97,9 @@ export function Employers() {
                   <p className="text-xs uppercase tracking-wide text-main-light-text opacity-70">
                     Pipeline overview
                   </p>
-                  <p className="text-lg font-semibold text-main-text">Open roles this week</p>
+                  <p className="text-lg font-semibold text-main-text">
+                    Open roles this week
+                  </p>
                 </div>
                 <span className="inline-flex items-center gap-1 rounded-full border border-subtle px-2 py-1 text-xs text-main-light-text">
                   <Icon
@@ -181,7 +183,9 @@ export function Employers() {
                   />
                   Vetted profiles, updated daily
                 </div>
-                <span className="text-xs text-main-light-text opacity-70">100% FREE</span>
+                <span className="text-xs text-main-light-text opacity-70">
+                  100% FREE
+                </span>
               </div>
             </div>
           </div>
