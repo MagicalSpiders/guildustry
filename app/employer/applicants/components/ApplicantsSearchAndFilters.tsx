@@ -23,11 +23,11 @@ export function ApplicantsSearchAndFilters({
 }: ApplicantsSearchAndFiltersProps) {
   const statusOptions = [
     "All Status",
-    "New",
-    "Under Review",
-    "Shortlisted",
-    "Interview Scheduled",
+    "Pending",
+    "Reviewed",
+    "Accepted",
     "Rejected",
+    "Withdrawn",
   ];
 
   return (

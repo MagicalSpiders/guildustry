@@ -204,7 +204,7 @@ export default function CandidateJobsPage() {
     try {
       const applications = await getOwnApplications();
       const appliedJobIds = applications.map((app) => app.job_id);
-
+      
       // Update all jobs to reflect current application status
       setJobs((prevJobs) =>
         prevJobs.map((job) => ({

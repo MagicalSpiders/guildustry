@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/src/components/Button";
 import { NoticeModal } from "@/src/components/NoticeModal";
@@ -23,6 +23,12 @@ export function ApplicationModal({
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Transition states for smooth modal appearance/disappearance
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  // Notice modal for submission feedback
   const [noticeModal, setNoticeModal] = useState<{
     open: boolean;
     title: string;
@@ -33,6 +39,31 @@ export function ApplicationModal({
     title: "",
     variant: "info",
   });
+
+  // Success notice that shows after modal closes
+  const [successNotice, setSuccessNotice] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+  }>({
+    open: false,
+    title: "",
+    description: "",
+  });
+
+  // Handle modal transitions with smooth animations
+  useEffect(() => {
+    if (open) {
+      setShouldRender(true);
+      // Small delay to trigger fade-in after render
+      setTimeout(() => setIsVisible(true), 10);
+    } else {
+      setIsVisible(false);
+      // Wait for fade-out animation before unmounting
+      const timer = setTimeout(() => setShouldRender(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const handleSubmit = async () => {
     if (!coverLetter.trim()) {
@@ -60,30 +91,44 @@ export function ApplicationModal({
       setCoverLetter("");
       setResumeUrl("");
 
-      // Close modal immediately and show success notification
+      // Close modal immediately
       onClose();
 
-      // Call success callback after modal closes
-      if (onSuccess) {
-        onSuccess(jobTitle);
-      }
+      // Show success notice after modal closes
+      setTimeout(() => {
+        setSuccessNotice({
+          open: true,
+          title: "Application Submitted Successfully!",
+          description: `Your application for "${jobTitle}" has been submitted. We'll notify you of any updates.`,
+        });
+
+        // Call success callback
+        if (onSuccess) {
+          onSuccess(jobTitle);
+        }
+      }, 300); // Small delay to ensure modal is fully closed
     } catch (error: any) {
-      setNoticeModal({
-        open: true,
-        title: "Application Failed",
-        description:
-          error.message || "Failed to submit application. Please try again.",
-        variant: "error",
-      });
+      // Close modal and show error notice after
+      onClose();
+
+      setTimeout(() => {
+        setSuccessNotice({
+          open: true,
+          title: "Application Failed",
+          description:
+            error.message || "Failed to submit application. Please try again.",
+        });
+      }, 300);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!open) return null;
+  if (!shouldRender) return null;
 
   return (
     <>
+      {/* Notice modal for submission feedback */}
       <NoticeModal
         open={noticeModal.open}
         title={noticeModal.title}
@@ -106,17 +151,37 @@ export function ApplicationModal({
         }
       />
 
+      {/* Success/Error notice that shows after modal closes */}
+      <NoticeModal
+        open={successNotice.open}
+        title={successNotice.title}
+        description={successNotice.description}
+        variant={successNotice.title.includes("Failed") ? "error" : "success"}
+        onClose={() =>
+          setSuccessNotice({ open: false, title: "", description: "" })
+        }
+        primaryAction={{
+          label: "OK",
+          onClick: () =>
+            setSuccessNotice({ open: false, title: "", description: "" }),
+        }}
+      />
+
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
         <div
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+            isVisible ? "opacity-100" : "opacity-0"
+          }`}
           onClick={onClose}
           aria-hidden="true"
         />
 
         {/* Modal */}
         <div
-          className="relative z-50 w-full max-w-2xl rounded-2xl border border-subtle bg-surface shadow-2xl"
+          className={`relative z-50 w-full max-w-2xl rounded-2xl border border-subtle bg-surface shadow-2xl transition-all duration-300 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

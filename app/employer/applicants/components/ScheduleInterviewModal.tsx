@@ -34,6 +34,16 @@ export function ScheduleInterviewModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [noticeModal, setNoticeModal] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+    variant: "success" | "error" | "info";
+  }>({
+    open: false,
+    title: "",
+    variant: "info",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,24 +69,40 @@ export function ScheduleInterviewModal({
 
       await insertInterview(interviewData);
 
-      // Update application status to interviewScheduled
+      // Update application status to reviewed (since interview has been scheduled)
       await updateApplication(applicationId, {
-        status: "interviewScheduled",
+        status: "reviewed",
       });
 
-      // Reset form
-      setFormData({
-        interview_date: "",
-        interview_time: "",
-        type: "phone",
-        location: "",
-        notes: "",
+      // Show success modal
+      setNoticeModal({
+        open: true,
+        title: "Interview Scheduled Successfully!",
+        description: `Interview with ${candidateName} for ${jobTitle} has been scheduled.`,
+        variant: "success",
       });
 
-      onSuccess?.();
-      onClose();
+      // Reset form and close after a delay
+      setTimeout(() => {
+        setFormData({
+          interview_date: "",
+          interview_time: "",
+          type: "phone",
+          location: "",
+          notes: "",
+        });
+        setNoticeModal({ open: false, title: "", variant: "info" });
+        onSuccess?.();
+        onClose();
+      }, 2000);
     } catch (err: any) {
-      setError(err.message || "Failed to schedule interview");
+      const errorMessage = err.message || "Failed to schedule interview";
+      setNoticeModal({
+        open: true,
+        title: "Failed to Schedule Interview",
+        description: errorMessage,
+        variant: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -105,12 +131,6 @@ export function ScheduleInterviewModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-              <p className="text-sm text-red-500">{error}</p>
-            </div>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-main-light-text">
@@ -236,7 +256,21 @@ export function ScheduleInterviewModal({
           </div>
         </form>
       </div>
+
+      {/* Notice Modal */}
+      <NoticeModal
+        open={noticeModal.open}
+        title={noticeModal.title}
+        description={noticeModal.description}
+        variant={noticeModal.variant}
+        onClose={() => {
+          setNoticeModal({ open: false, title: "", variant: "info" });
+          if (noticeModal.variant === "error") {
+            // Don't close the modal on error, just close the notice
+            return;
+          }
+        }}
+      />
     </div>
   );
 }
-

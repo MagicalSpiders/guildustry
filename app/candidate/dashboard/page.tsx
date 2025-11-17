@@ -54,7 +54,7 @@ export default function CandidateDashboardPage() {
   // Calculate real stats from data
   const stats = useMemo(() => {
     const activeApplications = applications.filter(app =>
-      app.status === "pending" || app.status === "under_review"
+      app.status === "pending" || app.status === "reviewed" || app.status === "accepted"
     ).length;
 
     // For saved jobs, we'd need a separate table/collection
@@ -77,24 +77,34 @@ export default function CandidateDashboardPage() {
 
   // Transform applications data for RecentApplications component
   const recentApplications = useMemo(() => {
-    return applications.slice(0, 3).map(app => ({
-      title: app.jobs?.title || "Unknown Position",
-      company: "Company", // Would need to join with companies table
-      date: new Date(app.submitted_at).toLocaleDateString(),
-      badge: {
-        label: app.status === "pending" ? "Applied" :
-               app.status === "under_review" ? "Under Review" :
-               app.status === "interview_scheduled" ? "Interview Scheduled" :
-               app.status === "accepted" ? "Accepted" :
-               app.status === "rejected" ? "Rejected" : "Applied",
-        tone: app.status === "pending" ? "neutral" :
-              app.status === "under_review" ? "neutral" :
-              app.status === "interview_scheduled" ? "accent" :
-              app.status === "accepted" ? "success" :
-              app.status === "rejected" ? "error" : "neutral" as "neutral" | "accent" | "success" | "error",
-      },
-    }));
-  }, [applications]);
+    // Create a map of application IDs to interviews for quick lookup
+    const interviewMap = new Map<string, InterviewWithRelations>();
+    interviews.forEach(interview => {
+      if (interview.applications?.id) {
+        interviewMap.set(interview.applications.id, interview);
+      }
+    });
+
+    return applications.slice(0, 3).map(app => {
+      const hasInterview = interviewMap.has(app.id);
+      const status = app.status || "pending";
+      
+      return {
+        title: app.jobs?.title || "Unknown Position",
+        company: "Company", // Would need to join with companies table
+        date: new Date(app.submitted_at).toLocaleDateString(),
+        badge: {
+          label: hasInterview ? "Interview Scheduled" :
+                 status === "pending" ? "Pending" :
+                 status === "reviewed" ? "Reviewed" :
+                 status === "accepted" ? "Accepted" :
+                 status === "rejected" ? "Rejected" :
+                 status === "withdrawn" ? "Withdrawn" : "Pending",
+          tone: hasInterview ? "accent" : "neutral" as "accent" | "neutral",
+        },
+      };
+    });
+  }, [applications, interviews]);
 
   // Get upcoming interview
   const upcomingInterview = useMemo(() => {
@@ -102,8 +112,8 @@ export default function CandidateDashboardPage() {
 
     // Find the next upcoming interview
     const sortedInterviews = interviews
-      .filter(interview => new Date(interview.scheduled_at) > new Date())
-      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+      .filter(interview => new Date(interview.interview_date) > new Date())
+      .sort((a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime());
 
     if (sortedInterviews.length === 0) return null;
 
@@ -111,7 +121,7 @@ export default function CandidateDashboardPage() {
     return {
       role: interview.applications?.jobs?.title || "Position",
       company: "Company", // Would need company data
-      date: new Date(interview.scheduled_at).toLocaleString(),
+      date: new Date(interview.interview_date).toLocaleString(),
     };
   }, [interviews]);
 

@@ -260,7 +260,7 @@ export async function getApplicationsForEmployer(): Promise<
     return [];
   }
 
-  const jobIds = jobs.map((job) => job.id);
+  const jobIds = (jobs as { id: string }[]).map((job) => job.id);
 
   // Then get all applications for those jobs
   const { data, error } = await supabase
@@ -304,7 +304,8 @@ export async function deleteApplication(appId: string): Promise<boolean> {
     throw new Error("Application not found");
   }
 
-  if (existingApp.applicant_id !== user.id) {
+  const app = existingApp as { applicant_id: string };
+  if (app.applicant_id !== user.id) {
     throw new Error("You don't have permission to delete this application");
   }
 

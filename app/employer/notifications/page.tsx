@@ -26,14 +26,14 @@ function transformNotification(dbNotif: DbNotification): Notification {
   // Extract metadata
   const metadata = (dbNotif.metadata as any) || {};
   
-  // Determine notification type and properties based on type
-  let type: Notification["type"] = "update";
+  // Determine notification type and properties based on database type
+  let type: Notification["type"] = "system";
   let label = "Update";
   let labelColor: Notification["labelColor"] = "grey";
   let icon = "lucide:bell";
   let actionButtonText = "View Details";
   let actionButtonLink = "";
-
+  
   switch (dbNotif.type) {
     case "application_status":
       type = "application";
@@ -47,8 +47,8 @@ function transformNotification(dbNotif: DbNotification): Notification {
       break;
     case "interview_reminder":
       type = "interview";
-      label = "Interview";
-      labelColor = "grey";
+      label = "Interview Reminder";
+      labelColor = "green";
       icon = "lucide:calendar";
       actionButtonText = "View Details";
       actionButtonLink = metadata.interviewId
@@ -56,15 +56,27 @@ function transformNotification(dbNotif: DbNotification): Notification {
         : "/employer/interviews";
       break;
     case "job_update":
-      type = "update";
+      type = "job";
       label = "Job Update";
       labelColor = "orange";
       icon = "lucide:briefcase";
       actionButtonText = "View Job";
-      actionButtonLink = "/employer/jobs";
+      actionButtonLink = metadata.jobId
+        ? `/employer/jobs?selected=${metadata.jobId}`
+        : "/employer/jobs";
+      break;
+    case "company_news":
+      type = "news";
+      label = "Company News";
+      labelColor = "blue";
+      icon = "lucide:newspaper";
+      actionButtonText = "Read More";
+      actionButtonLink = metadata.link || "#";
       break;
     case "system_alert":
-      type = "message";
+    case null:
+    default:
+      type = "system";
       label = "System";
       labelColor = "grey";
       icon = "lucide:alert-circle";

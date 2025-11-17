@@ -26,7 +26,7 @@ function transformNotification(dbNotif: DbNotification): Notification {
   // Extract metadata
   const metadata = (dbNotif.metadata as any) || {};
 
-  // Determine notification type and properties based on type
+  // Determine notification type and properties based on database type
   let type: Notification["type"] = "system";
   let label = "Update";
   let labelColor: Notification["labelColor"] = "grey";
@@ -45,9 +45,9 @@ function transformNotification(dbNotif: DbNotification): Notification {
         ? `/candidate/applications?selected=${metadata.applicationId}`
         : "/candidate/applications";
       break;
-    case "interview_scheduled":
+    case "interview_reminder":
       type = "interview";
-      label = "Interview";
+      label = "Interview Reminder";
       labelColor = "green";
       icon = "lucide:calendar";
       actionButtonText = "View Details";
@@ -55,19 +55,9 @@ function transformNotification(dbNotif: DbNotification): Notification {
         ? `/candidate/interviews?selected=${metadata.interviewId}`
         : "/candidate/interviews";
       break;
-    case "interview_reminder":
-      type = "interview";
-      label = "Interview Reminder";
-      labelColor = "grey";
-      icon = "lucide:clock";
-      actionButtonText = "View Details";
-      actionButtonLink = metadata.interviewId
-        ? `/candidate/interviews?selected=${metadata.interviewId}`
-        : "/candidate/interviews";
-      break;
-    case "job_match":
+    case "job_update":
       type = "job";
-      label = "Job Match";
+      label = "Job Update";
       labelColor = "orange";
       icon = "lucide:briefcase";
       actionButtonText = "View Job";
@@ -75,15 +65,17 @@ function transformNotification(dbNotif: DbNotification): Notification {
         ? `/candidate/jobs?selected=${metadata.jobId}`
         : "/candidate/jobs";
       break;
-    case "profile_view":
-      type = "system";
-      label = "Profile";
-      labelColor = "grey";
-      icon = "lucide:eye";
-      actionButtonText = "View Profile";
-      actionButtonLink = "/candidate/profile";
+    case "company_news":
+      type = "news";
+      label = "Company News";
+      labelColor = "blue";
+      icon = "lucide:newspaper";
+      actionButtonText = "Read More";
+      actionButtonLink = metadata.link || "#";
       break;
     case "system_alert":
+    case null:
+    default:
       type = "system";
       label = "System";
       labelColor = "grey";

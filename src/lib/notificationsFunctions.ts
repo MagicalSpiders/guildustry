@@ -87,8 +87,8 @@ export async function getAllNotifications(
 export async function markNotificationRead(
   notifId: string
 ): Promise<Notification> {
-  const { data, error } = await supabase
-    .from("notifications")
+  const { data, error } = await (supabase
+    .from("notifications") as any)
     .update({ read: true })
     .eq("id", notifId)
     .select()
@@ -98,7 +98,11 @@ export async function markNotificationRead(
     throw new Error(`Failed to mark notification as read: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to mark notification as read: No data returned");
+  }
+
+  return data as Notification;
 }
 
 /**
@@ -129,8 +133,8 @@ export async function markAllNotificationsRead(): Promise<number> {
   const count = unreadData?.length || 0;
 
   // Update all unread notifications
-  const { error } = await supabase
-    .from("notifications")
+  const { error } = await (supabase
+    .from("notifications") as any)
     .update({ read: true })
     .eq("user_id", user.id)
     .eq("read", false);
@@ -168,7 +172,8 @@ export async function deleteNotification(notifId: string): Promise<boolean> {
     throw new Error("Notification not found");
   }
 
-  if (notification.user_id !== user.id) {
+  const notificationData = notification as { user_id: string };
+  if (notificationData.user_id !== user.id) {
     throw new Error("You don't have permission to delete this notification");
   }
 
@@ -199,7 +204,7 @@ export async function createNotification(
 
   const { data, error } = await supabase
     .from("notifications")
-    .insert(dataToInsert)
+    .insert(dataToInsert as any)
     .select()
     .single();
 
@@ -207,7 +212,11 @@ export async function createNotification(
     throw new Error(`Failed to create notification: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to create notification: No data returned");
+  }
+
+  return data as Notification;
 }
 
 /**

@@ -87,7 +87,7 @@ export async function insertJob(jobData: JobInsert): Promise<Job> {
 
   const { data, error } = await supabase
     .from("jobs")
-    .insert(dataToInsert)
+    .insert(dataToInsert as any)
     .select()
     .single();
 
@@ -95,7 +95,11 @@ export async function insertJob(jobData: JobInsert): Promise<Job> {
     throw new Error(`Failed to create job: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to create job: No data returned");
+  }
+
+  return data as Job;
 }
 
 /**
@@ -130,8 +134,8 @@ export async function updateJob(
     throw new Error("Job not found or you don't have permission to update it");
   }
 
-  const { data, error } = await supabase
-    .from("jobs")
+  const { data, error } = await (supabase
+    .from("jobs") as any)
     .update(updates)
     .eq("id", jobId)
     .eq("posted_by", user.id)
@@ -142,7 +146,11 @@ export async function updateJob(
     throw new Error(`Failed to update job: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to update job: No data returned");
+  }
+
+  return data as Job;
 }
 
 /**

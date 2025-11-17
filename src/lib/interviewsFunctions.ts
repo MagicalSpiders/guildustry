@@ -52,7 +52,7 @@ export async function insertInterview(
 
   const { data, error } = await supabase
     .from("interviews")
-    .insert(dataToInsert)
+    .insert(dataToInsert as any)
     .select(
       `
       *,
@@ -78,14 +78,20 @@ export async function insertInterview(
     throw new Error(`Failed to create interview: ${error.message}`);
   }
 
+  if (!data) {
+    throw new Error("Failed to create interview: No data returned");
+  }
+
+  const interviewData = data as unknown as InterviewWithRelations;
+
   // Create notification for candidate
-  if (data.applications?.applicant_id && data.applications?.jobs?.title) {
+  if (interviewData.applications?.applicant_id && interviewData.applications?.jobs?.title) {
     try {
       await createInterviewScheduledNotification(
-        data.applications.applicant_id,
-        data.id,
-        data.applications.jobs.title,
-        data.interview_date
+        interviewData.applications.applicant_id,
+        interviewData.id,
+        interviewData.applications.jobs.title,
+        interviewData.interview_date
       );
     } catch (notifError) {
       console.error("Failed to create notification:", notifError);
@@ -93,7 +99,7 @@ export async function insertInterview(
     }
   }
 
-  return data as unknown as InterviewWithRelations;
+  return interviewData;
 }
 
 /**
@@ -106,8 +112,8 @@ export async function updateInterview(
   interviewId: string,
   updates: InterviewUpdate
 ): Promise<Interview> {
-  const { data, error } = await supabase
-    .from("interviews")
+  const { data, error } = await (supabase
+    .from("interviews") as any)
     .update(updates)
     .eq("id", interviewId)
     .select()
@@ -117,7 +123,11 @@ export async function updateInterview(
     throw new Error(`Failed to update interview: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to update interview: No data returned");
+  }
+
+  return data as Interview;
 }
 
 /**
@@ -130,8 +140,8 @@ export async function updateInterviewStatus(
   interviewId: string,
   status: "scheduled" | "completed" | "cancelled" | "rescheduled"
 ): Promise<Interview> {
-  const { data, error } = await supabase
-    .from("interviews")
+  const { data, error } = await (supabase
+    .from("interviews") as any)
     .update({ status })
     .eq("id", interviewId)
     .select()
@@ -141,7 +151,11 @@ export async function updateInterviewStatus(
     throw new Error(`Failed to update interview status: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to update interview status: No data returned");
+  }
+
+  return data as Interview;
 }
 
 /**
@@ -213,7 +227,7 @@ export async function getInterviewsForCandidate(): Promise<
     return [];
   }
 
-  const applicationIds = applications.map((app) => app.id);
+  const applicationIds = (applications as Array<{ id: string }>).map((app: { id: string }) => app.id);
 
   // Then get all interviews for those applications
   const { data, error } = await supabase
@@ -274,7 +288,7 @@ export async function getInterviewsForEmployer(): Promise<
     return [];
   }
 
-  const jobIds = jobs.map((job) => job.id);
+  const jobIds = (jobs as Array<{ id: string }>).map((job) => job.id);
 
   // Then get all applications for those jobs
   const { data: applications, error: appsError } = await supabase
@@ -290,7 +304,7 @@ export async function getInterviewsForEmployer(): Promise<
     return [];
   }
 
-  const applicationIds = applications.map((app) => app.id);
+  const applicationIds = (applications as Array<{ id: string }>).map((app: { id: string }) => app.id);
 
   // Finally get all interviews for those applications
   const { data, error } = await supabase

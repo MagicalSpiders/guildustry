@@ -11,15 +11,15 @@ import { getApplicationsForEmployer, updateApplication, ApplicationWithRelations
 import { NoticeModal } from "@/src/components/NoticeModal";
 
 // Map backend status to UI status
-const mapStatus = (status: string): Applicant["status"] => {
+const mapStatus = (status: string | null): Applicant["status"] => {
   const statusMap: Record<string, Applicant["status"]> = {
-    pending: "new",
-    underReview: "underReview",
-    shortlisted: "shortlisted",
-    interviewScheduled: "interviewScheduled",
+    pending: "pending",
+    reviewed: "reviewed",
+    accepted: "accepted",
     rejected: "rejected",
+    withdrawn: "withdrawn",
   };
-  return statusMap[status] || "new";
+  return statusMap[status || "pending"] || "pending";
 };
 
 export default function EmployerApplicantsPage() {
@@ -129,11 +129,11 @@ export default function EmployerApplicantsPage() {
 
       // Map UI status back to backend status
       const statusMap: Record<Applicant["status"], string> = {
-        new: "pending",
-        underReview: "underReview",
-        shortlisted: "shortlisted",
-        interviewScheduled: "interviewScheduled",
+        pending: "pending",
+        reviewed: "reviewed",
+        accepted: "accepted",
         rejected: "rejected",
+        withdrawn: "withdrawn",
       };
 
       await updateApplication(applicantId, {
@@ -195,11 +195,11 @@ export default function EmployerApplicantsPage() {
     // Status filter
     if (selectedStatus !== "All Status") {
       const statusMap: Record<string, Applicant["status"]> = {
-        "New": "new",
-        "Under Review": "underReview",
-        "Shortlisted": "shortlisted",
-        "Interview Scheduled": "interviewScheduled",
+        "Pending": "pending",
+        "Reviewed": "reviewed",
+        "Accepted": "accepted",
         "Rejected": "rejected",
+        "Withdrawn": "withdrawn",
       };
       const status = statusMap[selectedStatus];
       if (status) {
@@ -209,17 +209,20 @@ export default function EmployerApplicantsPage() {
 
     // Tab filter
     switch (activeTab) {
-      case "new":
-        filtered = filtered.filter((app) => app.status === "new");
+      case "pending":
+        filtered = filtered.filter((app) => app.status === "pending");
         break;
-      case "underReview":
-        filtered = filtered.filter((app) => app.status === "underReview");
+      case "reviewed":
+        filtered = filtered.filter((app) => app.status === "reviewed");
         break;
-      case "shortlisted":
-        filtered = filtered.filter((app) => app.status === "shortlisted");
+      case "accepted":
+        filtered = filtered.filter((app) => app.status === "accepted");
         break;
-      case "interviews":
-        filtered = filtered.filter((app) => app.status === "interviewScheduled");
+      case "rejected":
+        filtered = filtered.filter((app) => app.status === "rejected");
+        break;
+      case "withdrawn":
+        filtered = filtered.filter((app) => app.status === "withdrawn");
         break;
       default:
         // "all" - no filter
@@ -233,9 +236,10 @@ export default function EmployerApplicantsPage() {
   const stats = useMemo(() => {
     return {
       total: applicants.length,
-      new: applicants.filter((app) => app.status === "new").length,
-      interviews: applicants.filter((app) => app.status === "interviewScheduled").length,
-      shortlisted: applicants.filter((app) => app.status === "shortlisted").length,
+      pending: applicants.filter((app) => app.status === "pending").length,
+      reviewed: applicants.filter((app) => app.status === "reviewed").length,
+      accepted: applicants.filter((app) => app.status === "accepted").length,
+      rejected: applicants.filter((app) => app.status === "rejected").length,
     };
   }, [applicants]);
 
@@ -243,10 +247,11 @@ export default function EmployerApplicantsPage() {
   const tabCounts = useMemo(() => {
     return {
       all: applicants.length,
-      new: applicants.filter((app) => app.status === "new").length,
-      underReview: applicants.filter((app) => app.status === "underReview").length,
-      shortlisted: applicants.filter((app) => app.status === "shortlisted").length,
-      interviews: applicants.filter((app) => app.status === "interviewScheduled").length,
+      pending: applicants.filter((app) => app.status === "pending").length,
+      reviewed: applicants.filter((app) => app.status === "reviewed").length,
+      accepted: applicants.filter((app) => app.status === "accepted").length,
+      rejected: applicants.filter((app) => app.status === "rejected").length,
+      withdrawn: applicants.filter((app) => app.status === "withdrawn").length,
     };
   }, [applicants]);
 
@@ -278,9 +283,9 @@ export default function EmployerApplicantsPage() {
           <ApplicantsHeader />
           <ApplicantsStats
             total={stats.total}
-            new={stats.new}
-            interviews={stats.interviews}
-            shortlisted={stats.shortlisted}
+            pending={stats.pending}
+            reviewed={stats.reviewed}
+            accepted={stats.accepted}
           />
 
           <ApplicantsSearchAndFilters

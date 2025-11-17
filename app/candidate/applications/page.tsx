@@ -6,6 +6,7 @@ import { Filters } from "@/app/candidate/applications/components/Filters";
 import { ApplicationCard } from "@/app/candidate/applications/components/ApplicationCard";
 import { Application } from "@/app/candidate/applications/data";
 import { getOwnApplications, ApplicationWithRelations } from "@/src/lib/applicationsFunctions";
+import { getInterviewsForCandidate, InterviewWithRelations } from "@/src/lib/interviewsFunctions";
 import { NoticeModal } from "@/src/components/NoticeModal";
 
 const tabs = [
@@ -17,22 +18,22 @@ const tabs = [
 ];
 
 // Map backend status to UI status
-const mapStatus = (status: string): Application["status"] => {
+const mapStatus = (status: string | null): Application["status"] => {
   const statusMap: Record<string, Application["status"]> = {
-    pending: "Pending",
-    underReview: "Under Review",
-    shortlisted: "Under Review",
-    interviewScheduled: "Interview Scheduled",
-    rejected: "Rejected",
+    accepted: "accepted",
+    reviewed: "reviewed",
+    pending: "pending",
+    rejected: "rejected",
+    withdrawn: "withdrawn",
   };
-  return statusMap[status] || "Pending";
+  return statusMap[status || "pending"] || "pending";
 };
 
-// Map status to category
-const getCategory = (status: Application["status"]): Application["category"] => {
-  if (status === "Interview Scheduled") return "interviews";
-  if (status === "Rejected") return "rejected";
-  if (status === "Under Review" || status === "Pending") return "active";
+// Map status and interview to category
+const getCategory = (status: Application["status"], hasInterview: boolean): Application["category"] => {
+  if (hasInterview) return "interviews";
+  if (status === "rejected" || status === "withdrawn") return "rejected";
+  if (status === "reviewed" || status === "pending" || status === "accepted") return "active";
   return "all";
 };
 
@@ -68,7 +69,19 @@ export default function CandidateApplicationsPage() {
           variant: "info",
         });
 
-        const apps = await getOwnApplications();
+        // Fetch applications and interviews in parallel
+        const [apps, interviews] = await Promise.all([
+          getOwnApplications(),
+          getInterviewsForCandidate(),
+        ]);
+
+        // Create a map of application IDs to interviews for quick lookup
+        const interviewMap = new Map<string, InterviewWithRelations>();
+        interviews.forEach(interview => {
+          if (interview.applications?.id) {
+            interviewMap.set(interview.applications.id, interview);
+          }
+        });
 
         // Transform ApplicationWithRelations to Application format
         const transformedApps: Application[] = apps.map((app) => {
@@ -80,10 +93,24 @@ export default function CandidateApplicationsPage() {
           });
 
           const job = app.jobs;
+          const interview = interviewMap.get(app.id);
+
+          // Use the actual status from backend
           const status = mapStatus(app.status);
           const salary = job
             ? `$${job.salary_min.toLocaleString()} - $${job.salary_max.toLocaleString()}`
             : "N/A";
+
+          let interviewData;
+          if (interview) {
+            interviewData = {
+              id: interview.id,
+              date: new Date(interview.interview_date).toLocaleString(),
+              type: interview.type,
+              location: interview.location || undefined,
+              notes: interview.notes || undefined,
+            };
+          }
 
           return {
             id: app.id,
@@ -93,8 +120,9 @@ export default function CandidateApplicationsPage() {
             salary,
             applied: formattedDate,
             status,
-            category: getCategory(status),
+            category: getCategory(status, !!interview),
             summary: app.cover_letter || undefined,
+            interview: interviewData,
           };
         });
 
@@ -140,12 +168,10 @@ export default function CandidateApplicationsPage() {
 
   const stats = useMemo(() => {
     const total = applications.length;
-    const interviews = applications.filter(
-      (d) => d.status === "Interview Scheduled"
-    ).length;
-    const underReview = applications.filter((d) => d.status === "Under Review").length;
-    const pending = applications.filter((d) => d.status === "Pending").length;
-    return { total, interviews, underReview, pending };
+    const interviews = applications.filter((d) => !!d.interview).length;
+    const reviewed = applications.filter((d) => d.status === "reviewed").length;
+    const pending = applications.filter((d) => d.status === "pending").length;
+    return { total, interviews, reviewed, pending };
   }, [applications]);
 
   return (

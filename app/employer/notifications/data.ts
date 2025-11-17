@@ -1,6 +1,9 @@
+// UI notification types mapped from database notification types
+export type NotificationUIType = "application" | "interview" | "job" | "system" | "news";
+
 export interface Notification {
   id: string;
-  type: "application" | "interview" | "message" | "performance" | "update";
+  type: NotificationUIType;
   status: "read" | "unread";
   timestamp: string;
   title: string;
@@ -60,21 +63,20 @@ export const mockNotifications: Notification[] = [
   },
   {
     id: "3",
-    type: "message",
+    type: "system",
     status: "read",
     timestamp: "5 hours ago",
-    title: "New Message",
-    label: "Message",
+    title: "System Alert",
+    label: "System",
     labelColor: "grey",
-    icon: "lucide:message-square",
-    primaryEntityName: "Mike Davis",
+    icon: "lucide:alert-circle",
+    primaryEntityName: "Guildustry",
     description:
-      "Mike Davis sent you a message regarding the HVAC Technician position.",
-    actionButtonText: "Read Message",
-    actionButtonLink: "/employer/messages/3",
+      "Your job posting for HVAC Technician has been updated.",
+    actionButtonText: "View Job",
+    actionButtonLink: "/employer/jobs",
     metadata: {
       jobTitle: "HVAC Technician",
-      messageId: "3",
     },
   },
   {
@@ -98,18 +100,18 @@ export const mockNotifications: Notification[] = [
   },
   {
     id: "5",
-    type: "performance",
+    type: "job",
     status: "read",
     timestamp: "2 days ago",
-    title: "Job Posting Performance",
-    label: "Update",
+    title: "Job Posting Update",
+    label: "Job Update",
     labelColor: "orange",
-    icon: "lucide:trending-up",
-    primaryEntityName: "",
+    icon: "lucide:briefcase",
+    primaryEntityName: "Guildustry",
     description:
       "Your Licensed Electrician posting has received 15 new views this week.",
-    actionButtonText: "View Analytics",
-    actionButtonLink: "/employer/jobs/analytics",
+    actionButtonText: "View Job",
+    actionButtonLink: "/employer/jobs",
     metadata: {
       jobTitle: "Licensed Electrician",
       views: 15,

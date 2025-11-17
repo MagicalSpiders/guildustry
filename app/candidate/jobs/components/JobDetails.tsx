@@ -6,6 +6,7 @@ import { Button } from "@/src/components/Button";
 import { CandidateJob } from "../data/mockJobs";
 import { ApplicationModal } from "./ApplicationModal";
 import { insertApplication } from "@/src/lib/applicationsFunctions";
+import type { ApplicationInsert } from "@/src/lib/database.types";
 import { NoticeModal } from "@/src/components/NoticeModal";
 
 interface JobDetailsProps {
@@ -35,13 +36,16 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
   ) => {
     if (!job) throw new Error("No job selected");
 
-    await insertApplication({
+    // insertApplication will automatically set applicant_id from authenticated user
+    const applicationData: Omit<ApplicationInsert, "applicant_id"> = {
       job_id: job.id,
       status: "pending",
       cover_letter: coverLetter,
       resume_url: resumeUrl || null,
       submitted_at: new Date().toISOString(),
-    });
+    };
+
+    await insertApplication(applicationData as ApplicationInsert);
 
     // Notify parent component to refresh
     onApply?.(job.id);
@@ -60,9 +64,11 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
   }
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 90) return "bg-green-500/20 text-green-400 border-green-500/30";
+    if (score >= 90)
+      return "bg-green-500/20 text-green-400 border-green-500/30";
     if (score >= 80) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-    if (score >= 70) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+    if (score >= 70)
+      return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
     return "bg-red-500/20 text-red-400 border-red-500/30";
   };
 
@@ -104,7 +110,9 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
           </div>
           <div className="flex items-center gap-2 text-main-light-text">
             <Icon icon="lucide:calendar" className="w-4 h-4" />
-            <span>Start Date: {new Date(job.startDate).toLocaleDateString()}</span>
+            <span>
+              Start Date: {new Date(job.startDate).toLocaleDateString()}
+            </span>
           </div>
         </div>
 
@@ -148,13 +156,17 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-main-light-text mb-1">Trade Specialty:</p>
+            <p className="text-sm text-main-light-text mb-1">
+              Trade Specialty:
+            </p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               {job.tradeSpecialty}
             </span>
           </div>
           <div>
-            <p className="text-sm text-main-light-text mb-1">Employment Type:</p>
+            <p className="text-sm text-main-light-text mb-1">
+              Employment Type:
+            </p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               {job.employmentType}
             </span>
@@ -166,15 +178,15 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
             </span>
           </div>
           <div>
-            <p className="text-sm text-main-light-text mb-1">Minimum Education:</p>
+            <p className="text-sm text-main-light-text mb-1">
+              Minimum Education:
+            </p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               {job.minimumEducation}
             </span>
           </div>
           <div className="sm:col-span-2">
-            <p className="text-sm text-main-light-text mb-1">
-              Transportation:
-            </p>
+            <p className="text-sm text-main-light-text mb-1">Transportation:</p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               {job.transportationRequired}
             </span>
@@ -186,10 +198,7 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
       {job.requiredCertifications.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Icon
-              icon="lucide:award"
-              className="w-5 h-5 text-main-accent"
-            />
+            <Icon icon="lucide:award" className="w-5 h-5 text-main-accent" />
             <h3 className="font-semibold text-main-text">
               Required Certifications
             </h3>
@@ -248,4 +257,3 @@ export function JobDetails({ job, onApply }: JobDetailsProps) {
     </div>
   );
 }
-

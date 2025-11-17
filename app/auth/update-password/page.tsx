@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,7 @@ const updatePasswordSchema = z
 
 type UpdatePasswordFormData = z.infer<typeof updatePasswordSchema>;
 
-export default function UpdatePasswordPage() {
+function UpdatePasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { updatePassword, user, loading: authLoading } = useAuth();
@@ -347,5 +347,13 @@ export default function UpdatePasswordPage() {
         }
       />
     </div>
+  );
+}
+
+export default function UpdatePasswordPage() {
+  return (
+    <Suspense fallback={<PageSkeleton variant="form" />}>
+      <UpdatePasswordContent />
+    </Suspense>
   );
 }

@@ -1,18 +1,18 @@
 export function Stats({
   total,
   interviews,
-  underReview,
+  reviewed,
   pending,
 }: {
   total: number;
   interviews: number;
-  underReview: number;
+  reviewed: number;
   pending: number;
 }) {
   const items = [
     { label: "Total Applications", value: total },
     { label: "Interviews", value: interviews },
-    { label: "Under Review", value: underReview },
+    { label: "Reviewed", value: reviewed },
     { label: "Pending", value: pending },
   ];
   return (

@@ -1,6 +1,9 @@
+// UI notification types mapped from database notification types
+export type NotificationUIType = "application" | "interview" | "job" | "system" | "news";
+
 export interface Notification {
   id: string;
-  type: "application" | "interview" | "job" | "message" | "system";
+  type: NotificationUIType;
   status: "read" | "unread";
   timestamp: string;
   title: string;

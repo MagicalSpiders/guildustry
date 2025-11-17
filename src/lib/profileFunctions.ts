@@ -27,7 +27,7 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
   console.log('[Profile] Inserting profile data');
   const { data, error } = await supabase
     .from('candidate_profile')
-    .insert(dataToInsert)
+    .insert(dataToInsert as any)
     .select()
     .single();
 
@@ -40,8 +40,12 @@ export async function insertUserProfile(profileData: UserProfileInsert): Promise
     throw new Error(`Failed to create profile: ${error.message}`);
   }
 
+  if (!data) {
+    throw new Error('Failed to create profile: No data returned');
+  }
+
   console.log('[Profile] Profile created successfully');
-  return data;
+  return data as UserProfile;
 }
 
 /**
@@ -60,8 +64,8 @@ export async function updateUserProfile(updates: UserProfileUpdate): Promise<Use
     throw new Error('User must be authenticated to update profile');
   }
 
-  const { data, error } = await supabase
-    .from('candidate_profile')
+  const { data, error } = await (supabase
+    .from('candidate_profile') as any)
     .update(updates)
     .eq('id', user.id)
     .select()
@@ -78,7 +82,7 @@ export async function updateUserProfile(updates: UserProfileUpdate): Promise<Use
   }
 
   console.log('[Profile] Profile updated successfully');
-  return data;
+  return data as UserProfile;
 }
 
 /**

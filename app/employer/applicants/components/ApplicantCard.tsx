@@ -8,7 +8,7 @@ import { ScheduleInterviewModal } from "./ScheduleInterviewModal";
 export interface Applicant {
   id: string;
   name: string;
-  status: "new" | "underReview" | "shortlisted" | "interviewScheduled" | "rejected";
+  status: "pending" | "reviewed" | "accepted" | "rejected" | "withdrawn";
   jobTitle: string;
   location: string;
   experience: string;
@@ -31,30 +31,53 @@ export interface Applicant {
 
 interface ApplicantCardProps {
   applicant: Applicant;
-  onStatusUpdate?: (applicantId: string, newStatus: Applicant["status"]) => void;
+  onStatusUpdate?: (
+    applicantId: string,
+    newStatus: Applicant["status"]
+  ) => void;
 }
 
-export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps) {
+export function ApplicantCard({
+  applicant,
+  onStatusUpdate,
+}: ApplicantCardProps) {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   const handleInterviewScheduled = () => {
-    // Update status to interviewScheduled
-    onStatusUpdate?.(applicant.id, "interviewScheduled");
+    // Update status to reviewed (interview will be scheduled)
+    onStatusUpdate?.(applicant.id, "reviewed");
     setIsScheduleModalOpen(false);
   };
   const getStatusBadge = () => {
     const statusConfig = {
-      new: { label: "New", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-      underReview: { label: "Under Review", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-      shortlisted: { label: "Shortlisted", className: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-      interviewScheduled: { label: "Interview Scheduled", className: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-      rejected: { label: "Rejected", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+      pending: {
+        label: "Pending",
+        className: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+      },
+      reviewed: {
+        label: "Reviewed",
+        className: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+      },
+      accepted: {
+        label: "Accepted",
+        className: "bg-green-500/20 text-green-400 border-green-500/30",
+      },
+      rejected: {
+        label: "Rejected",
+        className: "bg-red-500/20 text-red-400 border-red-500/30",
+      },
+      withdrawn: {
+        label: "Withdrawn",
+        className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      },
     };
 
     const config = statusConfig[applicant.status];
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${config.className}`}>
+      <span
+        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${config.className}`}
+      >
         {config.label}
       </span>
     );
@@ -70,11 +93,16 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-xl font-semibold text-main-text">{applicant.name}</h3>
+              <h3 className="text-xl font-semibold text-main-text">
+                {applicant.name}
+              </h3>
               {getStatusBadge()}
             </div>
             <p className="text-sm text-main-light-text mb-3">
-              Applied for: <span className="font-medium text-main-text">{applicant.jobTitle}</span>
+              Applied for:{" "}
+              <span className="font-medium text-main-text">
+                {applicant.jobTitle}
+              </span>
             </p>
             <div className="flex flex-wrap items-center gap-4 text-sm text-main-light-text">
               <div className="flex items-center gap-2">
@@ -189,7 +217,9 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Icon icon="lucide:target" className="w-5 h-5 text-main-accent" />
-            <h4 className="font-semibold text-main-text">Assessment Performance</h4>
+            <h4 className="font-semibold text-main-text">
+              Assessment Performance
+            </h4>
           </div>
           {applicant.assessment && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
@@ -202,13 +232,19 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
             {applicant.assessment.technicalAptitude !== undefined && (
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-main-light-text">Technical Aptitude</span>
-                  <span className="text-main-text font-medium">{applicant.assessment.technicalAptitude}%</span>
+                  <span className="text-main-light-text">
+                    Technical Aptitude
+                  </span>
+                  <span className="text-main-text font-medium">
+                    {applicant.assessment.technicalAptitude}%
+                  </span>
                 </div>
                 <div className="h-2 bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full bg-main-accent rounded-full transition-all"
-                    style={{ width: `${applicant.assessment.technicalAptitude}%` }}
+                    style={{
+                      width: `${applicant.assessment.technicalAptitude}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -217,7 +253,9 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-main-light-text">Problem Solving</span>
-                  <span className="text-main-text font-medium">{applicant.assessment.problemSolving}%</span>
+                  <span className="text-main-text font-medium">
+                    {applicant.assessment.problemSolving}%
+                  </span>
                 </div>
                 <div className="h-2 bg-subtle rounded-full overflow-hidden">
                   <div
@@ -231,12 +269,16 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-main-light-text">Safety Awareness</span>
-                  <span className="text-main-text font-medium">{applicant.assessment.safetyAwareness}%</span>
+                  <span className="text-main-text font-medium">
+                    {applicant.assessment.safetyAwareness}%
+                  </span>
                 </div>
                 <div className="h-2 bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full bg-main-accent rounded-full transition-all"
-                    style={{ width: `${applicant.assessment.safetyAwareness}%` }}
+                    style={{
+                      width: `${applicant.assessment.safetyAwareness}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -245,7 +287,9 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-main-light-text">Adaptability</span>
-                  <span className="text-main-text font-medium">{applicant.assessment.adaptability}%</span>
+                  <span className="text-main-text font-medium">
+                    {applicant.assessment.adaptability}%
+                  </span>
                 </div>
                 <div className="h-2 bg-subtle rounded-full overflow-hidden">
                   <div
@@ -257,27 +301,32 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
             )}
           </div>
         ) : (
-          <p className="text-sm text-main-light-text">This candidate hasn't completed the assessment yet.</p>
+          <p className="text-sm text-main-light-text">
+            This candidate hasn't completed the assessment yet.
+          </p>
         )}
       </div>
 
       {/* Action Buttons */}
       <div className="flex gap-3 pt-4 border-t border-subtle">
-        <Button variant="accent" size="sm" className="flex-1">
+        <Button variant="accent" size="sm" className=" ">
           View Profile
         </Button>
         <Button variant="outline" size="sm">
           Message
         </Button>
-        {applicant.status !== "rejected" && applicant.status !== "interviewScheduled" && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsScheduleModalOpen(true)}
-          >
-            Schedule Interview
-          </Button>
-        )}
+        {applicant.status !== "rejected" &&
+          applicant.status !== "withdrawn" &&
+          (applicant.status === "reviewed" ||
+            applicant.status === "accepted") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsScheduleModalOpen(true)}
+            >
+              Schedule Interview
+            </Button>
+          )}
       </div>
 
       <ScheduleInterviewModal
@@ -291,4 +340,3 @@ export function ApplicantCard({ applicant, onStatusUpdate }: ApplicantCardProps)
     </div>
   );
 }
-

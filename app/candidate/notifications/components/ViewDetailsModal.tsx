@@ -37,7 +37,9 @@ export function ViewDetailsModal({
 
   const getIcon = () => {
     if (notification.type === "interview") return "lucide:calendar";
-    if (notification.type === "performance") return "lucide:trending-up";
+    if (notification.type === "application") return "lucide:file-check";
+    if (notification.type === "job") return "lucide:briefcase";
+    if (notification.type === "news") return "lucide:newspaper";
     return "lucide:info";
   };
 

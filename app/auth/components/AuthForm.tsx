@@ -353,11 +353,22 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
             }
           }, 800); // Give AuthProvider time to load company (increased from 500ms)
         } else if (actualRole === "candidate") {
-          // Wait a bit for profile to load after sign-in, then check if profile exists
-          setTimeout(() => {
+          // Wait a bit for profile to load from AuthProvider, then check directly from database
+          // This ensures we get the most up-to-date profile status
+          setTimeout(async () => {
             try {
-              // Check if AuthProvider has loaded the profile
-              const hasProfile = !!profile;
+              // Check directly from database to get current state
+              const { getUserProfile } = await import(
+                "@/src/lib/profileFunctions"
+              );
+              const profileData = await getUserProfile();
+              const hasProfile = profileData !== null;
+
+              console.log(
+                `[Flow] Profile check: ${hasProfile ? "exists" : "not found"}`
+              );
+
+              // Only show prompt if profile doesn't exist AND user hasn't seen it
               const hasSeenPostLogin =
                 typeof window !== "undefined"
                   ? localStorage.getItem("has_seen_candidate_post_login") ===
@@ -375,11 +386,15 @@ export function AuthForm({ initialMode = "login" }: AuthFormProps) {
                 setNoticeVariant("info");
                 setNoticeOpen(true);
               } else {
-                console.log(
-                  hasProfile
-                    ? "[Flow] Candidate with profile - redirecting to dashboard"
-                    : "[Flow] Returning candidate - redirecting to dashboard"
-                );
+                if (hasProfile) {
+                  console.log(
+                    "[Flow] Candidate with profile - redirecting to dashboard"
+                  );
+                } else {
+                  console.log(
+                    "[Flow] Returning candidate - redirecting to dashboard"
+                  );
+                }
                 router.push("/candidate/dashboard");
               }
             } catch (error) {

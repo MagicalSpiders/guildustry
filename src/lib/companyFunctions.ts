@@ -27,7 +27,7 @@ export async function insertCompany(
 
   const { data, error } = await supabase
     .from("companies")
-    .insert(dataToInsert)
+    .insert(dataToInsert as any)
     .select()
     .single();
 
@@ -38,7 +38,11 @@ export async function insertCompany(
     throw new Error(`Failed to create company: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error("Failed to create company: No data returned");
+  }
+
+  return data as Company;
 }
 
 /**
@@ -57,12 +61,13 @@ export async function updateCompany(updates: CompanyUpdate): Promise<Company> {
     throw new Error("User must be authenticated to update company");
   }
 
-  const { data, error } = await supabase
-    .from("companies")
+  const query = (supabase
+    .from("companies") as any)
     .update(updates)
     .eq("owner_id", user.id)
     .select()
     .single();
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(`Failed to update company: ${error.message}`);
@@ -72,7 +77,7 @@ export async function updateCompany(updates: CompanyUpdate): Promise<Company> {
     throw new Error("Company not found");
   }
 
-  return data;
+  return data as Company;
 }
 
 /**

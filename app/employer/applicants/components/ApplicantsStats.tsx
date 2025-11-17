@@ -24,21 +24,21 @@ function StatCard({ label, value, icon }: StatCardProps) {
 
 export function ApplicantsStats({
   total,
-  new: newCount,
-  interviews,
-  shortlisted,
+  pending,
+  reviewed,
+  accepted,
 }: {
   total: number;
-  new: number;
-  interviews: number;
-  shortlisted: number;
+  pending: number;
+  reviewed: number;
+  accepted: number;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <StatCard label="Total Applicants" value={total.toString()} icon="lucide:users" />
-      <StatCard label="New" value={newCount.toString()} icon="lucide:user-plus" />
-      <StatCard label="Interviews" value={interviews.toString()} icon="lucide:calendar" />
-      <StatCard label="Shortlisted" value={shortlisted.toString()} icon="lucide:star" />
+      <StatCard label="Pending" value={pending.toString()} icon="lucide:clock" />
+      <StatCard label="Reviewed" value={reviewed.toString()} icon="lucide:eye" />
+      <StatCard label="Accepted" value={accepted.toString()} icon="lucide:check-circle" />
     </div>
   );
 }

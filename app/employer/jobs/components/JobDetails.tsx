@@ -11,7 +11,10 @@ export function JobDetails({ job }: JobDetailsProps) {
   if (!job) {
     return (
       <div className="rounded-lg bg-surface border border-subtle p-8 text-center">
-        <Icon icon="lucide:briefcase" className="w-16 h-16 text-main-light-text mx-auto mb-4" />
+        <Icon
+          icon="lucide:briefcase"
+          className="w-16 h-16 text-main-light-text mx-auto mb-4"
+        />
         <p className="text-main-light-text">Select a job to view details</p>
       </div>
     );
@@ -91,11 +94,15 @@ export function JobDetails({ job }: JobDetailsProps) {
               <p className="text-sm text-main-light-text">Applicants</p>
             </div>
             <div>
-              <div className="text-2xl font-bold font-title text-main-text">245</div>
+              <div className="text-2xl font-bold font-title text-main-text">
+                245
+              </div>
               <p className="text-sm text-main-light-text">Views</p>
             </div>
             <div>
-              <div className="text-2xl font-bold font-title text-main-text">5%</div>
+              <div className="text-2xl font-bold font-title text-main-text">
+                5%
+              </div>
               <p className="text-sm text-main-light-text">Conversion</p>
             </div>
           </div>
@@ -109,7 +116,8 @@ export function JobDetails({ job }: JobDetailsProps) {
           <h3 className="font-semibold text-main-text">Job Overview</h3>
         </div>
         <p className="text-main-light-text leading-relaxed">
-          Seeking experienced {job.title.toLowerCase()} for commercial projects. Must have valid license and OSHA certification.
+          Seeking experienced {job.title.toLowerCase()} for commercial projects.
+          Must have valid license and OSHA certification.
         </p>
       </div>
 
@@ -121,13 +129,17 @@ export function JobDetails({ job }: JobDetailsProps) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-main-light-text mb-1">Education Required:</p>
+            <p className="text-sm text-main-light-text mb-1">
+              Education Required:
+            </p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               High School
             </span>
           </div>
           <div>
-            <p className="text-sm text-main-light-text mb-1">Employment Type:</p>
+            <p className="text-sm text-main-light-text mb-1">
+              Employment Type:
+            </p>
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
               Full-time
             </span>
@@ -149,4 +161,3 @@ export function JobDetails({ job }: JobDetailsProps) {
     </div>
   );
 }
-

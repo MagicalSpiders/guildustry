@@ -5,20 +5,22 @@ interface ApplicantsTabsProps {
   onTabChange: (tab: string) => void;
   counts: {
     all: number;
-    new: number;
-    underReview: number;
-    shortlisted: number;
-    interviews: number;
+    pending: number;
+    reviewed: number;
+    accepted: number;
+    rejected: number;
+    withdrawn: number;
   };
 }
 
 export function ApplicantsTabs({ activeTab, onTabChange, counts }: ApplicantsTabsProps) {
   const tabs = [
     { id: "all", label: "All", count: counts.all },
-    { id: "new", label: "New", count: counts.new },
-    { id: "underReview", label: "Under Review", count: counts.underReview },
-    { id: "shortlisted", label: "Shortlisted", count: counts.shortlisted },
-    { id: "interviews", label: "Interviews", count: counts.interviews },
+    { id: "pending", label: "Pending", count: counts.pending },
+    { id: "reviewed", label: "Reviewed", count: counts.reviewed },
+    { id: "accepted", label: "Accepted", count: counts.accepted },
+    { id: "rejected", label: "Rejected", count: counts.rejected },
+    { id: "withdrawn", label: "Withdrawn", count: counts.withdrawn },
   ];
 
   return (
