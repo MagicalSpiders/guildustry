@@ -188,20 +188,34 @@ describe('Application Functions', () => {
     }
 
     it('should successfully update application status', async () => {
+      const currentApp = mockApplication({ id: appId, status: 'pending' })
       const updatedApp = mockApplication({ id: appId, status: 'underReview' })
 
-      const mockFrom = jest.fn().mockReturnValue({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
+      const mockFrom = jest.fn()
+        .mockReturnValueOnce({
+          // First call: select with relations to get current app
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
-                data: updatedApp,
+                data: { ...currentApp, jobs: { title: 'Test Job', employer_id: 'employer-id' }, candidate_profile: { fullname: 'Test User' } },
                 error: null,
               }),
             }),
           }),
-        }),
-      })
+        })
+        .mockReturnValueOnce({
+          // Second call: update
+          update: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: updatedApp,
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        })
 
       ;(supabase.from as jest.Mock) = mockFrom
 
@@ -212,18 +226,33 @@ describe('Application Functions', () => {
     })
 
     it('should fail with database error', async () => {
-      const mockFrom = jest.fn().mockReturnValue({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
+      const currentApp = mockApplication({ id: appId, status: 'pending' })
+
+      const mockFrom = jest.fn()
+        .mockReturnValueOnce({
+          // First call: select with relations
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
-                data: null,
-                error: { message: 'Database error' },
+                data: { ...currentApp, jobs: { title: 'Test Job', employer_id: 'employer-id' }, candidate_profile: { fullname: 'Test User' } },
+                error: null,
               }),
             }),
           }),
-        }),
-      })
+        })
+        .mockReturnValueOnce({
+          // Second call: update with error
+          update: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'Database error' },
+                }),
+              }),
+            }),
+          }),
+        })
 
       ;(supabase.from as jest.Mock) = mockFrom
 

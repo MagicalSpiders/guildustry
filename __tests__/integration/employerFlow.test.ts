@@ -143,18 +143,32 @@ describe('Employer Job Posting and Applicant Review Flow', () => {
     expect(receivedApplications[0].status).toBe('pending')
 
     // Step 4: Employer reviews and updates application status
-    mockFrom = jest.fn().mockReturnValue({
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
+    const currentApp = applications[0]
+    mockFrom = jest.fn()
+      .mockReturnValueOnce({
+        // First call: select with relations to get current app
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
-              data: { ...applications[0], status: 'underReview' },
+              data: { ...currentApp, jobs: { title: 'Test Job', employer_id: user.id }, candidate_profile: { fullname: 'Test Candidate' } },
               error: null,
             }),
           }),
         }),
-      }),
-    })
+      })
+      .mockReturnValueOnce({
+        // Second call: update
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...applications[0], status: 'underReview' },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      })
 
     ;(supabase.from as jest.Mock) = mockFrom
 
@@ -248,18 +262,31 @@ describe('Employer Job Posting and Applicant Review Flow', () => {
     })
 
     // Move to under review
-    let mockFrom = jest.fn().mockReturnValue({
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
+    let mockFrom = jest.fn()
+      .mockReturnValueOnce({
+        // First call: select with relations
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
-              data: { ...application, status: 'underReview' },
+              data: { ...application, jobs: { title: 'Test Job', employer_id: user.id }, candidate_profile: { fullname: 'Test Candidate' } },
               error: null,
             }),
           }),
         }),
-      }),
-    })
+      })
+      .mockReturnValueOnce({
+        // Second call: update
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...application, status: 'underReview' },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      })
 
     ;(supabase.from as jest.Mock) = mockFrom
 
@@ -267,18 +294,29 @@ describe('Employer Job Posting and Applicant Review Flow', () => {
     expect(updated.status).toBe('underReview')
 
     // Move to shortlisted
-    mockFrom = jest.fn().mockReturnValue({
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
+    mockFrom = jest.fn()
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
-              data: { ...application, status: 'shortlisted' },
+              data: { ...application, status: 'underReview', jobs: { title: 'Test Job', employer_id: user.id }, candidate_profile: { fullname: 'Test Candidate' } },
               error: null,
             }),
           }),
         }),
-      }),
-    })
+      })
+      .mockReturnValueOnce({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...application, status: 'shortlisted' },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      })
 
     ;(supabase.from as jest.Mock) = mockFrom
 
@@ -286,18 +324,29 @@ describe('Employer Job Posting and Applicant Review Flow', () => {
     expect(updated.status).toBe('shortlisted')
 
     // Move to interview scheduled
-    mockFrom = jest.fn().mockReturnValue({
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
+    mockFrom = jest.fn()
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
-              data: { ...application, status: 'interviewScheduled' },
+              data: { ...application, status: 'shortlisted', jobs: { title: 'Test Job', employer_id: user.id }, candidate_profile: { fullname: 'Test Candidate' } },
               error: null,
             }),
           }),
         }),
-      }),
-    })
+      })
+      .mockReturnValueOnce({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...application, status: 'interviewScheduled' },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      })
 
     ;(supabase.from as jest.Mock) = mockFrom
 
