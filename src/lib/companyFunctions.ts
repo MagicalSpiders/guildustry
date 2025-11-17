@@ -61,20 +61,36 @@ export async function updateCompany(updates: CompanyUpdate): Promise<Company> {
     throw new Error("User must be authenticated to update company");
   }
 
-  const query = (supabase
+  // First verify the company exists
+  const { data: existingCompany, error: fetchError } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("owner_id", user.id)
+    .single();
+
+  if (fetchError || !existingCompany) {
+    if (fetchError?.code === "PGRST116") {
+      throw new Error("Company not found");
+    }
+    throw new Error("Company not found or you don't have permission to update it");
+  }
+
+  // Now perform the update - use maybeSingle to handle 0 rows case
+  const { data, error } = await (supabase
     .from("companies") as any)
     .update(updates)
     .eq("owner_id", user.id)
     .select()
-    .single();
-  const { data, error } = await query;
+    .maybeSingle();
 
   if (error) {
     throw new Error(`Failed to update company: ${error.message}`);
   }
 
   if (!data) {
-    throw new Error("Company not found");
+    // Update returned no rows - this could be due to RLS policies or the row not matching
+    // Since we verified it exists above, this is likely an RLS issue
+    throw new Error("Update failed: No rows were updated. Please check your Row-Level Security policies.");
   }
 
   return data as Company;
@@ -178,7 +194,7 @@ export async function uploadCompanyLogo(
   const filePath = `logos/${fileName}`;
 
   const { error: uploadError } = await supabase.storage
-    .from("company-assets")
+    .from("logo")
     .upload(filePath, file, {
       cacheControl: "3600",
       upsert: true,
@@ -189,7 +205,7 @@ export async function uploadCompanyLogo(
   }
 
   const { data } = supabase.storage
-    .from("company-assets")
+    .from("logo")
     .getPublicUrl(filePath);
 
   return data.publicUrl;
@@ -207,7 +223,7 @@ export async function deleteCompanyLogo(fileUrl: string): Promise<boolean> {
   const filePath = pathParts.slice(pathParts.indexOf("logos")).join("/");
 
   const { error } = await supabase.storage
-    .from("company-assets")
+    .from("logo")
     .remove([filePath]);
 
   if (error) {
@@ -230,7 +246,7 @@ export async function listCompanyFiles(
   const path = folder ? `${folder}` : "";
 
   const { data: files, error } = await supabase.storage
-    .from("company-assets")
+    .from("logo")
     .list(path, {
       limit: 100,
       offset: 0,
@@ -247,7 +263,7 @@ export async function listCompanyFiles(
     .map((file) => {
       const filePath = folder ? `${folder}/${file.name}` : file.name;
       const { data } = supabase.storage
-        .from("company-assets")
+        .from("logo")
         .getPublicUrl(filePath);
 
       return {

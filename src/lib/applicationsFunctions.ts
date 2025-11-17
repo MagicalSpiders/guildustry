@@ -263,16 +263,64 @@ export async function getApplicationsForEmployer(): Promise<
   const jobIds = (jobs as { id: string }[]).map((job) => job.id);
 
   // Then get all applications for those jobs
-  const { data, error } = await supabase
+  // First try with the join - if foreign key relationship exists
+  let { data, error } = await supabase
     .from("applications")
     .select(
-      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
+      "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date, employer_id), candidate_profile(id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url)"
     )
     .in("job_id", jobIds)
     .order("submitted_at", { ascending: false });
 
+  // If the join fails (foreign key not set up), fetch separately
   if (error) {
-    throw new Error(`Failed to fetch applications: ${error.message}`);
+    console.warn("Join query failed, fetching separately:", error.message);
+    
+    // Fetch applications without profile join
+    const { data: appsData, error: appsError } = await supabase
+      .from("applications")
+      .select(
+        "*, jobs(id, title, company_id, location, salary_min, salary_max, trade_specialty, job_type, skills, posted_date, employer_id)"
+      )
+      .in("job_id", jobIds)
+      .order("submitted_at", { ascending: false });
+
+    if (appsError) {
+      throw new Error(`Failed to fetch applications: ${appsError.message}`);
+    }
+
+    if (!appsData || appsData.length === 0) {
+      return [];
+    }
+
+    // Fetch candidate profiles separately using applicant_id
+    const applicantIds = [...new Set(appsData.map((app: any) => app.applicant_id))];
+    
+    if (applicantIds.length > 0) {
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("candidate_profile")
+        .select("id, fullname, email, phone_number, city, state, primary_trade, years_of_experience, shift_preference, has_valid_licence, resume_file_url")
+        .in("id", applicantIds);
+
+      if (profilesError) {
+        console.warn("Failed to fetch candidate profiles:", profilesError.message);
+      }
+
+      // Merge profiles with applications
+      const profilesMap = new Map(
+        (profilesData || []).map((profile: any) => [profile.id, profile])
+      );
+
+      const result = appsData.map((app: any) => ({
+        ...app,
+        candidate_profile: profilesMap.get(app.applicant_id) || null,
+      }));
+
+      return result as unknown as ApplicationWithRelations[];
+    }
+
+    // If no applicant IDs, return apps without profiles
+    return appsData as unknown as ApplicationWithRelations[];
   }
 
   return (data || []) as unknown as ApplicationWithRelations[];

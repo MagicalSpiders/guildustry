@@ -145,7 +145,7 @@ export default function ViewCompanyProfilePage() {
               <div className="flex flex-wrap justify-center lg:justify-start gap-8 mb-10">
                 <div className="flex items-center gap-4 group">
                   <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-main-accent/10 text-main-accent shadow-sm group-hover:shadow-md transition-all duration-200">
-                    <Icon icon="lucide:users" width={24} height={24} />
+                    <Icon icon="lucide:users" width={36} height={36} />
                   </div>
                   <div>
                     <div className="text-3xl font-bold font-title text-main-text">
@@ -157,25 +157,29 @@ export default function ViewCompanyProfilePage() {
 
                 <div className="flex items-center gap-4 group">
                   <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-main-accent/10 text-main-accent shadow-sm group-hover:shadow-md transition-all duration-200">
-                    <Icon icon="lucide:calendar" width={24} height={24} />
+                    <Icon icon="lucide:calendar" width={36} height={36} />
                   </div>
                   <div>
                     <div className="text-3xl font-bold font-title text-main-text">
                       {company.stats.yearsInBusiness}
                     </div>
-                    <p className="text-sm text-main-light-text">Years in Business</p>
+                    <p className="text-sm text-main-light-text">
+                      Years in Business
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4 group">
                   <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-main-accent/10 text-main-accent shadow-sm group-hover:shadow-md transition-all duration-200">
-                    <Icon icon="lucide:briefcase" width={24} height={24} />
+                    <Icon icon="lucide:briefcase" width={36} height={36} />
                   </div>
                   <div>
                     <div className="text-3xl font-bold font-title text-main-text">
                       {company.stats.activeJobs}
                     </div>
-                    <p className="text-sm text-main-light-text">Active Positions</p>
+                    <p className="text-sm text-main-light-text">
+                      Active Positions
+                    </p>
                   </div>
                 </div>
               </div>
@@ -184,7 +188,7 @@ export default function ViewCompanyProfilePage() {
               <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 <Button
                   variant="accent"
-                  size="lg"
+                  size="sm"
                   onClick={() => router.push("/employer/profile/edit")}
                   className="shadow-sm hover:shadow-lg transition-all duration-200"
                 >
@@ -193,7 +197,7 @@ export default function ViewCompanyProfilePage() {
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="sm"
                   onClick={() => router.push("/employer/dashboard")}
                   className="border-subtle hover:border-main-accent/50 hover:bg-surface/50 transition-all duration-200"
                 >
@@ -230,7 +234,8 @@ export default function ViewCompanyProfilePage() {
                     </div>
                   </div>
                   <p className="text-main-light-text leading-relaxed text-lg">
-                    {company.description || "No description provided yet. Tell candidates about your company's story, mission, and what makes you unique."}
+                    {company.description ||
+                      "No description provided yet. Tell candidates about your company's story, mission, and what makes you unique."}
                   </p>
                 </div>
               </div>
@@ -289,9 +294,14 @@ export default function ViewCompanyProfilePage() {
                     </div>
                     <div className="grid grid-cols-1 gap-4">
                       {company.values.map((value, index) => (
-                        <div key={index} className="flex items-center gap-4 group/item">
+                        <div
+                          key={index}
+                          className="flex items-center gap-4 group/item"
+                        >
                           <div className="w-3 h-3 rounded-full bg-main-accent group-hover/item:scale-125 transition-transform duration-200"></div>
-                          <span className="text-main-text text-lg group-hover/item:text-main-accent transition-colors duration-200">{value}</span>
+                          <span className="text-main-text text-lg group-hover/item:text-main-accent transition-colors duration-200">
+                            {value}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -322,11 +332,16 @@ export default function ViewCompanyProfilePage() {
                     </div>
                     <div className="space-y-4">
                       {company.benefits.map((benefit, index) => (
-                        <div key={index} className="flex items-center gap-4 group/item">
+                        <div
+                          key={index}
+                          className="flex items-center gap-4 group/item"
+                        >
                           <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500/10 text-green-500 group-hover/item:bg-green-500/20 transition-colors duration-200">
                             <Icon icon="lucide:check" className="w-3.5 h-3.5" />
                           </div>
-                          <span className="text-main-text text-lg group-hover/item:text-main-accent transition-colors duration-200">{benefit}</span>
+                          <span className="text-main-text text-lg group-hover/item:text-main-accent transition-colors duration-200">
+                            {benefit}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -457,12 +472,14 @@ export default function ViewCompanyProfilePage() {
                   </div>
                 </div>
                 <p className="text-main-light-text text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-                  Showcase your company's story, values, and opportunities. Your profile is now optimized to attract the best candidates in your industry and build lasting connections.
+                  Showcase your company's story, values, and opportunities. Your
+                  profile is now optimized to attract the best candidates in
+                  your industry and build lasting connections.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <Button
                     variant="accent"
-                    size="lg"
+                    size="md"
                     onClick={() => router.push("/employer/jobs")}
                     className="shadow-sm hover:shadow-lg transition-all duration-200"
                   >
@@ -471,11 +488,14 @@ export default function ViewCompanyProfilePage() {
                   </Button>
                   <Button
                     variant="outline"
-                    size="lg"
+                    size="md"
                     onClick={() => router.push("/employer/dashboard")}
                     className="border-subtle hover:border-main-accent/50 hover:bg-surface/50 transition-all duration-200"
                   >
-                    <Icon icon="lucide:layout-dashboard" className="w-5 h-5 mr-2" />
+                    <Icon
+                      icon="lucide:layout-dashboard"
+                      className="w-5 h-5 mr-2"
+                    />
                     Dashboard
                   </Button>
                 </div>

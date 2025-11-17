@@ -258,7 +258,7 @@ describe('Company Functions', () => {
 
       ;(supabase.from as jest.Mock) = mockFrom
 
-      await expect(updateCompany(updateData)).rejects.toThrow('Failed to update company: Not found')
+      await expect(updateCompany(updateData)).rejects.toThrow('Company not found')
     })
   })
 

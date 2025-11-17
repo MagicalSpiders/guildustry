@@ -315,18 +315,14 @@ export function ApplicantCard({
         <Button variant="outline" size="sm">
           Message
         </Button>
-        {applicant.status !== "rejected" &&
-          applicant.status !== "withdrawn" &&
-          (applicant.status === "reviewed" ||
-            applicant.status === "accepted") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsScheduleModalOpen(true)}
-            >
-              Schedule Interview
-            </Button>
-          )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsScheduleModalOpen(true)}
+        >
+          Schedule Interview
+        </Button>
       </div>
 
       <ScheduleInterviewModal
