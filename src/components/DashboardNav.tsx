@@ -150,21 +150,22 @@ export function DashboardNav() {
                   return null;
                 }
 
-                // Hide Notifications link if user is a candidate
-                if (item.name === "Notifications" && userRole === "candidate") {
-                  return null;
-                }
+                // Show Notifications link for both candidates and employers
+                // (Notifications link is now available for candidates too)
 
                 // For Dashboard, Jobs, Applicants/Applications, Profile, Notifications: use dynamic href based on user role
                 let href = item.href;
                 if (
-                  (typeof item.name === "string" && item.name === "Dashboard") ||
-                  (typeof item.name === "function" && item.name(userRole) === "Dashboard")
+                  (typeof item.name === "string" &&
+                    item.name === "Dashboard") ||
+                  (typeof item.name === "function" &&
+                    item.name(userRole) === "Dashboard")
                 ) {
                   href = getDashboardRoute(userRole);
                 } else if (
                   (typeof item.name === "string" && item.name === "Jobs") ||
-                  (typeof item.name === "function" && item.name(userRole) === "Jobs")
+                  (typeof item.name === "function" &&
+                    item.name(userRole) === "Jobs")
                 ) {
                   href = getJobsRoute(userRole);
                 } else if (item.dynamicName) {
@@ -203,14 +204,11 @@ export function DashboardNav() {
                   (displayName === "Notifications" &&
                     (pathname === "/employer/notifications" ||
                       pathname === "/dashboard/notifications")) ||
-                  (
-                    (displayName === "Applicants" || displayName === "Applications") &&
-                    (
-                      pathname === "/candidate/applications" ||
+                  ((displayName === "Applicants" ||
+                    displayName === "Applications") &&
+                    (pathname === "/candidate/applications" ||
                       pathname === "/employer/applicants" ||
-                      pathname === "/dashboard/applicants"
-                    )
-                  );
+                      pathname === "/dashboard/applicants"));
                 return (
                   <Link
                     key={displayName}

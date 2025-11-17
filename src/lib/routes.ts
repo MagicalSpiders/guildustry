@@ -69,11 +69,13 @@ export function getProfileRoute(role: UserRole): string {
  * Get the notifications URL based on user role
  */
 export function getNotificationsRoute(role: UserRole): string {
-  if (role === "employer") {
+  if (role === "candidate") {
+    return "/candidate/notifications";
+  } else if (role === "employer") {
     return "/employer/notifications";
   }
-  // Fallback to employer notifications if role is undefined
-  return "/employer/notifications";
+  // Fallback to candidate notifications if role is undefined
+  return "/candidate/notifications";
 }
 
 /**

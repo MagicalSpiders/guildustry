@@ -58,9 +58,7 @@ export function Toast({
     <div className="fixed bottom-6 right-6 z-[9999] pointer-events-auto animate-in slide-in-from-bottom-2 fade-in duration-300">
       <div className="relative overflow-hidden rounded-2xl border border-subtle/60 bg-surface/95 backdrop-blur-sm shadow-xl">
         {/* Subtle gradient overlay */}
-        <div
-          className={`absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-main-accent/5 opacity-50`}
-        ></div>
+        <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-main-accent/5 opacity-50`}></div>
 
         <div className="relative flex items-center gap-4 h-fit p-5">
           {/* Icon */}
@@ -72,9 +70,7 @@ export function Toast({
 
           {/* Content */}
           <div className="min-w-0 flex-1">
-            <p className="text-main-text text-sm leading-tight font-medium">
-              {message}
-            </p>
+            <p className="text-main-text text-sm leading-tight font-medium">{message}</p>
             {description && (
               <p className="text-main-light-text text-sm mt-1 leading-relaxed">
                 {description}
